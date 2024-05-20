@@ -2434,8 +2434,7 @@ namespace ARManila.Controllers
         {
             try
             {
-                SqlConnectionStringBuilder SConn = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());
-                //Sir Seno CR Technique
+                SqlConnectionStringBuilder SConn = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());                
                 //document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "SOA.pdf"
                 LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
                 var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;
