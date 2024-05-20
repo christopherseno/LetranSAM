@@ -1,0 +1,107 @@
+﻿@model IEnumerable<ARManila.Models.DMCM>
+
+@{
+    ViewBag.Title = "ListDMCM";
+}
+
+<h2>ListDMCM</h2>
+<table class="table table-sm">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccountNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DocNum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TransactionDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DC)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChargeToStudentAr)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChargeToAssessment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccountName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Period.Period1)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ChartOfAccounts.AcctNo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SubChartOfAccounts.SubAcctNo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AcademicDepartment.AcaDepartmentName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Student.StudentNo)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AccountNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DocNum)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TransactionDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DC)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ChargeToStudentAr)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ChargeToAssessment)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AccountName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Period.Period1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ChartOfAccounts.AcctNo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SubChartOfAccounts.SubAcctNo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AcademicDepartment.AcaDepartmentName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Student.StudentNo)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DMCMID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DMCMID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DMCMID })
+        </td>
+    </tr>
+}
+
+</table>

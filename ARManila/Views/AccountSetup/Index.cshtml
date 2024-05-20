@@ -1,0 +1,76 @@
+﻿@model IEnumerable<ARManila.Models.FeeName>
+
+@{
+    ViewBag.Title = "FeeName";
+}
+
+<h2>Fee Name</h2>
+
+<p>
+    @Html.ActionLink("Create New", "CreateFeeName")
+</p>
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                Fee
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Default Amount
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FeeName1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FeeCategory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditFeeName", new { id = item.FeeNameID }, new { @class = "btn btn-xs btn-primary" } ) 
+                    <a href="#" class="btn btn-xs btn-danger" onclick="ConfirmDelete('@item.FeeNameID', '@item.FeeName1')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" tabindex="-1" id="confirmdelete" data-keyboard="false"
+     data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-primary">Are you sure you want to delete this item?</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">
+                    &times;
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <div id="modalmessage"></div>
+                <div id="modallink"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        function ConfirmDelete(id, message) {
+            $("#modalmessage").html(message);
+            $("#modallink").html('<a href="/AccountSetup/DeleteFeeName/' + id + '" class="btn btn-primary">Confirm</a>');
+            $("#confirmdelete").modal('show');
+        }
+    </script>
+}

@@ -1,0 +1,60 @@
+﻿@model List<ARManila.Models.GetEnrollmentStat2_Result>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    <h2>Enrollment Comparative Report</h2>
+    @using (Html.BeginForm("Index", "EnrollmentStat", FormMethod.Post))
+    {
+        <input type="date" placeholder="Select Date" name="id" id="id" />
+        <input type="submit" value="View" class="btn btn-primary" />
+    }
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>        
+                    <th>Department</th>
+                    <th>Level</th>
+                    <th>Projected</th>
+                    <th>Assessed Todate</th>
+                    <th>Assessed Today</th>
+                    <th>Enrolled Todate</th>
+                    <th>Enroll Today</th>
+                    <th>Cancelled</th>
+                    <th>Cash</th>
+                    <th>Semi-annual</th>
+                    <th>Quarterly</th>
+                    <th>Monthly</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.AcaAcronym</td>
+                        <td>@item.GradeYear</td>
+                        <td>@item.Projected</td>
+                        <td>@item.AssTodate</td>
+                        <td>@item.AssToday</td>
+                        <td>@item.EnrTodate</td>
+                        <td>@item.EnrToday</td>
+                        <td>@item.Cancelled</td>
+                        <td>@item.Cash</td>
+                        <td>@item.SemiAnnual</td>
+                        <td>@item.Installment</td>
+                        <td>@item.Monthky</td>
+                        <td>@item.Total</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h4 class="text-danger">No data to show.</h4>
+    }
+</div>
+

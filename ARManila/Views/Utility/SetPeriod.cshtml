@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    @using (Html.BeginForm("SetPeriod", "Utility", FormMethod.Post))
+    {
+        @Html.Hidden("fromcontroller", new { @value = ViewBag.controller })
+        @Html.Hidden("fromaction", new { @value = ViewBag.action })
+        <h3>Period Selector</h3>
+        @Html.AntiForgeryToken()
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="EducationalLevelId">Level: </label>
+                @Html.DropDownList("EducationalLevelId", null, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="SchoolYearId">School Year: </label>
+                @Html.DropDownList("SchoolYearId", null, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="Period">Period: </label>
+                <select class="form-control" id="Period" name="Period"></select>
+            </div>
+        </div>
+        <input type="submit" value="Set Period" />
+    }
+
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var periods = new Array();
+            var periodarray = @Html.Raw(Json.Encode(ViewBag.Period));
+            for (var i = 0; i < periodarray.length; i++) {
+                periods[i] = periodarray[i];
+            }
+            LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val());
+            $("#SchoolYearId").change(function () {
+                LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val());
+            });
+            $("#EducationalLevelId").change(function () {
+                LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val());
+            });
+            function LoadPeriod(schoolyearid, educationallevelid) {
+                $("#Period").empty();
+
+                for (var i = 0; i < periodarray.length; i++) {
+
+                    if (periodarray[i].SchoolYearId == schoolyearid && periodarray[i].EducationalLevelId == educationallevelid) {
+                        var option = $("<option />");
+                        option.attr("value", periodarray[i].PeriodId).text(periodarray[i].PeriodName);
+                        $("#Period").append(option);
+
+                    }
+                }
+            }
+        });
+    </script>
+}
+

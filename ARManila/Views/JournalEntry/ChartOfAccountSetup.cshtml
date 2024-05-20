@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ARManila.Models.ChartOfAccounts>
+
+@{
+    ViewBag.Title = "ChartOfAccountSetup";
+}
+
+<h2>Chart Of Accounts - QNE Setup</h2>
+
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                Account No
+            </th>
+            <th>Description</th>
+            <th>
+                QNE Code
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcctNo)
+                </td>
+                <td>@Html.DisplayFor(m=>item.AcctName)</td>
+                <td>
+                    @(item.QNEAccountCode != null ? item.QNEAccountCode : "")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditChartOfAccountSetup", new { id = item.AcctID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

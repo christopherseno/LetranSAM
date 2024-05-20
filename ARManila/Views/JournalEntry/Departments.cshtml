@@ -1,0 +1,44 @@
+﻿@model IEnumerable<ARManila.Models.Project>
+
+@{
+    ViewBag.Title = "Departments";
+}
+
+<h2>Departments - (QNE Projects)</h2>
+
+@using (Ajax.BeginForm("DepartmentSync", "JournalEntry", new AjaxOptions { UpdateTargetId = "result", LoadingElementId = "loading" }))
+{
+    <div id="loading" style="display:none;">Generating Report...</div>
+    <div id="result"></div>
+    <input type="submit" value="Sync" class="btn btn-primary" />
+
+}
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                Project Code
+            </th>
+            <th>
+                Description
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts
+{
+
+}

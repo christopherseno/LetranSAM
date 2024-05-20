@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ARManila.Models.QneDb.Journals>
+
+@{
+    ViewBag.Title = "PostedQneJournalEntry";
+}
+
+<h2>AR - Posted Qne Journal Entry</h2>
+
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                Journal Code
+            </th>
+            <th>
+                Journal Date
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Total Debit
+            </th>
+            <th>
+                Total Credit
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JournalCode)
+                </td>
+                <td>
+                    @item.JournalDate.ToShortDateString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td align="right">
+                   @item.TotalDebit.Value.ToString("#,##0.00")
+                </td>
+                <td align="right">
+                   @item.TotalCredit.Value.ToString("#,##0.00")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

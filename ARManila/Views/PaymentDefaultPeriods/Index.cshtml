@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ARManila.Models.PaymentDefaultPeriod>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    <h2>Period Used for Bank Deposit Posting</h2>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EducationalLevel.EducLevelName)
+            </th>
+            <th>
+                Period For All Payments
+            </th>
+            <th>
+               Period for Reservation Payments
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EducationalLevel.EducLevelName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Period.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Period1.FullName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EducationalLevelId })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

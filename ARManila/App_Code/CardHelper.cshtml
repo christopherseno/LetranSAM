@@ -1,0 +1,71 @@
+﻿@helper ListViewHeader(string subHeader, string header, string createActionUrl = null)
+{
+    <div class="card-header bg-light container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <i class="fas fa-list h2 mb-0 mr-3"></i>
+                    <div>
+                        <p class="m-0">@subHeader</p>
+                        <h4 class="m-0 font-weight-bold">@header</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col flex-grow-0">
+                <div class="h-100 d-flex align-items-center">
+                    @if (!string.IsNullOrEmpty(createActionUrl))
+                    {
+                        <a href="@createActionUrl" class="btn bg-gradient-gray text-light"><i class="fas fa-plus"></i></a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@helper RecordViewHeader(string subHeader, string header, string createActionUrl = null, string editActionUrl = null)
+{
+    <div class="card-header bg-light container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <i class="far fa-sticky-note h2 mb-0 mr-3"></i>
+                    <div>
+                        <p class="m-0">@subHeader</p>
+                        <h4 class="m-0 font-weight-bold">@header</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col flex-grow-0">
+                <div class="h-100 d-flex align-items-center">
+                    @if (!string.IsNullOrEmpty(createActionUrl))
+                    {
+                        <a href="@createActionUrl" class="btn bg-gradient-gray text-light mr-1"><i class="fas fa-plus"></i></a>
+                    }
+
+                    @if (!string.IsNullOrEmpty(editActionUrl))
+                    {
+                        <a href="@editActionUrl" class="btn bg-gradient-gray text-light"><i class="fas fa-pen"></i></a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@helper CreateViewHeader(string subHeader, string header)
+{
+    <div class="card-header bg-light container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <i class="fas fa-plus h2 mb-0 mr-3"></i>
+                    <div>
+                        <p class="m-0">@subHeader</p>
+                        <h4 class="m-0 font-weight-bold">@header</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

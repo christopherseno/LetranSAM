@@ -1,0 +1,110 @@
+﻿@model IEnumerable<ARManila.Models.Supplemental>
+
+@{
+    ViewBag.Title = "SupplementalFeeSetup";
+}
+
+<h2>Supplemental Fees Setup</h2>
+
+<p>
+    @Html.ActionLink("Create New Supplemental Fee", "CreateSupplementalFeeSetup")
+</p>
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                Fee Name
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                For Student Status
+            </th>
+            <th>
+                For Grade Level
+            </th>
+            <th>
+                GL Account
+            </th>
+            <th>
+                Subchart Account
+            </th>
+            <th>QNE GL Account</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @item.Amount.ToString("#,##0.00")
+                </td>
+                <td>
+                    @(item.NewStatus ==null ? "All" :(item.NewStatus.Value ? "New" : "Old"))
+                </td>
+                <td>
+                    @item.YearLevel
+                </td>
+                <td>
+                    @( item.Fee.AcctID !=null ?
+                @Html.DisplayFor(modelItem => item.Fee.ChartOfAccounts.AcctNo)  +"-"+
+                @Html.DisplayFor(modelItem => item.Fee.ChartOfAccounts.AcctName)
+                : ""
+                )
+                </td>
+                <td>
+                    @( item.Fee.SubAcctID !=null ?
+                Html.DisplayFor(modelItem => item.Fee.SubChartOfAccounts.SubAcctNo) +"-"+
+                Html.DisplayFor(modelItem => item.Fee.SubChartOfAccounts.SubbAcctName)
+                : ""
+                )
+                </td>
+                <td>
+                    @( item.Fee.QneAccountCode !=null ?
+                @Html.DisplayFor(modelItem => item.Fee.QneAccountCode) +"-"+
+                @Html.DisplayFor(modelItem => item.Fee.QNEGLAccount.Description)
+                 : ""
+                )
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditSupplementalFeeSetup", new { id = item.FeeID }, new { @class = "btn btn-xs btn-primary" })
+                    <a href="#" class="btn btn-xs btn-danger" onclick="ConfirmDelete('@item.FeeID', '@item.Description')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" tabindex="-1" id="confirmdelete" data-keyboard="false"
+     data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="text-primary">Are you sure you want to delete this item?</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">
+                    &times;
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <div id="modalmessage"></div>
+                <div id="modallink"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        function ConfirmDelete(id, message) {
+            $("#modalmessage").html(message);
+            $("#modallink").html('<a href="/AccountSetup/DeleteSupplementalFeeSetup/' + id + '" class="btn btn-primary">Confirm</a>');
+            $("#confirmdelete").modal('show');
+        }
+    </script>
+}

@@ -1,0 +1,43 @@
+﻿@model ARManila.Models.FeeName
+
+@{
+    ViewBag.Title = "CreateFeeName";
+}
+
+<h2>New Fee Name</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <label for="FeeName1" class="col-md-2">Fee Name</label>
+        @Html.EditorFor(model => model.FeeName1, new { htmlAttributes = new { @class = "col-md-8" } })
+        @Html.ValidationMessageFor(model => model.FeeName1, "", new { @class = "text-danger" })
+
+    </div>
+    <div class="form-group">
+        <label for="FeeCategory" class="col-md-2">Fee Type</label>       
+        @Html.DropDownListFor(model => model.FeeCategory, (List<SelectListItem>)ViewBag.feetypes, new { htmlAttributes = new { @class = "col-md-8" } })
+        @Html.ValidationMessageFor(model => model.FeeCategory, "", new { @class = "text-danger" })
+
+    </div>
+
+    <div class="form-group">
+        <label for="Amount" class="col-md-2">Default Amount</label>
+        @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "col-md-8" } })
+        @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </div>
+
+}
+
+<div>
+    @Html.ActionLink("Back to List", "FeeName")
+</div>

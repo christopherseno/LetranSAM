@@ -1,0 +1,141 @@
+﻿@model ARManila.Models.QneJournal
+@{
+    ViewBag.Title = "ViewMiscJournalEntry";
+}
+
+<h2>Journal Entry</h2>
+@using (Html.BeginForm("MiscJournalEntry", "JournalEntry", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            <label class="col-md-2">Start Date</label>
+            @Html.TextBoxFor(m => m.SDate, new { @class = "col-md-8", type = "date", required = "required" })
+            @Html.ValidationMessageFor(m => m.SDate, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">End Date</label>
+            @Html.TextBoxFor(m => m.EDate, new { @class = "col-md-8", type = "date", required = "required" })
+            @Html.ValidationMessageFor(m => m.EDate, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">AR Journal Entry Type</label>
+            @Html.DropDownListFor(m => m.JournalEntryTypeId, (SelectList)ViewBag.journalentrytype, new { @class = "col-md-8" })
+            @Html.ValidationMessageFor(m => m.JournalEntryTypeId, "", new { @class = "text-danger" })
+        </div>
+        <div class="row items-push">
+            <label class="col-md-2">Select GL Code-></label>
+            <div class="col-md-4">
+                <div class="form-check form-block">
+                    @Html.RadioButtonFor(m => m.IsQne, "false", new { @class = "form-check-input", id = "IsQne1" })
+                    <label class="form-check-label" for="IsQne1">
+                        <span class="d-block fw-normal text-center my-3">
+                            <span class="fs-4 fw-semibold">Letran Accounting System</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-block">
+                    @Html.RadioButtonFor(m => m.IsQne, "true", new { @class = "form-check-input", id = "IsQne2" })
+                    <label class="form-check-label" for="IsQne2">
+                        <span class="d-block fw-normal text-center my-3">
+                            <span class="fs-4 fw-semibold">QNE Accounting System</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            @Html.ValidationMessageFor(m => m.IsQne, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="col-md-2">Next QNE Journal Code</label>
+                <input type="text" name="docCode" id="docCode" value='@Model.docCode' class="col-md-8" />
+                @Html.ValidationMessageFor(m => m.docCode, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label class="col-md-2">Description</label>
+                <input type="text" name="description" id="description" value='@Model.description' class="col-md-8" />
+                @Html.ValidationMessageFor(m => m.description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Show Data" name="Action" class="btn btn-primary" />  &nbsp;&nbsp;
+
+        </div>
+    </div>
+
+    <br />
+    if (Model.IsQne)
+    {
+        if (Model.details.Count > 0)
+        {
+            <h2>Using QNE Account Code</h2>
+            <span class="fs-3">From @Model.SDate.ToShortDateString() to @Model.EDate.ToShortDateString()</span>
+            <br />
+            <input type="submit" value="Post to QNE" class="btn btn-primary" />
+            <input type="hidden" value="All" name="Action" />
+            <br />
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var i in Model.details)
+                    {
+                        <tr>
+                            <td>@i.project</td>
+                            <td>@i.account</td>
+                            <td>@i.AccountName</td>
+                            <td align="right">@(i.debit ==0 ? "" : i.debit.ToString("#,##0.00"))</td>
+                            <td align="right">@(i.credit ==0 ? "" : i.credit.ToString("#,##0.00"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+    }
+    else
+    {
+        if (Model.Entries.Count > 0)
+        {
+            <h2>Using Old Account Code</h2>
+            <span class="fs-3">From @Model.SDate.ToShortDateString() to @Model.EDate.ToShortDateString()</span>
+            <br />
+
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                <thead>
+                    <tr>
+                        <th>GL Code</th>
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var i in Model.Entries)
+                    {
+                        <tr>
+                            <td>@i.GLCode</td>
+                            <td>@i.AcctNo</td>
+                            <td>@i.AcctName</td>
+                            <td align="right">@(i.Debit ==0 ? "" : i.Debit.ToString("#,##0.00"))</td>
+                            <td align="right">@(i.Credit ==0 ? "" : i.Credit.ToString("#,##0.00"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+    }
+}
+
+<p>&nbsp;</p>

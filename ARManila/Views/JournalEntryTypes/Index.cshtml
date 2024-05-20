@@ -1,0 +1,44 @@
+﻿@model IEnumerable<ARManila.Models.JournalEntryType>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Journal Type Setting</h2>
+
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.JounalEntryTypeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostingMessage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JournalCode)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JounalEntryTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostingMessage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JournalCode)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.JournalEntryTypeId })
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>

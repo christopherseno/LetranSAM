@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Letran AR</title>
+    <meta name="description" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
+    <meta name="author" content="pixelcave">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Open Graph Meta -->
+    <meta property="og:title" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework">
+    <meta property="og:site_name" content="Codebase">
+    <meta property="og:description" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <link rel="shortcut icon" href="~/Assets/media/favicons/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/Assets/media/favicons/favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/Assets/media/favicons/apple-touch-icon-180x180.png">
+
+    @Styles.Render("~/Codebase/maincss")
+    <link rel="stylesheet" href="~/assets/js/plugins/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800&display=swap">
+    <link rel="stylesheet" id="css-main" href="~/assets/css/codebase.min.css">
+
+</head>
+<body>
+
+    <div id="page-container" class="sidebar-o enable-page-overlay side-scroll page-header-fixed page-header-dark remember-theme">
+        <header id="page-header">
+            <div class="content-header">
+                <div class="space-x-1">
+                    <button type="button" class="btn btn-sm btn-alt-secondary" data-toggle="layout" data-action="sidebar_toggle">
+                        <i class="fa fa-fw fa-bars"></i>
+                    </button>
+                </div>
+                <div class="space-x-1">
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn btn-sm btn-alt-secondary" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user d-sm-none"></i>
+                            <span class="d-none d-sm-inline-block fw-semibold">
+                                @if (Request.IsAuthenticated)
+                                {
+                                    var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;
+                                    var fullname = userWithClaims.Claims.First(c => c.Type == "Fullname");
+                                    //var token = userWithClaims.Claims.First(c => c.Type == "Password");
+                                    @(fullname.Value)
+                                }
+                            </span>
+                            <i class="fa fa-angle-down opacity-50 ms-1"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-md dropdown-menu-end p-0" aria-labelledby="page-header-user-dropdown">
+                            <div class="p-2">
+                                <a href="@Url.Action("Index", "Manage")" class="dropdown-item d-flex align-items-center justify-content-between space-x-1">
+                                    <span>Manage Account</span>
+                                    <i class="fa fa-fw fa-gear opacity-25"></i>
+                                </a>
+
+
+                                <div class="dropdown-item d-flex align-items-center justify-content-between space-x-1">
+                                    <span>Dark Mode</span>
+                                    <i class="fa fa-fw fa-moon opacity-25"></i>
+                                    <div class="form-check form-switch form-check-inline me-0">
+                                        <input class="form-check-input p-0" type="checkbox" id="SwitchMode" autocomplete="off" />
+                                    </div>
+                                </div>
+                                <a href="@Url.Action("ChangePassword", "Manage")" class="dropdown-item d-flex align-items-center justify-content-between space-x-1">
+                                    <span>Change Password</span>
+                                    <i class="fa fa-fw fa-key opacity-25"></i>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <a class="dropdown-item d-flex align-items-center justify-content-between space-x-1" href="javascript:document.getElementById('logoutForm').submit()">
+                                        <span>Log Out</span>
+                                        <i class="fa fa-fw fa-sign-out-alt opacity-25"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="page-header-loader" class="overlay-header bg-primary">
+                <div class="content-header">
+                    <div class="w-100 text-center">
+                        <i class="fa fa-3x fa-cog fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <nav id="sidebar" class="nav">
+            <div class="sidebar-content">
+                <div class="content-header justify-content-lg-center">
+                    <div class="text-center">
+                        @*<img src="~/Assets/media/favicons/favicon.png"  />*@
+                        <img src="~/Images/ManilaSmall.png" style="width:20%;height:20%" />
+                        <a class="link-fx fw-bold tracking-wide mx-auto" href="@Url.Action("Index","Home")">
+                            <span class="fs-6 text-dual">AR</span>&nbsp;<span class="fs-6 text-primary">Module</span>
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-alt-danger d-lg-none" data-toggle="layout" data-action="sidebar_close">
+                            <i class="fa fa-fw fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="js-sidebar-scroll">
+                    @Html.Partial("_period")
+
+                    <div class="content-side content-side-full">
+                        @Html.Partial("~/Views/Shared/_MenuBar.cshtml")
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+
+        <main id="main-container">
+            <div class="content">
+                @*<img src="~/Images/ManilaSmall.png" class="position-absolute m-auto img-responsive" style="top: 0;left: 0;right: 0;bottom: 0;width: 50%; opacity: .2; min-width: 280px; max-width: 500px;">*@
+
+
+                @RenderBody()
+                <p>
+                    &nbsp;
+                </p>
+
+            </div>
+            <!--
+            <img src="~/Images/letranseal.jpg" class="position-absolute m-auto" style="top: 0;left: 0;right: 0;bottom: 0;width: 50%; opacity: .2; min-width: 280px; max-width: 500px;">
+            <div class="position-relative">
+
+            </div>
+            <p>
+                &nbsp;
+            </p>
+             -->
+        </main>
+        <footer id="page-footer" class="fixed-bottom" style="background-color: #31373d; color: #cbd2dd; ">
+            <div class="content py-3">
+                <div class="row fs-5">
+                    <div class="col-sm-12 order-sm-2 py-1 text-sm-end align-content-end ">
+                        <span style="font-family: 'Old English Text MT'">Colegio de San Juan de Letran </span>  &copy;  @DateTime.Today.Year<a class="fw-semibold" href="https://1.envato.market/95j" target="_blank">. ITSD </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/Codebase/mainjs")
+    <script src="~/assets/js/plugins/flatpickr/flatpickr.min.js"></script>
+
+    <script>
+        Codebase.helpersOnLoad(['cb-table-tools-sections', 'js-flatpickr', 'jq-datepicker', 'jq-colorpicker', 'jq-maxlength', 'jq-select2', 'jq-rangeslider', 'jq-masked-inputs', 'jq-pw-strength']);
+    </script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            if (localStorage.getItem("codebaseDarkMode") != null) {
+                $("#SwitchMode").prop('checked', true);
+            }
+            else {
+                $("#SwitchMode").prop('checked', false);
+            }
+        });
+        $("#SwitchMode").change(function () {
+            if ($(this).prop('checked')) {
+                Codebase.layout('dark_mode_on');
+            } else {
+                Codebase.layout('dark_mode_off');
+            }
+        });
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+        function getFormattedDate(date) {
+            var year = date.getFullYear();
+
+            var month = (1 + date.getMonth()).toString();
+            month = month.length > 1 ? month : '0' + month;
+
+            var day = date.getDate().toString();
+            day = day.length > 1 ? day : '0' + day;
+
+            return month + '/' + day + '/' + year;
+        }
+
+        function toCurrency(n) {
+            var nStr = Number(n).toFixed(2);
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

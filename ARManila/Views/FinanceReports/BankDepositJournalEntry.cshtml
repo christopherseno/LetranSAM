@@ -1,0 +1,68 @@
+﻿@model IEnumerable<ARManila.Models.ReportsDTO.BankDepositJournalEntry>
+
+@{
+    ViewBag.Title = "ViewReports";
+}
+<div class="p-2">
+    <h2>Bank Deposit Journal Entry</h2>
+    @if (Model != null && Model.Count() > 0)
+    {
+        <h3>@Model.FirstOrDefault().StartDate.ToShortDateString() to @Model.FirstOrDefault().EndDate.ToShortDateString() </h3>
+        <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Bank)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DepartmentAcronym)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AccountName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AccountNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Debit)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Credit)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Bank)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DepartmentAcronym)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Debit)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Credit)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -1,0 +1,178 @@
+﻿@model ARManila.Models.ReportsDTO.FeeSummaryElem
+@{
+    ViewBag.Title = "FeesSummary";
+}
+<nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+    <span class="breadcrumb-item">Report Menu</span>
+    <span class="breadcrumb-item active">Summary of Fees</span>
+</nav>
+
+
+@using (Html.BeginForm("FeesSummary", "FinanceReports", FormMethod.Post))
+{
+<div class="row">
+    <div class="form-group col-md-4">
+        <label>As Of Date</label>
+        <input type="date" value="@ViewBag.asofdate" id="asofdate" name="asofdate" class="form-control" required />
+    </div>
+    <div class="form-group col-md-4">
+        <label>View As</label>
+        <select id="viewas" name="viewas" class="form-select">
+            <option value="1">Web</option>
+            <option value="2">PDF</option>
+            <option value="3">Excel</option>
+        </select>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="iscollegeformat" id="iscollegeformat">
+            <label class="form-check-label" for="iscollegeformat">
+                Use College Format
+            </label>
+        </div>
+        <input type="submit" value="View" class="form-control btn btn-primary" />
+    </div>
+</div>
+}
+
+@if (Model != null)
+{
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="table-responsive">
+                <table id="arquerytable" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr class="bg-gray-light">
+                            <th></th>
+                            <th class="text-center">Grade 7</th>
+                            <th class="text-center">Grade 8</th>
+                            <th class="text-center">Grade 9</th>
+                            <th class="text-center">Grade 10</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.NoOfEnrollees)
+                        {
+                            <tr class="subtotal">
+                                <td>@item.Item</td>
+                                <td align="right">@item.Grade1.ToString("#,##0")</td>
+                                <td align="right">@item.Grade2.ToString("#,##0")</td>
+                                <td align="right">@item.Grade3.ToString("#,##0")</td>
+                                <td align="right">@item.Grade4.ToString("#,##0")</td>
+                                <td align="right">@item.Total.ToString("#,##0")</td>
+                            </tr>
+                        }
+                        @foreach (var item in Model.TuitionFee)
+                        {
+                            <tr class="subtotal">
+                                <td>@item.Item</td>
+                                <td align="right">@item.Grade1.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade2.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade3.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade4.ToString("#,##0.00")</td>
+                                <td align="right">@item.Total.ToString("#,##0.00")</td>
+                            </tr>
+                        }
+                        <tr class="subtotal">
+                            <td colspan="9">Miscellaneous Fees</td>
+                        </tr>
+                        @foreach (var item in Model.MiscellaneousFee)
+                        {
+                            <tr>
+                                <td>@item.Item</td>
+                                <td align="right">@item.Grade1.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade2.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade3.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade4.ToString("#,##0.00")</td>
+                                <td align="right">@item.Total.ToString("#,##0.00")</td>
+                            </tr>
+                        }
+                        <tr class="subtotal">
+                            <td>@Model.MiscellaneousTotal.Item</td>
+                            <td align="right">@Model.MiscellaneousTotal.Grade1.ToString("#,##0.00")</td>
+                            <td align="right">@Model.MiscellaneousTotal.Grade2.ToString("#,##0.00")</td>
+                            <td align="right">@Model.MiscellaneousTotal.Grade3.ToString("#,##0.00")</td>
+                            <td align="right">@Model.MiscellaneousTotal.Grade4.ToString("#,##0.00")</td>
+                            <td align="right">@Model.MiscellaneousTotal.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td colspan="9">Supplemental Fees</td>
+                        </tr>
+                        @foreach (var item in Model.SupplementalFee)
+                        {
+                            <tr>
+                                <td>@item.Item</td>
+                                <td align="right">@item.Grade1.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade2.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade3.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade4.ToString("#,##0.00")</td>
+                                <td align="right">@item.Total.ToString("#,##0.00")</td>
+                            </tr>
+                        }
+                        <tr class="subtotal">
+                            <td>@Model.SupplementalTotal.Item</td>
+                            <td align="right">@Model.SupplementalTotal.Grade1.ToString("#,##0.00")</td>
+                            <td align="right">@Model.SupplementalTotal.Grade2.ToString("#,##0.00")</td>
+                            <td align="right">@Model.SupplementalTotal.Grade3.ToString("#,##0.00")</td>
+                            <td align="right">@Model.SupplementalTotal.Grade4.ToString("#,##0.00")</td>
+                            <td align="right">@Model.SupplementalTotal.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td colspan="9">Various/Other Fees</td>
+                        </tr>
+                        @foreach (var item in Model.OtherFee)
+                        {
+                            <tr>
+                                <td>@item.Item</td>
+                                <td align="right">@item.Grade1.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade2.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade3.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade4.ToString("#,##0.00")</td>
+                                <td align="right">@item.Total.ToString("#,##0.00")</td>
+                            </tr>
+                        }
+                        <tr class="subtotal">
+                            <td>@Model.OtherTotal.Item</td>
+                            <td align="right">@Model.OtherTotal.Grade1.ToString("#,##0.00")</td>
+                            <td align="right">@Model.OtherTotal.Grade2.ToString("#,##0.00")</td>
+                            <td align="right">@Model.OtherTotal.Grade3.ToString("#,##0.00")</td>
+                            <td align="right">@Model.OtherTotal.Grade4.ToString("#,##0.00")</td>
+                            <td align="right">@Model.OtherTotal.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td colspan="9">Laboratory Fees</td>
+                        </tr>
+                        @foreach (var item in Model.LabFee)
+                        {
+                            <tr>
+                                <td>@item.Item</td>
+                                <td align="right">@item.Grade1.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade2.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade3.ToString("#,##0.00")</td>
+                                <td align="right">@item.Grade4.ToString("#,##0.00")</td>
+                                <td align="right">@item.Total.ToString("#,##0.00")</td>
+                            </tr>
+                        }
+                        <tr class="subtotal">
+                            <td>@Model.LabTotal.Item</td>
+                            <td align="right">@Model.LabTotal.Grade1.ToString("#,##0.00")</td>
+                            <td align="right">@Model.LabTotal.Grade2.ToString("#,##0.00")</td>
+                            <td align="right">@Model.LabTotal.Grade3.ToString("#,##0.00")</td>
+                            <td align="right">@Model.LabTotal.Grade4.ToString("#,##0.00")</td>
+                            <td align="right">@Model.LabTotal.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.TotalAssessmentFee.Item</td>
+                            <td align="right">@Model.TotalAssessmentFee.Grade1.ToString("#,##0.00")</td>
+                            <td align="right">@Model.TotalAssessmentFee.Grade2.ToString("#,##0.00")</td>
+                            <td align="right">@Model.TotalAssessmentFee.Grade3.ToString("#,##0.00")</td>
+                            <td align="right">@Model.TotalAssessmentFee.Grade4.ToString("#,##0.00")</td>
+                            <td align="right">@Model.TotalAssessmentFee.Total.ToString("#,##0.00")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

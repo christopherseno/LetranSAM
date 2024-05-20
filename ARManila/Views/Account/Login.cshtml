@@ -1,0 +1,61 @@
+﻿@using ARManila.Models
+@model LoginViewModel
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewBag.Title = "Log in";
+}
+
+<div class="bg-image" style="background-image: url('/Assets/media/photos/photo34@3x.jpg');">
+    <div class="row mx-0 bg-black-50">
+        <div class="hero-static col-md-6 col-xl-8 d-none d-md-flex align-items-md-end">
+            <div class="p-4">
+                <p class="fs-1 fw-semibold text-white" style="font-family: 'Old English Text MT'">
+                    Colegio de San Juan de Letran
+                </p>
+                <p class="text-white-75 fw-medium">
+                    ITSD &copy; 2022
+                </p>
+            </div>
+        </div>
+        <div class="hero-static col-md-6 col-xl-4 d-flex align-items-center bg-body-extra-light">
+            <div class="content content-full">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <img src="~/Images/ManilaSmall.png" />
+                </div>
+                <div class="px-4 py-2 mb-4 text-center">
+                    <a class="link-fx fw-bold" href="#">
+                        <span class="fs-2 text-body-color">Enrollment-AR</span>&nbsp;<span class="fs-2">Module</span>
+                    </a>
+                    <h2 class="h5 fw-medium text-muted mt-3 mb-0">Use your E-link account to log in</h2>
+                </div>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "js-validation-signin px-4" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-floating mb-4">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Employee No." })
+                        <label class="form-label">Employee No.</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
+                        <label class="form-label">Password</label>
+                    </div>
+                    <div class="mb-4">
+                        @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
+                        <label class="form-label">Remember Me?</label>
+                    </div>
+                    <div class="mb-4">
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </div>                    
+                        <div class="mb-4">
+                            <a href="~/Account/ForgotPassword" class="btn btn-danger btn-block">Forgot your password</a>
+                        </div>
+
+                    <div class="text-center mb-4">
+                        <small>For security purposes, please enable two-factor authentication when using this system.</small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

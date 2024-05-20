@@ -1,0 +1,52 @@
+﻿@model ARManila.Models.AcademicDepartment
+
+@{
+    ViewBag.Title = "EditDepartmentSetup";
+}
+
+<h2>Edit Department - QNE Project Setup</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.AcaDeptID)
+
+    <div class="form-group">
+        <label class="col-md-2">Acronym</label>
+        <span class="col-md-8">
+            @Model.AcaAcronym
+        </span>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2">Department Name</label>
+        <span class="col-md-8">
+            @Model.AcaDepartmentName
+        </span>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2">Old GL Code</label>
+        <span class="col-md-8">
+            @Model.GLCode
+        </span>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2">QNE GL Code</label>
+        @Html.DropDownListFor(model => model.QNEProjectCode, (SelectList)ViewBag.qne, "", new { htmlAttributes = new { @class = "col-md-8" } })
+        @Html.ValidationMessageFor(model => model.QNEProjectCode, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "DepartmentSetup")
+</div>

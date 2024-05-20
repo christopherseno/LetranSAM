@@ -1,0 +1,113 @@
+﻿@model IEnumerable<ARManila.Models.ReportsDTO.BankDeposit>
+
+@{
+    ViewBag.Title = "BankDeposit";
+}
+
+<div class="p-2">
+    <h2>Bank Deposits</h2>
+    @if (Model != null && Model.Count() > 0)
+    {
+        <h3>@Model.FirstOrDefault().StartDate.ToShortDateString() to @Model.FirstOrDefault().EndDate.ToShortDateString() </h3>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Department)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StudentNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StudentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DateReceived)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Bank)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BankDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Remarks)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaymentTotal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Employee)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrNo)
+                </th>                
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>                
+                <th>
+                    @Html.DisplayNameFor(model => model.PaycodeType)
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bank)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateReceived)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.BankDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Remarks)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentTotal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Employee)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaycodeType)
+            </td>
+        </tr>
+            }
+
+        </table>
+    }
+    </div>

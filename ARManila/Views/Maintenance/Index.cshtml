@@ -1,0 +1,61 @@
+﻿@model List<ARManila.Models.Paycode>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    <h2>Set paycodes to TRUE to be used for bank deposit posting.</h2>
+
+    @using (Html.BeginForm("Index", "Maintenance", FormMethod.Post, new {id="myform" }))
+    {
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <table class="table table-responsive" id="tableall">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Select
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td></td>
+                        <td>
+                            @Model[i].Description
+                        </td>
+                        <td>
+                            @Html.HiddenFor(m => Model[i].PaycodeID)
+                            @Html.EditorFor(modelItem => Model[i].ForBankPosting)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <input type="submit" value="Save" class="btn btn-primary" />
+    }
+</div>
+@section scripts
+{
+    <script>
+        var table = $("#tablex").DataTable({
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "responsive": true,
+            "autoWidth": false,
+        });
+        $('#myform').on('submit', function (e) {
+            var oTable = $('#tableall').DataTable();
+            oTable.page.len(-1).draw();
+            //$('#tableall').page.len(1000).draw();
+            //var $oTable = $('#table').DataTable();
+            //var numRows = $oTable.rows().count(); // get total number rows in table
+            //$oTable.page.len(numRows).draw();
+        });
+    </script>
+}

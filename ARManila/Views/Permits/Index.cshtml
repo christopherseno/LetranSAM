@@ -1,0 +1,51 @@
+﻿@model List<ARManila.Models.OtherDTO.StudentWithBalancesDTO>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    <h2>Permit Module</h2>
+    @using (Html.BeginForm("Index", "Adjustment", FormMethod.Post))
+    {
+        <input type="text" placeholder="Adjustment No" name="id" id="id" />
+        <input type="submit" value="Search" class="btn btn-primary" />
+    }
+    @if (Model != null)
+    {
+        <table class="table table-striped" id="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Student No</th>
+                    <th>Student Name</th>
+                    <th>Amount</th>
+                    <th>Student CP</th>
+                    <th>Guardian CP</th>
+                    <th>E-mail</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(int i=0;i< Model.Count; i++)
+                {
+                <tr>
+                    <td></td>
+                    <td>
+                        @Html.CheckBoxFor(m => Model[i].IsSelected)
+                        @Html.HiddenFor(m => Model[i].StudentID)                        
+                        @Model[i].StudentNo
+                    </td>
+                    <td>@Model[i].StudentName</td>
+                    <td>@Model[i].Amount</td>
+                    <td>@Model[i].StudentContactNo</td>
+                    <td>@Model[i].GuardianContactNo</td>
+                    <td>@Model[i].Email</td>
+                    <td></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    </div>
+

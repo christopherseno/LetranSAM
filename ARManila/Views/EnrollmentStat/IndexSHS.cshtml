@@ -1,0 +1,85 @@
+﻿@model List<ARManila.Models.GetEnrollmentComparativeSHSV2_Result>
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    <h2>Enrollment Comparative Report</h2>
+    @using (Html.BeginForm("Index", "EnrollmentStat", FormMethod.Post))
+    {
+        <input type="date" placeholder="Select Date" name="id" id="id" />
+        <input type="submit" value="View" class="btn btn-primary" />
+    }
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>
+                    <th>Track</th>
+                    <th>P- 11</th>
+                    <th>P- 12</th>
+                    <th>P- Total</th>
+                    <th>AT-11</th>
+                    <th>AT-12</th>
+                    <th>AT-Total</th>
+                    <th>AD-11</th>
+                    <th>AD-12</th>
+                    <th>AD-Total</th>
+                    <th>ET-11</th>
+                    <th>ET-12</th>
+                    <th>ET-Total</th>
+                    <th>ED-11</th>
+                    <th>ED-12</th>
+                    <th>ED-Total</th>
+                    <th>Cash</th>
+                    <th>Semi</th>
+                    <th>Quar</th>
+                    <th>Mon</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@item.ProgramCode</td>
+                    <td>@item.P11</td>
+                    <td>@item.P12</td>
+                    <td>@item.TotalProjected</td>
+                    <td>@item.AD11</td>
+                    <td>@item.AD12</td>
+                    <td>@item.TotalAssessedToDate</td>
+                    <td>@item.AT11</td>
+                    <td>@item.AT12</td>
+                    <td>@item.TotalAssessedToday</td>
+                    <td>@item.ED11</td>
+                    <td>@item.ED12</td>
+                    <td>@item.TotalEnrolledToDate</td>
+                    <td>@item.ET11</td>
+                    <td>@item.ET12</td>
+                    <td>@item.TotalEnrolledToday</td>
+                    <td>@item.Cash</td>
+                    <td>@item.Semi_annual</td>
+                    <td>@item.Installment</td>
+                    <td>@item.Monthly</td>
+                    <td>@item.TotalPaymentMode</td>
+                </tr>
+                }
+            </tbody>
+            <caption>
+                <ul>
+                    <li>P for Projected</li>
+                    <li>AD for Assessed Todate</li>
+                    <li>AT for Assessed Today</li>
+                    <li>ED for Enrolled Todate</li>
+                    <li>ET for Enrolled Today</li>
+                </ul>
+            </caption>
+        </table>
+    }
+    else
+    {
+        <h4 class="text-danger">No data to show.</h4>
+    }
+</div>
+

@@ -1,0 +1,182 @@
+﻿@model IEnumerable<ARManila.Models.Payment>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-4 content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-outline card-warning">
+                    <div class="card-header">
+                        <h3 class="card-title font-weight-bold">Posting of Bank Payments</h3>
+
+                        <br />
+                        @Html.ActionLink("Create New", "Create")
+
+                        @using (Html.BeginForm("Index", "Payments", FormMethod.Post, new { id = "myform" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <span class="control-label col-md-2">Level</span>
+                                <div class="col-md-10">
+                                    @Html.DropDownList("EducationalLevelId", null, htmlAttributes: new { @class = "col-md-3" })
+                                    @Html.DropDownList("SchoolYearId", null, htmlAttributes: new { @class = "col-md-3" })
+                                    @Html.DropDownList("LearningTypeId", null, htmlAttributes: new { @class = "col-md-3" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="control-label col-md-2">Period</span>
+                                <div class="col-md-10">
+                                    <select class="form-control" id="Period" name="Period"></select>
+                                </div>
+                            </div>
+                            <div class="form-horizontal">
+
+                                <div class="form-group">
+                                    <label for="startdate" class="control-label col-md-2">Start Date</label>
+                                    <div class="col-md-10">
+                                        <input type="date" id="startdate" name="startdate" value="@ViewBag.startdate" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="enddate" class="control-label col-md-2">End Date</label>
+                                    <div class="col-md-10">
+                                        <input type="date" id="enddate" name="enddate" value="@ViewBag.enddate" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Search" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                    @Html.ActionLink("Download Excel", "DownloadExcel", new { startdate = ViewBag.startdate, enddate = ViewBag.enddate, @class = "btn btn-default" })
+                    <div class="card-body">
+                        <table id="table" class="table table-striped table-bordered table-responsive">
+                            <thead>
+                                <tr>
+                                    <th scope=row>
+                                        Name
+                                    </th>
+                                    <th>
+                                        Reference No
+                                    </th>
+                                    <th>
+                                        Date Posted
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Bank)
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+
+                                    <th>
+                                        Period
+                                    </th>
+                                    <th>
+                                        Level
+                                    </th>
+                                    <th class="hidden-xs hidden-sm">
+                                        @Html.DisplayNameFor(model => model.Remarks)
+                                    </th>
+                                    <th class="hidden-xs hidden-sm">
+                                        Posted By
+                                    </th>
+                                    <th>Issued OR No</th>
+
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Student.Person.FullName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ORNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TransactionDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Bank.BankCode)
+                                        </td>
+                                        <td align="right">
+                                            @Html.DisplayFor(modelItem => item.Amount)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Period.FullName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Period.EducationalLevel.EducationalLevelName)
+                                        </td>
+                                        <td class="hidden-xs hidden-sm">
+                                            @Html.DisplayFor(modelItem => item.Remarks)
+                                        </td>
+                                        <td class="hidden-xs hidden-sm">
+                                            @Html.DisplayFor(modelItem => item.Employee1.Person.ShortName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.IssuedOrNo)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Details", "Details", new { id = item.PaymentID }) |
+                                            @Html.ActionLink("Cancel", "Delete", new { id = item.PaymentID }) |
+                                            @Html.ActionLink("Issue OR", "OrIssuance", "Cashiering", new { id = item.PaymentID }, new { target = "_blank", @class = "issueor" }) |
+                                            @Html.ActionLink("Reprint OR", "PdfWithMargin", "Cashiering", new { id = item.PaymentID }, new { target = "_blank" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script>
+$(document).ready(function(){
+    var periods = new Array();
+    var periodarray = @Html.Raw(Json.Encode(ViewBag.Period));
+    for (var i = 0; i < periodarray.length; i++) {
+        periods[i] = periodarray[i];
+    }
+
+    LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val(), $("#LearningTypeId").val());
+    $("#SchoolYearId").change(function () {
+        LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val(), $("#LearningTypeId").val());
+    });
+    $("#EducationalLevelId").change(function () {
+        LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val(), $("#LearningTypeId").val());
+    });
+    $("#LearningTypeId").change(function () {
+        LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val(), $("#LearningTypeId").val());
+    });
+    function LoadPeriod(schoolyearid, educationallevelid, learningtypeid)
+    {
+        $("#Period").empty();
+
+        for (var i = 0; i < periodarray.length; i++) {
+
+            if (periodarray[i].SchoolYearId == schoolyearid && periodarray[i].EducationalLevelId == educationallevelid && periodarray[i].LearningTypeId == learningtypeid) {
+                var option = $("<option />");
+                option.attr("value", periodarray[i].PeriodId).text(periodarray[i].PeriodName);
+                $("#Period").append(option);
+
+            }
+        }
+    }
+});
+    </script>
+}

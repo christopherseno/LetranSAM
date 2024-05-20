@@ -1,0 +1,130 @@
+﻿@model ARManila.Models.Payment
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<div class="p-4 content">
+
+    <h3>Are you sure you want to cancel this?</h3>
+    <div>
+        <h4>Payment</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                Name
+            </dt>
+
+            <dd>
+                @if (Model.StudentID != null)
+                {
+                    @Html.DisplayFor(model => model.Student.FullName)
+                }
+            </dd>
+            <dt>
+                Student No
+            </dt>
+
+            <dd>
+                @if (Model.StudentID != null)
+                {
+                    @Html.DisplayFor(model => model.Student.StudentNo)
+                }
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.ORNo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ORNo)
+            </dd>
+            <dt>
+                Date Posted
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.DateReceived)
+            </dd>
+            <dt>
+                Amount
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CheckAmount)
+            </dd>
+            <dt>
+                Bank
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Bank)
+            </dd>
+            <dt>
+                Particular
+            </dt>
+
+            <dd>
+                @(Model.Period.SchoolYear.SchoolYearName + ", " + Model.Period.Period1 )
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.BankDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BankDate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Remarks)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Remarks)
+            </dd>
+            <dt>
+                Educational Level
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Period.EducationalLevel1.EducLevelName)
+            </dd>
+
+            <dt>
+                Posted By
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Employee1.FullName)
+            </dd>
+        </dl>
+        <table class="table">
+            <tr>
+                <th>
+                    Item
+                </th>
+                <th>
+                    Amount
+                </th>
+            </tr>
+
+            @foreach (var item in Model.PaymentDetails)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Paycode.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
+    </div>
+</div>

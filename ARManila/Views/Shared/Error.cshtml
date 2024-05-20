@@ -1,0 +1,33 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-md-12">
+                <h1 class="font-weight-bold text-danger text-md-center"><i class="fas fa-bug"></i> Action cannot be processed <i class="fas fa-exclamation"></i></h1>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="p-4 content">
+    <div class="p-4 content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title font-weight-bold">@Model.Exception.Message</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Error from: @Model.ControllerName <span>-></span>@Model.ActionName</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

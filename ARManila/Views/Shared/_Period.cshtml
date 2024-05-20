@@ -1,0 +1,28 @@
+﻿@if (Request.Cookies["PeriodId"] != null)
+{
+    var db = new ARManila.Models.LetranIntegratedSystemEntities();
+    var periodid = Convert.ToInt32(Request.Cookies["PeriodId"].Value);
+    var period = db.Period.Find(periodid);
+    if (period != null)
+    { 
+    <div class="content-side content-side-user px-0 py-0">
+        <!-- Visible only in mini mode -->
+        <div class="smini-visible-block animated fadeIn px-3">
+            <img class="img-avatar img-avatar32" src="~/assets/media/avatars/avatar15.jpg" alt="">
+        </div>
+        <!-- END Visible only in mini mode -->
+        <!-- Visible only in normal mode -->
+        <div class="smini-hidden text-center mx-auto">
+            @period.EducationalLevel1.EducLevelName
+            <br />
+            @period.FullName <input type="hidden" value="@periodid" id="PeriodId" />
+            <ul class="list-inline mt-3 mb-0">
+                <li class="list-inline-item">
+                    @Html.ActionLink("Change Period", "SetPeriod", "Utility", new { fromcontroller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), fromaction = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString() }, new { @class = "d-block btn btn-primary" })
+                </li>
+            </ul>
+        </div>
+        <!-- END Visible only in normal mode -->
+    </div>
+    }
+}

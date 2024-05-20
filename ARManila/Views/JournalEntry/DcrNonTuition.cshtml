@@ -1,0 +1,106 @@
+﻿@model List<ARManila.Models.Dcr>
+@{
+    ViewBag.Title = "DCR";
+}
+
+<h2>Non-Tuition Receipt Voucher</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            <label class="col-md-2">Transaction Date</label>
+            <input type="date" class="col-md-8" required value="@ViewBag.OrDate" name="OrDate" />
+        </div>
+        <div class="row items-push">
+            <label class="col-md-2">Select GL Code-></label>
+            <div class="col-md-4">
+                <div class="form-check form-block">
+                    <input type="radio" value="false" @(ViewBag.IsQne ? "" : "checked") class="form-check-input" , id="IsQne1" name="IsQne" />
+                    <label class="form-check-label" for="IsQne1">
+                        <span class="d-block fw-normal text-center my-3">
+                            <span class="fs-4 fw-semibold">Letran Accounting System</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-block">
+                    <input type="radio" value="true" class="form-check-input" @(ViewBag.IsQne ? "checked" : "") id="IsQne2" name="IsQne" />
+                    <label class="form-check-label" for="IsQne2">
+                        <span class="d-block fw-normal text-center my-3">
+                            <span class="fs-4 fw-semibold">QNE Accounting System</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Show Data" name="Action" class="btn btn-primary" />  &nbsp;&nbsp;
+
+        </div>
+    </div>
+
+    <br />
+
+    if (Model.Count > 0)
+    {
+        decimal total = 0;
+        <h2>@(ViewBag.IsQne  ? "Using QNE Account Code" : "Using Old Account Code" )</h2>
+        <span class="fs-3">For @ViewBag.OrDate2</span>
+        <br />
+        if (ViewBag.IsQne)
+        {
+            <input type="submit" value="Post to QNE" name="Action" class="btn btn-primary" />
+            <br />
+        }
+        <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+            <thead>
+                <tr>
+                    <th>Receipt Code</th>
+                    <th>Received From</th>
+                    <th>Dept Code</th>
+                    <th>Description</th>
+                    <th>Account Number</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    foreach (var i in item.details)
+                    {
+                        total += i.amount;
+                        <tr>
+                            <td>@item.receiptCode</td>
+                            <td>@item.receiveFrom</td>
+                            <td>@item.project</td>
+                            <td>@i.description</td>
+                            <td>@i.account</td>
+                            <td align="right">@i.amount.ToString("#,##0.00")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>@ViewBag.cashonhand</td>
+                    <td align="right">@total.ToString("#,##0.00")</td>
+                </tr>
+            </tfoot>
+        </table>
+
+
+    }
+
+
+}
+
+<p>&nbsp;</p>

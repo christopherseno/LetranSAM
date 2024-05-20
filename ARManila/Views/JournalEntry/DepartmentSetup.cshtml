@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ARManila.Models.AcademicDepartment>
+
+@{
+    ViewBag.Title = "DepartmentSetup";
+}
+
+<h2>Department -AR Setup</h2>
+
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+               Department Name
+            </th>
+            <th>
+                Acronym
+            </th>
+            <th>
+                Old GL Code
+            </th>
+            <th>
+                QNE Project Code
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcaDepartmentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcaAcronym)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GLCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QNEProjectCode)
+            </td>
+            <td>
+            <td>
+                @Html.ActionLink("Edit", "EditDepartmentSetup", new { id = item.AcaDeptID })
+            </td>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

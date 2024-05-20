@@ -1,0 +1,273 @@
+﻿<ul class="nav-main">
+    <li class="nav-main-item">
+        <a class="nav-main-link" href="@Url.Action("Index","Home")">
+            <i class="nav-main-link-icon fa fa-chart-line"></i>
+            <span class="nav-main-link-name">Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Student Menu</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index2", "ARQuery")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">AR Query</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "Assessment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Assessment</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "ARHistory")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">AR History</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Payments</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "Payments")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Collection Summary</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Create", "Payments")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Post Payments</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Backaccount</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "Backaccount")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">View Backaccount</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Adjustment</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "Adjustment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">View Adjustment</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">DMCM</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "DMCM")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">View DMCM</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("BatchDMCM", "DMCM")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Batch DMCM</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Reports</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("FeesSummary", "FinanceReports")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Summary of Fees</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("ARSetupSummary", "FinanceReports")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">AR Set-up Summary</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("EnrollmentStat", "FinanceReports")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Enrollment Stat</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "FinanceReports")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Accounting</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Settings</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Fee Name</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("MiscFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Miscellaneous Fees</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("SupplementalFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Supplemental Fees</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("OtherFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Other Fees</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("LabFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Laboratory Fees</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("VariousFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Various Fees</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("AirconFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Aircon Fee</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("TuitionFeeSetup", "AccountSetup")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Tuition Fee</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">QNE Settings</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">QNE GL Codes</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Departments", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">QNE Projects</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("ChartOfAccountSetup", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Chart of Accounts-QNE</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("SubLedgerSetup", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Subsidiary Ledger-QNE</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("SchoolYearARSetup", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">School Year-QNE</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("DepartmentSetup", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Acad Departments-QNE</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "JournalEntryTypes")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Entry Setting</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">QNE Posting</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("MiscJournalEntry", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Post AR Journal</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("PostedQneJournalEntry", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Posting Logs</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("DcrNonTuition", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">DCR-NT Journal Entry</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("ViewReceiptVoucher", "JournalEntry")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">View Receipt Voucher</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ul>
+

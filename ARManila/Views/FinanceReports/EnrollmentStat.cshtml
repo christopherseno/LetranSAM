@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "EnrollmentStat2";
+}
+
+<nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+    <span class="breadcrumb-item">Reports</span>
+    <span class="breadcrumb-item active">Enrollment Statistics</span>
+</nav>
+
+
+        @*<div class="row items-push">
+            <div class="col-md-3">
+                <div class="form-check form-block">
+                    <input type="radio" class="form-check-input" id="example-radio-block1" name="example-radio-block" checked>
+                    <label class="form-check-label" for="example-radio-block1">
+                        <span class="d-block fw-normal text-center my-3">
+                            <span class="fs-4 fw-semibold bg-white">Enrollment Statistics</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check form-block">
+                    <input type="radio" class="form-check-input" id="example-radio-block2" name="example-radio-block">
+                    <label class="form-check-label" for="example-radio-block2">
+                        <span class="d-block fw-normal text-center my-3">
+                            <span class="fs-4 fw-semibold">Enrollment Statistics MOD</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>*@
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-4">
+                <div class="input-group">
+                    <input class="js-flatpickr form-control" data-date-format="Y-m-d" placeholder="Select Date" type="date" id="enddate" name="enddate"  />
+                    <button class="btn btn-primary" id="enrollmentstatbutton">Load Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <div id="statblock" class="block block-rounded">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title" id="statdate"></h3>
+                    <div id="statoptions" class="block-options">
+                        <div type="button" class="btn-block-option" data-toggle="block-option" data-action="fullscreen_toggle"></div>
+                    </div>
+                </div>
+                <div class="block-content">
+                    <div id="StatPartial"></div>
+                </div>
+            </div>
+
+            @section scripts
+{
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#statblock").hide();
+                        $("#enrollmentstatbutton").click(function () {
+                            $("#statblock").show();
+                            /*Codebase.block('fullscreen_on', '#statblock');*/
+                            getEnrollmentStat();
+                        });
+                        $("#linkClose").click(function () {
+                            $("#divError").hide('fade');
+                        });
+
+                    });
+                    function getEnrollmentStat() {
+                        var enddate = $("#enddate").val();
+                        var periodid = $("#PeriodId").val();
+                        var enrollmentstattable = $("#table");
+                        $.ajax({
+                            type: "POST",
+                            url: "/FinanceReports/EnrollmentStatPartial?periodid=" + periodid + "&edate=" + enddate,
+                            beforeSend: function (data) {
+                                /*Codebase.layout('header_loader_on');*/
+                                Codebase.block('state_loading', '#statblock');
+                            },
+                            complete: function (data) {
+                                /*Codebase.layout('header_loader_off');*/
+                                Codebase.block('state_normal', '#statblock');
+
+                            },
+                            success: function (data) {
+                                $('#StatPartial').html(data);
+                            },
+                            error: function () {
+                                alert(error)
+                            }
+                        });
+                    }
+
+
+                </script>
+            }

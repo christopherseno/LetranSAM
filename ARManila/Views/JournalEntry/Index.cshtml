@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ARManila.Models.QNEGLAccount>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Chart of Accounts</h2>
+@using (Ajax.BeginForm("Sync", "JournalEntry", new AjaxOptions { UpdateTargetId = "result", LoadingElementId = "loading" }))
+{
+    <div id="loading" style="display:none;">Generating Report...</div>
+    <div id="result"></div>
+    <input type="submit" value="Sync" class="btn btn-primary" />
+
+}
+<form action="~/JournalEntry/Sync" method="post">
+</form>
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>Account Code</th>
+            <th>Description</th>
+            <th>Is Subaccount</th>
+            <th>Is Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.AccountCode</td>
+                <td>@item.Description</td>
+                <td>@item.IsSubAccount</td>
+                <td>@item.IsActive</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts
+{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#search").click(function () {
+                getQNEGLAccounts();
+            });
+        });
+        function getQNEGLAccounts() {
+            var glaccountstable = $("#glaccountstable");
+
+        }
+
+
+    </script>
+}

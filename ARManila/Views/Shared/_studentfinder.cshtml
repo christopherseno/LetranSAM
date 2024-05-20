@@ -1,0 +1,48 @@
+﻿
+<input type="button" class="btn btn-danger" id="studentfinderbutton" value="Student No Finder" />
+<br />
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#studentfinderbutton").click(function () {
+                $("#searchstudenttext").val("");
+                $('#searchstudenttable').empty();
+                $("#searchstudentmodal").modal('show');
+            });
+            $("#searchstudentbutton").click(function () {
+                getStudents($("#searchstudenttext").val());
+            });
+        });
+        function getStudentNo(sn) {
+            $("#studentno").val(sn);
+        }
+        function getStudents(searchtext) {
+            $.ajax({
+                type: "GET",
+                url: "https://api.letran.edu.ph/SearchStudent/" + searchtext,
+                headers: {Authorization: 'Bearer @Session["ApiAccessToken"].ToString()'},
+                beforeSend: function (data) {
+                    $("#searchstudentloading").css("display", "inline");
+                },
+                complete: function (data) {
+                    $("#searchstudentloading").css("display", "none");
+                },
+                success: function (data) {
+
+                    var searchstudenttable = $('#searchstudenttable');
+                    searchstudenttable.empty();
+                    searchstudenttable.append('<thead class="thead-dark"><tr><th>Student No</th><th>Last Name</th><th>First Name</th>' +
+                        '<th>Program</th></tr ></thead > <tbody>');
+                    $.each(data, function (index, val) {
+                        searchstudenttable.append('<tr><td><a href="#" onclick="getStudentNo(' + val.StudentNo + ')">' + val.StudentNo + '</a></td><td>' + val.LastName + '</td>' +
+                            '<td>' + val.FirstName + '</td><td>' + val.Program + '</td></tr>');
+                    });
+                },
+                error: function (data) {
+
+                }
+            });
+        }
+    </script>
+}

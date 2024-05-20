@@ -1,0 +1,654 @@
+﻿@using ARManila.Models
+@model ARManila.Models.ReportsDTO.ARSetupSummary
+@{
+    ViewBag.Title = "FeesSummary";
+    string[] barchartlabels = (Model?.ARSetupSummaryConsolidatedItems.Count > 0 ? Model.ARSetupSummaryConsolidatedItems.Select(m => m.Value.Item).ToArray() : new string[] { "Mon", "Tue", "Wed", "Thu" });
+    decimal[] barchartarsetupvalues = (Model?.ARSetupSummaryConsolidatedItems.Count > 0 ? Model.ARSetupSummaryConsolidatedItems.Select(m => Math.Round(m.Value.ARFeesSetup / 1000000, 2)).ToArray() : new decimal[] { 100, 200, 300, 400 });
+    decimal[] barchartarbalancevalues = (Model?.ARSetupSummaryConsolidatedItems.Count > 0 ? Model.ARSetupSummaryConsolidatedItems.Select(m => Math.Round(m.Value.ARBalance / 1000000, 2)).ToArray() : new decimal[] { 100, 200, 300, 400 });
+    decimal[] barchartpercentagevalues = (Model?.ARSetupSummaryConsolidatedItems.Count > 0 ? Model.ARSetupSummaryConsolidatedItems.Select(m => Math.Round(m.Value.AgePercent * 100, 0)).ToArray() : new decimal[] { 0.5m, 0.2m, 0.3m, 0.1m });
+}
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item">Report Menu</span>
+    <span class="breadcrumb-item active">AR Set-up Summary</span>
+</nav>
+
+
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label>As Of Date</label>
+            <input type="date" value="@ViewBag.asofdate" id="asofdate" name="asofdate" class="form-control" required />
+        </div>
+        <div class="form-group col-md-4">
+            <label>View As</label>
+            <select id="viewas" name="viewas" class="form-select">
+                <option value="1">Web</option>
+                <option value="2">PDF</option>
+                <option value="3">Excel</option>
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="isschoolyear" id="isschoolyear">
+                <label class="form-check-label" for="isschoolyear">
+                    Use School Year Data
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="isconsolidated" id="isconsolidated">
+                <label class="form-check-label" for="isconsolidated">
+                    Use Consolidated Data
+                </label>
+            </div>
+            <input type="submit" value="View" class="form-control btn btn-primary" />
+        </div>
+    </div>
+}
+
+@if (Model != null)
+{
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="table-responsive">
+                <table id="arquerytable" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr class="bg-gray-light">
+                            <th></th>
+                            @foreach (var item in Model.Periods)
+                            {
+                                <th class="text-center" colspan="2">@item</th>
+                            }
+                            <th class="text-center" colspan="2">Total</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="subtotal">
+                            <td colspan="@(Model.Periods.Count*2 + 3)">A/R Fees Register Set-up</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.Tuition.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Tuition.Amount1.ToString("#,##0.00")</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Tuition.Amount2.ToString("#,##0.00")</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Tuition.Amount3.ToString("#,##0.00")</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Tuition.Amount4.ToString("#,##0.00")</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Tuition.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.Miscellaneous.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Miscellaneous.Amount1.ToString("#,##0.00")</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Miscellaneous.Amount2.ToString("#,##0.00")</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Miscellaneous.Amount3.ToString("#,##0.00")</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Miscellaneous.Amount4.ToString("#,##0.00")</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Miscellaneous.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.Laboratory.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Laboratory.Amount1.ToString("#,##0.00")</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Laboratory.Amount2.ToString("#,##0.00")</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Laboratory.Amount3.ToString("#,##0.00")</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Laboratory.Amount4.ToString("#,##0.00")</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Laboratory.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.Various.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Various.Amount1.ToString("#,##0.00")</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Various.Amount2.ToString("#,##0.00")</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Various.Amount3.ToString("#,##0.00")</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Various.Amount4.ToString("#,##0.00")</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Various.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.TotalFees.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right">@Model.TotalStudent.Amount1.ToString("#,##0")</td>
+                                        <td align="right">@Model.TotalFees.Amount1.ToString("#,##0.00")</td>
+                                        break;
+                                    case 1:
+                                        <td align="right">@Model.TotalStudent.Amount2.ToString("#,##0")</td>
+                                        <td align="right">@Model.TotalFees.Amount2.ToString("#,##0.00")</td>
+                                        break;
+                                    case 2:
+                                        <td align="right">@Model.TotalStudent.Amount3.ToString("#,##0")</td>
+                                        <td align="right">@Model.TotalFees.Amount3.ToString("#,##0.00")</td>
+                                        break;
+                                    case 3:
+                                        <td align="right">@Model.TotalStudent.Amount4.ToString("#,##0")</td>
+                                        <td align="right">@Model.TotalFees.Amount4.ToString("#,##0.00")</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right">@Model.TotalStudent.TotalRW.ToString("#,##0")</td>
+                            <td align="right">@Model.TotalFees.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td colspan="@(Model.Periods.Count*2 + 3)">Add/(Deduct)</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.BeginningBalance.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.BeginningBalance.Amount1.ToCurrencyFormat()</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.BeginningBalance.Amount2.ToCurrencyFormat()</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.BeginningBalance.Amount3.ToCurrencyFormat()</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.BeginningBalance.Amount4.ToCurrencyFormat()</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.BeginningBalance.Total.ToCurrencyFormat()</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.Collection.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Collection.Amount1.ToCurrencyFormat()</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Collection.Amount2.ToCurrencyFormat()</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Collection.Amount3.ToCurrencyFormat()</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Collection.Amount4.ToCurrencyFormat()</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Collection.Total.ToCurrencyFormat()</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.Adjustment.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Adjustment.Amount1.ToCurrencyFormat()</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Adjustment.Amount2.ToCurrencyFormat()</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Adjustment.Amount3.ToCurrencyFormat()</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Adjustment.Amount4.ToCurrencyFormat()</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Adjustment.Total.ToCurrencyFormat()</td>
+                        </tr>
+                        @if (Model.Voucher.Amount1 != 0)
+                        {
+                            <tr class="subtotal">
+                                <td>@Model.Voucher.Item</td>
+                                @for (int i = 0; i < Model.Periods.Count; i++)
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            <td align="right" colspan="2">@Model.Voucher.Amount1.ToCurrencyFormat()</td>
+                                            break;
+                                        case 1:
+                                            <td align="right" colspan="2">@Model.Voucher.Amount2.ToCurrencyFormat()</td>
+                                            break;
+                                        case 2:
+                                            <td align="right" colspan="2">@Model.Voucher.Amount3.ToCurrencyFormat()</td>
+                                            break;
+                                        case 3:
+                                            <td align="right" colspan="2">@Model.Voucher.Amount4.ToCurrencyFormat()</td>
+                                            break;
+                                    }
+
+                                }
+                                <td align="right" colspan="2">@Model.Voucher.Total.ToCurrencyFormat()</td>
+                            </tr>
+                        }
+                        <tr class="subtotal">
+                            <td>@Model.Discount.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right" colspan="2">@Model.Discount.Amount1.ToCurrencyFormat()</td>
+                                        break;
+                                    case 1:
+                                        <td align="right" colspan="2">@Model.Discount.Amount2.ToCurrencyFormat()</td>
+                                        break;
+                                    case 2:
+                                        <td align="right" colspan="2">@Model.Discount.Amount3.ToCurrencyFormat()</td>
+                                        break;
+                                    case 3:
+                                        <td align="right" colspan="2">@Model.Discount.Amount4.ToCurrencyFormat()</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right" colspan="2">@Model.Discount.Total.ToCurrencyFormat()</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.ARBalance.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right">@Model.TotalStudentsWithBalance.Amount1.ToString("#,##0")</td>
+                                        <td align="right">@Model.ARBalance.Amount1.ToString("#,##0.00")</td>
+                                        break;
+                                    case 1:
+                                        <td align="right">@Model.TotalStudentsWithBalance.Amount2.ToString("#,##0")</td>
+                                        <td align="right">@Model.ARBalance.Amount2.ToString("#,##0.00")</td>
+                                        break;
+                                    case 2:
+                                        <td align="right">@Model.TotalStudentsWithBalance.Amount3.ToString("#,##0")</td>
+                                        <td align="right">@Model.ARBalance.Amount3.ToString("#,##0.00")</td>
+                                        break;
+                                    case 3:
+                                        <td align="right">@Model.TotalStudentsWithBalance.Amount4.ToString("#,##0")</td>
+                                        <td align="right">@Model.ARBalance.Amount4.ToString("#,##0.00")</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right">@Model.TotalStudentsWithBalance.TotalRW.ToString("#,##0")</td>
+                            <td align="right">@Model.ARBalance.Total.ToString("#,##0.00")</td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.CollectionPercent1.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right">@Model.CollectionPercent1.Amount1.ToPercentFormat()</td>
+                                        <td align="right">@Model.CollectionPercent2.Amount1.ToPercentFormat()</td>
+                                        break;
+                                    case 1:
+                                        <td align="right">@Model.CollectionPercent1.Amount2.ToPercentFormat()</td>
+                                        <td align="right">@Model.CollectionPercent2.Amount2.ToPercentFormat()</td>
+                                        break;
+                                    case 2:
+                                        <td align="right">@Model.CollectionPercent1.Amount3.ToPercentFormat()</td>
+                                        <td align="right">@Model.CollectionPercent2.Amount3.ToPercentFormat()</td>
+                                        break;
+                                    case 3:
+                                        <td align="right">@Model.CollectionPercent1.Amount4.ToPercentFormat()</td>
+                                        <td align="right">@Model.CollectionPercent2.Amount4.ToPercentFormat()</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right">
+                                @(Model.CollectionPercent1.TotalRW.ToPercentFormat())
+                            </td>
+                            <td align="right">
+                                @(Model.CollectionPercent2.TotalRW.ToPercentFormat())
+                            </td>
+                        </tr>
+                        <tr class="subtotal">
+                            <td>@Model.ARBalancePercent1.Item</td>
+                            @for (int i = 0; i < Model.Periods.Count; i++)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        <td align="right">@Model.ARBalancePercent1.Amount1.ToPercentFormat()</td>
+                                        <td align="right">@Model.ARBalancePercent2.Amount1.ToPercentFormat()</td>
+                                        break;
+                                    case 1:
+                                        <td align="right">@Model.ARBalancePercent1.Amount2.ToPercentFormat()</td>
+                                        <td align="right">@Model.ARBalancePercent2.Amount2.ToPercentFormat()</td>
+                                        break;
+                                    case 2:
+                                        <td align="right">@Model.ARBalancePercent1.Amount3.ToPercentFormat()</td>
+                                        <td align="right">@Model.ARBalancePercent2.Amount3.ToPercentFormat()</td>
+                                        break;
+                                    case 3:
+                                        <td align="right">@Model.ARBalancePercent1.Amount4.ToPercentFormat()</td>
+                                        <td align="right">@Model.ARBalancePercent2.Amount4.ToPercentFormat()</td>
+                                        break;
+                                }
+
+                            }
+                            <td align="right">
+                                @(Model.ARBalancePercent1.TotalRW.ToPercentFormat())
+                            </td>
+                            <td align="right">
+                                @(Model.ARBalancePercent2.TotalRW.ToPercentFormat())
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    if (Model.ARSetupSummaryConsolidatedItems.Count > 0)
+    {
+        <div class="block block-rounded">
+            <div class="block-content">
+                <div class="table-responsive">
+                    <table id="arquerytable" class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>AR Setup</th>
+                                <th>AR Balance</th>
+                                <th>%Age</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ARSetupSummaryConsolidatedItems)
+                            {
+                                <tr>
+                                    <td>@item.Value.Item</td>
+                                    <td align="right">@item.Value.ARFeesSetup.ToCurrencyFormat()</td>
+                                    <td align="right">@item.Value.ARBalance.ToCurrencyFormat()</td>
+                                    <td align="right">@item.Value.AgePercent.ToPercentFormat()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+}
+<div class="col-md-12">
+    @if (Model != null && Model.ARSetupSummaryConsolidatedItems.Count > 0)
+    {
+        <!-- Bars Chart -->
+        <div class="block block-rounded">
+            <div class="block-header block-header-default">
+                <h3 class="block-title">AR Set-up Summary</h3>
+                <div class="block-options">
+                    <button type="button" class="btn-block-option" data-toggle="block-option" data-action="state_toggle" data-action-mode="demo">
+                    </button>
+                </div>
+            </div>
+            <div class="block-content block-content-full text-center">
+                <!-- Bars Chart Container -->
+                <canvas id="js-chartjs-bars"></canvas>
+            </div>
+        </div>
+        <!-- END Bars Chart -->
+    }
+</div>
+@section scripts {
+    <script>
+        /*
+     *  Document   : be_comp_charts.js
+     *  Author     : pixelcave
+     *  Description: Custom JS code used in Charts Page
+     */
+
+        class pageCompCharts {
+            /*
+             * Chart.js Charts, for more examples you can check out http://www.chartjs.org/docs
+             *
+             */
+            static initChartsChartJS() {
+                // Set Global Chart.js configuration
+                Chart.defaults.color = '#818d96';
+                Chart.defaults.scale.grid.color = "rgba(0,0,0,.04)";
+                Chart.defaults.scale.grid.zeroLineColor = "rgba(0,0,0,.1)";
+                Chart.defaults.scale.beginAtZero = true;
+                Chart.defaults.elements.line.borderWidth = 2;
+                Chart.defaults.elements.point.radius = 5;
+                Chart.defaults.elements.point.hoverRadius = 7;
+                Chart.defaults.plugins.tooltip.radius = 3;
+                Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+                // Get Chart Containers
+                let chartLinesCon = document.getElementById('js-chartjs-lines');
+                let chartBarsCon = document.getElementById('js-chartjs-bars');
+                let chartRadarCon = document.getElementById('js-chartjs-radar');
+                let chartPolarCon = document.getElementById('js-chartjs-polar');
+                let chartPieCon = document.getElementById('js-chartjs-pie');
+                let chartDonutCon = document.getElementById('js-chartjs-donut');
+
+                // Lines/Bar/Radar Chart Data
+                let chartLinesBarsRadarData = {
+                    labels: @Html.Raw(Json.Encode(barchartlabels)),
+                    datasets: [
+                        {
+                            label: 'AR Setup',
+                            fill: true,
+                            type: 'bar',
+                            backgroundColor: 'rgba(2, 132, 199, .75)',
+                            borderColor: 'rgba(2, 132, 199, 1)',
+                            pointBackgroundColor: 'rgba(2, 132, 199, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(2, 132, 199, 1)',
+                            data: @Html.Raw(Json.Encode(barchartarsetupvalues)),
+                            yAxisID: 'first-y-axis'
+                        },
+                        {
+                            label: 'AR Balance',
+                            fill: true,
+                            type: 'bar',
+                            backgroundColor: 'rgba(2, 132, 199, .25)',
+                            borderColor: 'rgba(2, 132, 199, 1)',
+                            pointBackgroundColor: 'rgba(2, 132, 199, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(2, 132, 199, 1)',
+                            data:  @Html.Raw(Json.Encode(barchartarbalancevalues)),
+                            yAxisID: 'first-y-axis'
+                        },
+                        {
+                            label: '% Age',
+                            type: 'line',
+                            data:  @Html.Raw(Json.Encode(barchartpercentagevalues)),
+                            yAxisID: 'second-y-axis'
+                        }
+                    ]
+                };
+
+                // Polar/Pie/Donut Data
+                let chartPolarPieDonutData = {
+                    labels: [
+                        'Earnings',
+                        'Sales',
+                        'Tickets'
+                    ],
+                    datasets: [{
+                        data: [
+                            50,
+                            25,
+                            25
+                        ],
+                        backgroundColor: [
+                            'rgba(101, 163, 13, 1)',
+                            'rgba(217, 119, 6, 1)',
+                            'rgba(220, 38, 38, 1)'
+                        ],
+                        hoverBackgroundColor: [
+                            'rgba(101, 163, 13, .5)',
+                            'rgba(217, 119, 6, .5)',
+                            'rgba(220, 38, 38, .5)'
+                        ]
+                    }]
+                };
+
+                // Init Charts
+                let chartLines, chartBars, chartRadar, chartPolar, chartPie, chartDonut;
+
+                if (chartLinesCon !== null) {
+                    chartLines = new Chart(chartLinesCon, { type: 'line', data: chartLinesBarsRadarData, options: { tension: .4 } });
+                }
+
+                if (chartBarsCon !== null) {
+                    chartBars = new Chart(chartBarsCon, {
+                        data: chartLinesBarsRadarData,
+                        options: {
+                            scales: {
+                                'first-y-axis': {
+                                    type: 'linear',
+                                    position: 'left',
+                                    title: {
+                                        color: 'red',
+                                        display: true,
+                                        text: 'In Millions'
+                                    }
+                                },
+                                'second-y-axis': {
+                                    type: 'linear',
+                                    position: 'right'
+                                }
+                            },
+                            animation: {
+                                duration: 1,
+                                onComplete: (x) => {
+                                    const chart = x.chart;
+                                    var { ctx } = chart;
+                                    ctx.textAlign = 'center';
+                                    ctx.fillStyle = "rgba(0, 0, 0, 1)";
+                                    ctx.textBaseline = 'bottom';
+                                    // Loop through each data in the datasets
+                                    const metaFunc = this.getDatasetMeta;
+                                    chart.data.datasets.forEach((dataset, i) => {
+                                        var meta = chart.getDatasetMeta(i);
+                                        meta.data.forEach((bar, index) => {
+                                            console.log(index);
+                                            console.log(bar.options.pointStyle);
+                                            if (bar.options.pointStyle === 'circle') {
+                                                var data = dataset.data[index];
+                                                ctx.fillText(`${data}%`, bar.x, bar.y - 5);
+                                            }
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (chartRadarCon !== null) {
+                    chartRadar = new Chart(chartRadarCon, { type: 'radar', data: chartLinesBarsRadarData });
+                }
+
+                if (chartPolarCon !== null) {
+                    chartPolar = new Chart(chartPolarCon, { type: 'polarArea', data: chartPolarPieDonutData });
+                }
+
+                if (chartPieCon !== null) {
+                    chartPie = new Chart(chartPieCon, { type: 'pie', data: chartPolarPieDonutData });
+                }
+
+                if (chartDonutCon !== null) {
+                    chartDonut = new Chart(chartDonutCon, { type: 'doughnut', data: chartPolarPieDonutData });
+                }
+            }
+
+            /*
+             * Randomize Easy Pie Chart values
+             *
+             */
+            static initRandomEasyPieChart() {
+                document.querySelectorAll('.js-pie-randomize').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        btn.closest('.block').querySelectorAll('.pie-chart').forEach(chart => {
+                            jQuery(chart).data('easyPieChart').update(Math.floor((Math.random() * 100) + 1));
+                        });
+                    });
+                });
+            }
+
+            /*
+             * Init functionality
+             *
+             */
+            static init() {
+                this.initRandomEasyPieChart();
+                this.initChartsChartJS();
+            }
+        }
+
+        // Initialize when page loads
+        Codebase.onLoad(pageCompCharts.init());
+    </script>
+}

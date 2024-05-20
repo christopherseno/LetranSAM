@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-4">
+    @using (Html.BeginForm("ViewReports", "FinanceReports", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <span class="control-label col-md-2">Date Selector</span>
+            <div class="col-md-5">
+                @Html.DropDownList("ReportNameId", (List<SelectListItem>)ViewBag.ReportName, htmlAttributes: new { @class = "col-md-12" })
+                <br />
+                <span class="col-md-2">Start Date:</span><input type="date" id="startdate" name="startdate" class="col-md-4" placeholder="Start Date" />
+                <br />
+                <span class="col-md-2">End Date:</span><input type="date" id="enddate" name="enddate" class="col-md-4" placeholder="End Date" />
+                <br />
+                Report Type:
+                <br />
+                <input type="radio" id="reporttype" name="reporttype" class="col-md-2" value="1" /> Download as PDF
+                <br />
+                <input type="radio" id="reporttype" name="reporttype" checked class="col-md-2" value="2" /> Download as Excel
+                <br />
+                <input type="radio" id="reporttype" name="reporttype" checked class="col-md-2" value="3" /> View Data
+            </div>
+        </div>
+        <input type="submit" value="Submit" class="col-md-4 btn-primary" />
+        
+    }
+
+
+</div>
+

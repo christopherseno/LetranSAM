@@ -1,0 +1,113 @@
+﻿@model ARManila.Models.Payment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="p-4 content">
+    <h4>Payment Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Name
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Student.FullName)
+        </dd>
+        <dt>
+            Student No
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Student.StudentNo)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ORNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ORNo)
+        </dd>
+        <dt>
+            Date Posted
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateReceived)
+        </dd>
+        <dt>
+            Amount
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CheckAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Bank)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Bank)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BankDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BankDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Remarks)
+        </dd>
+        <dt>
+            Educational Level
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Period.EducationalLevel1.EducLevelName)
+        </dd>
+
+        <dt>
+            Period
+        </dt>
+
+        <dd>
+            @(Model.Period.SchoolYear.SchoolYearName + ", " + Model.Period.Period1)
+        </dd>
+
+        <dt>
+            Posted By
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee1.FullName)
+        </dd>
+    </dl>
+    <table class="table">
+        <tr>
+            <th>
+                Item
+            </th>
+            <th>
+                Amount
+            </th>
+        </tr>
+
+        @foreach (var item in Model.PaymentDetails)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Paycode.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    <p>
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</div>

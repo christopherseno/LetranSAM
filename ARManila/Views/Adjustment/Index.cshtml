@@ -1,0 +1,94 @@
+﻿@model ARManila.Models.AdjustmentWrapper
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="p-3">
+    <h2>View Adjustment</h2>
+    @using (Html.BeginForm("Index", "Adjustment", FormMethod.Post))
+    {
+        <input type="text" placeholder="Adjustment No"  name="id" id="id"/> 
+        <input type="submit" value="Search" class="btn btn-primary" />
+    }
+    @if (Model != null)
+    {
+        <hr />
+        @Model.EnrolledStudent.StudentNumber
+        <br />
+        @Model.EnrolledStudent.StudentName
+        <br />
+        @Model.EnrolledStudent.EducationalLevel
+        <br />
+        <span>Enlistment Date : @Html.DisplayFor(m=>m.EnrolledStudent.EnlistmentDate)</span>
+        <br />
+        <span>Assessment Date : @Html.DisplayFor(m=>m.EnrolledStudent.AssessmentDate)</span>
+        <br />
+        <span>Validation Date : @Html.DisplayFor(m=>m.EnrolledStudent.ValidationDate)</span>
+        <br />
+        <span>Payment Mode : @Model.EnrolledStudent.PaymentMode</span>
+        <br />
+        <span>Level / Section : @Model.EnrolledStudent.Level / @Model.EnrolledStudent.Section</span>
+        <br />
+        <span>Curr / Program : @Model.EnrolledStudent.Curriculum / @Model.EnrolledStudent.Program</span>
+        <br />
+        <span>Adjustment Date : @Model.AdjustmentDate</span>
+        <h3>Subjects affected by Adjustment No @Model.AdjustmentId</h3>
+        <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>
+                        Subject
+                    </th>
+                    <th>
+                        Unit
+                    </th>
+                    <th>
+                        Action
+                    </th>                    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.AdjustmentSubjects)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Subject)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Unit)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Action)
+                        </td>                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <hr />
+        <h3>Adjustment Computation</h3>
+        <table class="table table-bordered">
+            <tr>
+                <td>Tuition</td>
+                <td>@Html.DisplayFor(m=>m.Tuition)</td>
+            </tr>
+            <tr>
+                <td>Laboratory</td>
+                <td>@Html.DisplayFor(m=>m.Laboratory)</td>
+            </tr>
+            <tr>
+                <td>Other Fees</td>
+                <td>@Html.DisplayFor(m=>m.OtherFee)</td>
+            </tr>
+            <tr>
+                <td>Aircon</td>
+                <td>@Html.DisplayFor(m=>m.Aircon)</td>
+            </tr>
+            <tr class="text-bold">
+                <td>Total</td>
+                <td>@Html.DisplayFor(m=>m.Total)</td>
+            </tr>
+            <caption>@Html.ActionLink("Recompute Adjustment", "RecomputeAdjustment", new {id= Model.AdjustmentId }, new {@class="btn btn-primary" } ) </caption>
+        </table>
+    }
+</div>

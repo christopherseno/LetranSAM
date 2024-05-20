@@ -1,0 +1,400 @@
+﻿using ARManila.Models;
+using ARManila.Models.ReportsDTO;
+using ARManila.Reports;
+using CrystalDecisions.CrystalReports.Engine;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Mail;
+using System.Web;
+using System.Web.Mvc;
+
+namespace ARManila.Controllers
+{
+    [Authorize]
+    public class DMCMController : BaseController
+    {
+        LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
+
+        public ActionResult BatchDMCM()
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            ViewBag.sections = new SelectList(db.Section.Where(m => m.PeriodID == periodid).OrderBy(m => m.SectionName), "SectionID", "SectionName");
+            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { ScheduleId = m.ScheduleID, SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID, Description = m.Subject.Description });
+            ViewBag.programs = new SelectList(db.Progam.Where(m => m.EducationLevelId == period.EducLevelID).OrderBy(m => m.ProgramID), "ProgramID", "ProgramCode");
+            ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "AcctName");
+            ViewBag.subaccounts = new SelectList(db.SubChartOfAccounts.OrderBy(m => m.SubbAcctName), "SubAcctID", "SubbAcctName");
+            return View();
+        }
+
+        public ActionResult ListDMCM(int start, int last)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            var dmcms = db.DMCM.Where(m => m.DocNum >= start && m.DocNum <= last);
+            return View(dmcms);
+        }
+        [HttpPost]
+        public ActionResult BatchDMCM(int? sectionid, int? scheduleid, int? programid)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            ViewBag.sections = new SelectList(db.Section.Where(m => m.PeriodID == periodid).OrderBy(m => m.SectionName), "SectionID", "SectionName");
+            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { ScheduleId = m.ScheduleID, SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID });
+            ViewBag.programs = new SelectList(db.Progam.Where(m => m.EducationLevelId == period.EducLevelID).OrderBy(m => m.ProgramID), "ProgramID", "ProgramCode");
+            ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "AcctName");
+            ViewBag.subaccounts = new SelectList(db.SubChartOfAccounts.OrderBy(m => m.SubbAcctName), "SubAcctID", "SubbAcctName");
+            var curriculumids = db.ProgamCurriculum.Where(m => m.ProgramID == programid.Value).Select(m => m.CurriculumID).ToList();
+            var studentsectionids = db.StudentSchedule.Where(m => m.ScheduleID == scheduleid).Select(m => m.StudentSectionID).ToList();
+            var petitionsection = db.Section.Where(m => m.PeriodID == periodid && m.SectionName.Contains("CLAS-PC")).FirstOrDefault();
+            BatchDmcm batch = new BatchDmcm();
+            if (sectionid.HasValue && sectionid == petitionsection.SectionID)
+            {
+                //Get ScheduleID
+                var petitionschedule = db.Schedule.Where(m => m.ScheduleID == scheduleid).FirstOrDefault();
+
+                var studschedpetition = new List<StudentSchedule>();
+                //foreach (var Pschedule in petitionschedule)
+                //{
+                    var sched = db.StudentSchedule.Where(m => m.ScheduleID == petitionschedule.ScheduleID).ToList();
+
+                        foreach (var item in sched)
+                        {
+                            var testdata = db.StudentSchedule.Where(m => m.StudentSectionID == item.StudentSectionID).FirstOrDefault();
+                            studschedpetition.Add(db.StudentSchedule.Where(m => m.StudentSectionID == item.StudentSectionID).FirstOrDefault());
+                        }
+     
+                //}
+                var studsecpetition = new List<Student_Section>();
+                foreach (var Psection in studschedpetition)
+                {
+                    studsecpetition.Add(db.Student_Section.Where(m => m.Student_SectionID == Psection.StudentSectionID).FirstOrDefault());
+                }
+                batch.Students = studsecpetition.OrderBy(m => m.Student.FullName).ToList();
+            }
+            else if (programid.HasValue)
+            {
+                var students = db.Student_Section.Where(m => curriculumids.Contains(m.CurriculumID) && m.ValidationDate.HasValue && m.Section.PeriodID == periodid).OrderBy(m => m.Student.LastName).ToList();
+                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+            }
+            else if (scheduleid.HasValue)
+            {
+                var students = db.Student_Section.Where(m => studentsectionids.Contains(m.Student_SectionID) && m.ValidationDate.HasValue).OrderBy(m => m.Student.LastName.Trim()).ThenBy(m => m.Student.FirstName.Trim()).ToList();
+                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+            }
+            else if (sectionid.HasValue)
+            {
+                var students = db.Student_Section.Where(m => m.SectionID == sectionid && m.ValidationDate.HasValue).ToList();
+                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+            }
+            else
+            {
+                var students = db.Student_Section.Where(m => m.Section.PeriodID == periodid && m.ValidationDate.HasValue).OrderBy(m => m.Student.FullName).ToList();
+                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+            }
+            return View(batch);
+        }
+        [HttpPost]
+        public ActionResult PostBatchDMCM(BatchDmcm model, string IsSelectedAll)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            var account = model.AccountId == 0 ? null : db.ChartOfAccounts.Find(model.AccountId);
+            var subaccount = model.SubaccountId == 0 ? null : db.SubChartOfAccounts.Find(model.SubaccountId);
+            var araccount = db.ChartOfAccounts.Where(m => m.SYID == period.SchoolYearID).FirstOrDefault();
+            var docnumlast = db.DMCM.OrderByDescending(m => m.DocNum).FirstOrDefault().DocNum.Value;
+            var start = docnumlast;
+
+            if (model.IsDebit)
+            {
+                foreach (var i in model.Students)
+                {
+                    if (IsSelectedAll != null && IsSelectedAll.Equals("on"))
+                    {
+                        docnumlast = PostDebitMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                        EMailPostedDMCM(docnumlast);
+                    }
+                    else
+                    {
+                        if (i.IsSelected)
+                        {
+                            docnumlast = PostDebitMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                            EMailPostedDMCM(docnumlast);
+                        }
+                    }
+                }
+                return RedirectToAction("ListDMCM", new { start = start+1, last = docnumlast });
+            }
+            else
+            {
+                foreach (var i in model.Students)
+                {
+                    if (IsSelectedAll != null && IsSelectedAll.Equals("on"))
+                    {                        
+                        docnumlast = PostCreditMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                        EMailPostedDMCM(docnumlast);
+                    }
+                    else
+                    {
+                        if (i.IsSelected)
+                        {
+                            docnumlast = PostCreditMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                            EMailPostedDMCM(docnumlast);
+                        }
+                    }
+                }
+                return RedirectToAction("ListDMCM", new { start = start+1, last = docnumlast });
+            }
+
+        }
+
+        private int PostCreditMemo(BatchDmcm model, int periodid, ChartOfAccounts account, SubChartOfAccounts subaccount, ChartOfAccounts araccount, int docnumlast, Student_Section i)
+        {
+            docnumlast++;
+            DMCM debit = new DMCM();
+            DMCM credit = new DMCM();
+            credit.DocNum = docnumlast;
+            debit.DocNum = docnumlast;
+            credit.Amount = (double)model.Amount;
+            debit.Amount = (double)model.Amount;
+            credit.ChargeToStudentAr = true;
+            debit.ChargeToStudentAr = false;
+            credit.DC = "C";
+            debit.DC = "D";
+            credit.PeriodID = periodid;
+            debit.PeriodID = periodid;
+            credit.Remarks = model.Particular;
+            credit.StudentID = i.StudentID;
+            credit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
+            credit.TransactionDate = model.PostingDate;
+            debit.Remarks = model.Particular;
+            debit.StudentID = i.StudentID;
+            debit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
+            debit.TransactionDate = model.PostingDate;
+            if (subaccount != null)
+            {
+                debit.AcctID = subaccount.AcctID;
+                debit.SubAcctID = subaccount.SubAcctID;
+                debit.AccountName = subaccount.SubbAcctName;
+                debit.AccountNumber = subaccount.SubAcctNo;
+            }
+            else
+            {
+                debit.AcctID = account.AcctID;
+                debit.AccountName = account.AcctName;
+                debit.AcctID = account.AcctID;
+            }
+            credit.AcctID = araccount.AcctID;
+            credit.AccountName = araccount.AcctName;
+            credit.AccountNumber = araccount.AcctNo;
+            db.DMCM.Add(debit);
+            db.DMCM.Add(credit);
+            db.SaveChanges();
+            return docnumlast;
+        }
+
+        private int PostDebitMemo(BatchDmcm model, int periodid, ChartOfAccounts account, SubChartOfAccounts subaccount, ChartOfAccounts araccount, int docnumlast, Student_Section i)
+        {
+            docnumlast++;
+            DMCM debit = new DMCM();
+            DMCM credit = new DMCM();
+            debit.DocNum = docnumlast;
+            credit.DocNum = docnumlast;
+            debit.Amount = (double)model.Amount;
+            credit.Amount = (double)model.Amount;
+            debit.ChargeToStudentAr = true;
+            credit.ChargeToStudentAr = false;
+            debit.DC = "D";
+            credit.DC = "C";
+            debit.PeriodID = periodid;
+            credit.PeriodID = periodid;
+            debit.Remarks = model.Particular;
+            debit.StudentID = i.StudentID;
+            debit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
+            debit.TransactionDate = model.PostingDate;
+            credit.Remarks = model.Particular;
+            credit.StudentID = i.StudentID;
+            credit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
+            credit.TransactionDate = model.PostingDate;
+            if (subaccount != null)
+            {
+                credit.AcctID = subaccount.AcctID;
+                credit.SubAcctID = subaccount.SubAcctID;
+                credit.AccountName = subaccount.SubbAcctName;
+                credit.AccountNumber = subaccount.SubAcctNo;
+            }
+            else
+            {
+                credit.AcctID = account.AcctID;
+                credit.AccountName = account.AcctName;
+                credit.AccountNumber = account.AcctNo;
+            }
+            debit.AcctID = araccount.AcctID;
+            debit.AccountName = araccount.AcctName;
+            debit.AccountNumber = araccount.AcctNo;
+            db.DMCM.Add(debit);
+            db.DMCM.Add(credit);
+            db.SaveChanges();
+            return docnumlast;
+        }
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Index(string studentno)
+        {
+            IQueryable<DMCM> dmcms = GetStudentDMCM(studentno);
+            return View(dmcms);
+        }
+
+        private IQueryable<DMCM> GetStudentDMCM(string studentno)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            var student = db.Student.Where(m => m.StudentNo == studentno).FirstOrDefault();
+            if (student == null) throw new Exception("Invalid student number.");
+            var dmcms = db.DMCM.Where(m => m.StudentID == student.StudentID && m.ChargeToStudentAr == true && m.PeriodID == period.PeriodID);
+            return dmcms;
+        }
+
+        public ActionResult ViewReport(int id)
+        {
+            var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;
+            var fullname = userWithClaims.Claims.First(c => c.Type == "Fullname");
+            using (ReportDocument document = new DMCMReport())
+            {
+                List<DMCMReportDTO> reportdata = GenerateDMCMReport(id, fullname);
+                document.SetDataSource(reportdata);
+                return ExportType(1, "DMCM_" + id, document);
+            }
+        }
+
+        private List<DMCMReportDTO> GenerateDMCMReport(int id, System.Security.Claims.Claim fullname)
+        {
+            List<DMCMReportDTO> reportdata = new List<DMCMReportDTO>();
+            var dmcms = db.GetDMCMByNo(id);
+            foreach (var i in dmcms)
+            {
+                reportdata.Add(new DMCMReportDTO
+                {
+                    AccountName = i.AcctName,
+                    Amount = i.Amount ?? 0,
+                    Credit = (decimal)(i.Credit ?? 0),
+                    Debit = (decimal)(i.Debit ?? 0),
+                    Curriculum = i.Curriculum,
+                    DocumentNumber = i.DocNum ?? 0,
+                    EducationalLevelName = i.EducLevelName,
+                    Message = i.Message,
+                    PeriodName = i.Period + ", " + i.SchoolYearName,
+                    PreparedBy = fullname.Value,
+                    Remarks = i.Remarks,
+                    StudentName = i.StudentName,
+                    StudentNumber = i.StudentNo,
+                    TransactionDate = i.TransactionDate.Value,
+                    Type = i.Type.FirstOrDefault()
+                });
+            }
+
+            return reportdata;
+        }
+
+        public ActionResult EMailDMCM(int id)
+        {
+            try
+            {
+                using (ReportDocument document = new DMCMReport())
+                {
+                    var user = db.AspNetUsers.Where(m => m.UserName == User.Identity.Name).FirstOrDefault();
+                    var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;
+                    var fullname = userWithClaims.Claims.First(c => c.Type == "Fullname");
+                    var dmcm = db.DMCM.Where(m => m.DocNum == id).FirstOrDefault();
+                    var studentemail = db.AspNetUsers.Where(m => m.UserName == dmcm.Student.StudentNo).FirstOrDefault();
+                    MailMessage mail = new MailMessage();
+                    SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                    var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
+                    const string fromPassword = "Boo18!<3";
+                    mail.From = fromAddress;
+                    mail.CC.Add(new MailAddress(user.Email));
+
+                    mail.To.Add(studentemail.Email);
+                    //mail.To.Add("phea.regala@letran.edu.ph");
+                    //mail.To.Add("christopher.seno@letran.edu.ph");
+                    mail.Body = "Please see the attached debit or credit memo.";
+                    mail.Subject = "Debit/Credit Memo";
+                    mail.IsBodyHtml = true;
+
+                    List<DMCMReportDTO> reportdata = GenerateDMCMReport(id, fullname);
+                    document.SetDataSource(reportdata);
+                    mail.Attachments.Add(new Attachment(document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "SOA.pdf"));
+
+                    mail.IsBodyHtml = true;
+                    SmtpServer.Port = 587;
+                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
+                    SmtpServer.EnableSsl = true;
+                    SmtpServer.Send(mail);
+                    IQueryable<DMCM> dmcms = GetStudentDMCM(dmcm.Student.StudentNo);
+                    return View("Index", dmcms);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int EMailPostedDMCM(int id)
+        {
+            try
+            {
+                using (ReportDocument document = new DMCMReport())
+                {
+                    var user = db.AspNetUsers.Where(m => m.UserName == User.Identity.Name).FirstOrDefault();
+                    var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;
+                    var fullname = userWithClaims.Claims.First(c => c.Type == "Fullname");
+                    var dmcm = db.DMCM.Where(m => m.DocNum == id).FirstOrDefault();
+                    var student = db.Student.Where(m => m.StudentID == dmcm.StudentID).FirstOrDefault();
+                    var studentemail = db.AspNetUsers.Where(m => m.UserName == student.StudentNo).FirstOrDefault();
+                    MailMessage mail = new MailMessage();
+                    SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                    var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
+                    const string fromPassword = "Boo18!<3";
+                    mail.From = fromAddress;
+                    mail.CC.Add(new MailAddress(user.Email));
+
+                    mail.To.Add(studentemail.Email);
+                    //mail.To.Add("christopher.seno@letran.edu.ph");
+                    mail.Body = "Please see the attached debit or credit memo.";
+                    mail.Subject = "Debit/Credit Memo";
+                    mail.IsBodyHtml = true;
+
+                    List<DMCMReportDTO> reportdata = GenerateDMCMReport(id, fullname);
+                    document.SetDataSource(reportdata);
+                    mail.Attachments.Add(new Attachment(document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "SOA.pdf"));
+
+                    mail.IsBodyHtml = true;
+                    SmtpServer.Port = 587;
+                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
+                    SmtpServer.EnableSsl = true;
+                    SmtpServer.Send(mail);
+                    IQueryable<DMCM> dmcms = GetStudentDMCM(dmcm.Student.StudentNo);
+                    return id;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }               
+    }
+}

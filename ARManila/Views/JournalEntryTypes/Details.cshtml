@@ -1,0 +1,42 @@
+﻿@model ARManila.Models.JournalEntryType
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>JournalEntryType</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.JounalEntryTypeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JounalEntryTypeName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PostingMessage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PostingMessage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JournalCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JournalCode)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.JournalEntryTypeId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

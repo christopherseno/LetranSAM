@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "EnrollmentStat";
+}
+
+<div class="p-2">
+    <div class="row">
+        <h2>Enrollment Statistics</h2>
+        <input class="js-flatpickr form-control" data-date-format="Y-m-d" placeholder="Select Date" type="date" id="enddate" name="enddate" class="form-control" />
+        <button class="btn btn-primary" id="enrollmentstatbutton">Load Data</button>
+    </div>
+
+    <div class="row">
+        <div class="block">
+            <div class="block-content">
+                <div class="table-responsive">
+                    <table id="table" class="table table-responsive table-bordered table-striped table-vcenter">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#enrollmentstatbutton").click(function () {
+                getEnrollmentStat();
+            });
+            $("#linkClose").click(function () {
+                $("#divError").hide('fade');
+            });
+        });
+        function getEnrollmentStat() {
+            var enddate = $("#enddate").val();
+            var periodid = $("#PeriodId").val();
+            var enrollmentstattable = $("#table");
+            $.ajax({
+                type: "GET",
+                url: "https://api.letran.edu.ph/enrollmentstat/" + periodid + "/" + enddate,
+                beforeSend: function (data) {
+                    Codebase.layout('header_loader_on');                   
+                },
+                complete: function (data) {
+                    Codebase.layout('header_loader_off');                    
+                },
+                success: function (data) {
+                    var asstodate = 0;
+                    var asstoday = 0;
+                    var enrtodate = 0;
+                    var enrtoday = 0;
+                    var asstodatef = 0;
+                    var asstodayf = 0;
+                    var enrtodatef = 0;
+                    var enrtodayf = 0;
+                    enrollmentstattable.empty();                    
+                    enrollmentstattable.append('<thead class="thead-dark"><tr><th rowspan=2>Department</th><th rowspan=2>Year Level</th><th colspan=2>Assessed To date</th>' +
+                        '<th colspan=2>Assessed Today</th><th colspan=2>Enrolled To date</th><th colspan=2>Enrolled Today</th></tr><tr><th>All</th><th>New</th>' +
+                        '<th>All</th><th>New</th><th>All</th><th>New</th><th>All</th><th>New</th></tr></thead > <tbody>');
+                    var previous = null;
+                    $.each(data, function (index, val) {
+
+                        enrollmentstattable.append('<tr><td>' + (previous == null || previous.AcaAcronym != val.AcaAcronym ? val.AcaAcronym : "") + '</td>' +
+                                '<td align="center">' + val.GradeYear + '</td><td>' + val.AssTodate + '</td>'
+                                + '<td>' + val.AssessmentToDateFCount + '</td>' +
+                                '<td>' + val.AssToday + '</td>' + '<td>' + val.AssessmentTodayFCount + '</td>' + '<td>' + val.EnrTodate + '</td>'
+                                + '<td>' + val.EnrollmentToDateFCount + '</td>' + '<td>' + val.EnrToday + '</td>'
+                                + '<td>' + val.EnrollmentTodayFCount + '</td>' + '</tr>');
+                            asstoday += val.AssToday;
+                            asstodate += val.AssTodate;
+                            enrtodate += val.EnrTodate;
+                            enrtoday += val.EnrToday;
+                            asstodayf += val.AssessmentTodayFCount;
+                            asstodatef += val.AssessmentToDateFCount;
+                            enrtodatef += val.EnrollmentToDateFCount;
+                            enrtodayf += val.EnrollmentTodayFCount;
+                        
+                        previous = this;
+                    });
+                    enrollmentstattable.append('</tbody>');
+                    enrollmentstattable.append('<tfoot><tr><td colspan="2"></td><td>' + asstodate + '</td><td>' + asstodatef + '</td><td>' + asstoday + '</td><td>' + asstodayf + '</td><td>'
+                        + enrtodate + '</td ><td>' + enrtodatef + '</td ><td>' + enrtoday + '</td ><td>' + enrtodayf + '</td></tr ></tfoot > ');
+                    
+                },
+                error: function (data, x, y) {
+                    var error = JSON.parse(data.responseText);
+                    enrollmentstattable.empty();                    
+                    Codebase.layout('header_loader_off');
+                    Swal.fire(error.Message);
+                }
+            });
+        }
+
+
+    </script>
+}

@@ -1,0 +1,159 @@
+﻿@model IEnumerable<ARManila.Models.DMCM>
+@{
+    ViewBag.Title = "AR Query Page";
+}
+
+
+<div class="p-4 content">
+    <input type="button" class="btn btn-danger" id="studentfinderbutton" value="Student No Finder" />
+    <form method="post" action="~/DMCM/Index">
+        <input type="text" name="studentno" id="studentno" placeholder="Student No" />
+        <input type="submit" value="View DMCM" />
+    </form>
+    @if (Model != null && Model.Count() > 0 )
+    {
+        <hr />
+        <h3>List of Debit and Credit Memos</h3>        
+        <table id="table1" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Student No</th>
+                    <th>Student Name</th>
+                    <th>Date</th>
+                    <th>Doc No</th>
+                    <th>Account</th>
+                    <th>Accnt No</th>
+                    <th>Debit</th>
+                    <th>Credit</th>
+                    <th>Remarks</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var i in Model)
+                {
+                <tr>
+                    <td>Student No</td>
+                    <td>Student Name</td>
+                    <td>@i.TransactionDate.Value.ToShortDateString()</td>
+                    <td>@i.DocNum</td>
+                    <td>@i.AccountName</td>
+                    <td>@i.AccountNumber</td>
+                    <td>@(i.DC=="D" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
+                    <td>@(i.DC=="C" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
+                    <td>@i.Remarks</td>
+                    <td>@Html.ActionLink("View", "ViewReport", new { id=i.DocNum}, new{ @target ="_blank" })</td>
+                    <td>@Html.ActionLink("Send Email", "EMailDMCM", new { id = i.DocNum })</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+
+
+</div>
+
+<div class="modal" id="searchstudentmodal" tabindex="-1" role="dialog" aria-labelledby="modal-extra-large" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Search Student</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="block-content fs-sm">
+
+                    <div class="mb-4">
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" id="searchstudenttext" placeholder="Enter Lastname or Firstname">
+                            <button type="button" class="btn btn-primary" id="searchstudentbutton">
+                                <i class="fa fa-search me-1"></i> Search
+                            </button>
+
+                        </div>
+                    </div>
+
+                    @*<input type="text" class="input-group" id="searchstudenttext" placeholder="Enter Lastname or Firstname" />
+                        <button class="btn btn-primary" id="searchstudentbutton">Search</button>
+                        <button class="buttonload" style="display:none" id="searchstudentloading">
+                            <i class="fa fa-spinner fa-spin"></i>Loading
+                        </button>*@
+                    <div class="table-responsive">
+                        <table id="searchstudenttable" class="table table-striped table-bordered"><thead><tr><td>Student No</td><td>Last Name</td><td>First Name</td><td>Prgram</td></tr></thead></table>
+                    </div>
+
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#studentno").keyup(function (e) {
+                if (e.keyCode == 13) {
+                    getARQuery();
+                }
+            });
+            $("#linkClose").click(function () {
+                $("#divError").hide('fade');
+            });
+            $("#studentfinderbutton").click(function () {
+                $("#searchstudenttext").val("");
+                $('#searchstudenttable').empty();
+                $("#searchstudentmodal").modal('show');
+            });
+            $("#searchstudentbutton").click(function () {
+                getStudents($("#searchstudenttext").val());
+
+            });
+        });
+        function getStudentNo(sn) {
+            $("#studentno").val(sn);
+            $("#searchstudentmodal").modal('hide');
+        }
+        function getStudents(searchtext) {
+            $.ajax({
+                type: "GET",
+                url: "https://api.letran.edu.ph/SearchStudent/" + searchtext,                
+                beforeSend: function (data) {
+                    $("#searchstudentloading").css("display", "inline");
+                },
+                complete: function (data) {
+                    $("#searchstudentloading").css("display", "none");
+                },
+                success: function (data) {
+
+                    var searchstudenttable = $('#searchstudenttable');
+                    searchstudenttable.empty();
+                    searchstudenttable.append('<thead class="thead-dark"><tr><th>Student No</th><th>Last Name</th><th>First Name</th>' +
+                        '<th>Program</th></tr ></thead > <tbody>');
+                    $.each(data, function (index, val) {
+                        searchstudenttable.append('<tr><td><a href="#" onclick="getStudentNo(' + val.StudentNo + ')">' + val.StudentNo + '</a></td><td>' + val.LastName + '</td>' +
+                            '<td>' + val.FirstName + '</td><td>' + val.Program + '</td></tr>');
+                    });
+                },
+                error: function (data) {
+                    
+                }
+            });
+        }
+    </script>
+}
+
+

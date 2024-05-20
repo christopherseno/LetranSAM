@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ARManila.Models.SubChartOfAccounts>
+
+@{
+    ViewBag.Title = "SubLedgerSetup";
+}
+
+<h2>Subsidiary Ledger - QNE Setup</h2>
+
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+    <thead>
+        <tr>
+            <th>
+                Account No
+            </th>
+            <th>Description</th>
+            <th>
+                QNE Code
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubAcctNo)
+                </td>
+                <td>@Html.DisplayFor(m=>item.SubbAcctName)</td>
+                <td>
+                    @(item.QNEAccountCode != null ? item.QNEAccountCode : "")
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditSubLedgerSetup", new { id = item.SubAcctID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
