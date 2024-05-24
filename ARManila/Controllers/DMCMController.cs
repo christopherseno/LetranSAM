@@ -23,10 +23,13 @@ namespace ARManila.Controllers
             var period = db.Period.Find(periodid);
             if (period == null) throw new Exception("Invalid period id.");
             ViewBag.sections = new SelectList(db.Section.Where(m => m.PeriodID == periodid).OrderBy(m => m.SectionName), "SectionID", "SectionName");
-            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { ScheduleId = m.ScheduleID, SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID, Description = m.Subject.Description });
-            ViewBag.programs = new SelectList(db.Progam.Where(m => m.EducationLevelId == period.EducLevelID).OrderBy(m => m.ProgramID), "ProgramID", "ProgramCode");
+            ViewBag.sectionsubjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID, Description = m.Subject.Description, SubjectId= m.SubjectID });
+            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { SubjectCode = m.Subject.SubjectCode, Description = m.Subject.Description, SubjectId = m.SubjectID });
+            var curriculumids = db.Section.Where(m => m.PeriodID == periodid).Select(m => m.CurriculumID).Distinct().ToList();
+            var programids = db.ProgamCurriculum.Where(m => curriculumids.Contains(m.CurriculumID)).Select(m => m.ProgramID).ToList();
+            ViewBag.programs = new SelectList(db.Progam.Where(m => programids.Contains(m.ProgramID)).OrderBy(m => m.ProgramID), "ProgramID", "ProgramCode");
             ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "AcctName");
-            ViewBag.subaccounts = new SelectList(db.SubChartOfAccounts.OrderBy(m => m.SubbAcctName), "SubAcctID", "SubbAcctName");
+            ViewBag.subaccounts = db.SubChartOfAccounts.Select(m=> new { AcctID = m.AcctID, SubAcctID=m.SubAcctID, SubbAcctName = m.SubbAcctName}).OrderBy(m => m.SubbAcctName);
             return View();
         }
 

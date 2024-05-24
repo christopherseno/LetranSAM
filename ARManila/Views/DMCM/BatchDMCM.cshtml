@@ -6,34 +6,41 @@
 
 <div class="p-3">
     <h2>Batch DMCM</h2>
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("BatchDMCM", "DMCM", FormMethod.Post))
     {
-        <h3>
-            Section:
-            @Html.DropDownList("sectionid", (IEnumerable<SelectListItem>)ViewBag.sections, "", null)
-        </h3>
-        <h3>
-            Subject:
-            <select id="scheduleid" name="scheduleid"></select>
-        </h3>
-        <h3>
-            Program:
-            @Html.DropDownList("programid", (IEnumerable<SelectListItem>)ViewBag.programs, "", null)
-        </h3>
-        <input type="submit" value="Load Students" />
+        <div class="row mb-4">
+            <div class="col-4">
+                <label for="programid" class="form-label">Program:</label>
+                @Html.DropDownList("programid", (IEnumerable<SelectListItem>)ViewBag.programs, "", new { @class = "form-select" })
+            </div>
+            <div class="col-4">
+                <label for="sectionid" class="form-label">Section:</label>
+                @Html.DropDownList("sectionid", (IEnumerable<SelectListItem>)ViewBag.sections, "", new { @class = "form-select" })
+            </div>
+            <div class="col-4">
+                <label for="subjectid" class="form-label">Subject:</label>
+                <select id="subjectid" name="scheduleid" class="form-select"></select>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-4">
+                <input type="submit" value="Load Students" class="form-control btn btn-primary" />
+            </div>
+        </div>
     }
-    @using (Html.BeginForm("PostBatchDmcm", "DMCM", FormMethod.Post))
+
+    @if (Model != null && Model.Students != null && Model.Students.Count() > 0)
     {
-        <h3 class="col-md-12">@Html.EditorFor(m => m.IsDebit) Is debit?</h3>
-        <h3 class="col-md-12">Account Code: @Html.DropDownListFor(m => m.AccountId, (SelectList)ViewBag.accounts, "", null) </h3>
-        <h3 class="col-md-12">SubLedger Code @Html.DropDownListFor(m => m.SubaccountId, (SelectList)ViewBag.subaccounts, "", null) </h3>
-        <h3 class="col-md-12">Amount @Html.TextBoxFor(m => m.Amount, "", new { @type = "number", @class = "text-align: right" }) </h3>
-        <h3 class="col-md-12">Particulars: @Html.TextBoxFor(m => m.Particular, "")</h3>
-        <h3>Posting Date: @Html.TextBoxFor(m=>m.PostingDate, "",new {@type="Date" })</h3>
-        <h3><input type="submit" value="Post" /></h3>
-        <h3><input type="checkbox" id="IsSelectedAll" name="IsSelectedAll" /> Apply to all students</h3>
-        if (Model != null && Model.Students != null && Model.Students.Count() > 0)
+        using (Html.BeginForm("PostBatchDmcm", "DMCM", FormMethod.Post))
         {
+            <h3 class="col-md-12">@Html.EditorFor(m => m.IsDebit) Is debit?</h3>
+            <h3 class="col-md-12">Account Code: @Html.DropDownListFor(m => m.AccountId, (SelectList)ViewBag.accounts, "", null) </h3>
+            <h3 class="col-md-12">SubLedger Code @Html.DropDownListFor(m => m.SubaccountId, (SelectList)ViewBag.subaccounts, "", null) </h3>
+            <h3 class="col-md-12">Amount @Html.TextBoxFor(m => m.Amount, "", new { @type = "number", @class = "text-align: right" }) </h3>
+            <h3 class="col-md-12">Particulars: @Html.TextBoxFor(m => m.Particular, "")</h3>
+            <h3>Posting Date: @Html.TextBoxFor(m => m.PostingDate, "", new { @type = "Date" })</h3>
+            <h3><input type="submit" value="Post" /></h3>
+            <h3><input type="checkbox" id="IsSelectedAll" name="IsSelectedAll" /> Apply to all students</h3>
             <table class="table table-bordered table-striped table-vcenter">
                 <thead>
                     <tr>
@@ -90,29 +97,37 @@
             $("#chkselectall").click(function () {
 
             });
-            var periods = new Array();
-            var periodarray = @Html.Raw(Json.Encode(ViewBag.subjects));
-            for (var i = 0; i < periodarray.length; i++) {
-                periods[i] = periodarray[i];
-            }            
-            $("#sectionid").change(function () {                
+
+            var subjectarray = @Html.Raw(Json.Encode(ViewBag.subjects));
+
+            $("#sectionid").change(function () {
                 LoadSubject($("#sectionid").val());
             });
-            $("#scheduleid").change(function () {
-                for (var i = 0; i < periodarray.length; i++) {
-                    if (periodarray[i].ScheduleId == $("#scheduleid").val()) {
-                        $("#particular").val(periodarray[i].SubjectCode + '-' + periodarray[i].Description);
+            $("#subjectid").change(function () {
+                if ($("#sectionid").val() !== "") {                    
+                    var sectionsubjectarray = @Html.Raw(Json.Encode(ViewBag.sectionsubjects));
+                    for (var i = 0; i < sectionsubjectarray.length; i++) {
+                        if (sectionsubjectarray[i].subjectid == $("#subjectid").val()) {
+                            $("#particular").val(sectionsubjectarray[i].SubjectCode + '-' + sectionsubjectarray[i].Description);
+                        }
+                    }
+                }
+                else {
+                    for (var i = 0; i < subjectarray.length; i++) {
+                        if (subjectarray[i].ScheduleId == $("#scheduleid").val()) {
+                            $("#particular").val(subjectarray[i].SubjectCode + '-' + subjectarray[i].Description);
+                        }
                     }
                 }
 
-               
+
             });
 
             function LoadSubject(sectionid) {
-               
+
                 $("#scheduleid").empty();
                 for (var i = 0; i < periodarray.length; i++) {
-                    if (periodarray[i].SectionId == sectionid) {                        
+                    if (periodarray[i].SectionId == sectionid) {
                         var option = $("<option />");
                         option.attr("value", periodarray[i].ScheduleId).text(periodarray[i].SubjectCode);
                         $("#scheduleid").append(option);
