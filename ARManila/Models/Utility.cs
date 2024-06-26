@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatabaseEncryption;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -39,8 +40,9 @@ namespace ARManila.Models
     {
         public static string Decrypt(string passphrase, int type)
         {
+           
             string data = "";
-            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;            
             SqlConnection conn = new SqlConnection(connectionString);
             conn.Open();
             SqlCommand command = new SqlCommand("SELECT dbo.DecryptStudent(@passphrase, @plaintext, @type)", conn);
@@ -51,6 +53,23 @@ namespace ARManila.Models
             data = command.ExecuteScalar().ToString();
             conn.Close();
             return data;
+        }
+        public static string Decrypt256(string encryptedstring)
+        {
+            string decryptedstring = "";
+            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            string[] connectionStringParts = connectionString.Split(';');
+            string dataSource = "";
+            foreach (string part in connectionStringParts)
+            {
+                if (part.StartsWith("Data Source="))
+                {
+                    dataSource = part.Split('=')[1].Trim();
+                    break;
+                }
+            }
+            decryptedstring = Encryption.DecryptStringFromBytes_Aes(encryptedstring, "13061025", "-951Han5", dataSource);           
+            return decryptedstring;
         }
         public static string DecryptEmployee(string passphrase, int type)
         {

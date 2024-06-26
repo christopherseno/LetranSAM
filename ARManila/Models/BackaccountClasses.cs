@@ -13,6 +13,7 @@ namespace ARManila.Models
         public double? Amount { get; set; }
         public int? PeriodId { get; set; }
         public int? StudentId { get; set; }
+        public int? FromAssessmentId { get; set; }
         public string StudentNo { get; set; }
         public string StudentName { get; set; }
         public string Period { get; set; }
@@ -21,16 +22,18 @@ namespace ARManila.Models
         public int? AssessmentPeriodId { get; set; }
         public List<BackaccountPaymentWrapper> BackaccountPaymentWrappers { get; set; }
         public List<BackaccountDMCMWrapper> BackaccountDMCMWrappers { get; set; }
+        public List<BackaccountPaymentWrapper> FloatingBackaccountPaymentWrappers { get; set; }
 
     }
     public class BackaccountPaymentWrapper
     {
         public int BackaccountPaymentId { get; set; }
-        public int BackaccountId { get; set; }
+        public int? BackaccountId { get; set; }
         public int? PaymentId { get; set; }
         public string ORNo { get; set; }
         public double? Amount { get; set; }
         public DateTime PaymentDate { get; set; }
+        public string Remarks { get; set; }
     }
     public class BackaccountDMCMWrapper
     {

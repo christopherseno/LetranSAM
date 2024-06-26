@@ -102,7 +102,14 @@ namespace ARManila.Models
         {
             get
             {
-                return Utility.Decrypt(StudentNo, 2) + ", " + Utility.Decrypt(StudentNo, 1);
+                if (this.LastName256 == null || this.LastName256.Length < 0)
+                {
+                    return Utility.Decrypt(StudentNo, 2) + ", " + Utility.Decrypt(StudentNo, 1);
+                }
+                else
+                {
+                    return Utility.Decrypt256(this.LastName256) + ", " + Utility.Decrypt256(this.FirstName256); 
+                }
             }
         }
         public string DLastName

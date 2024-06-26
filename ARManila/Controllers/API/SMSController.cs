@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Web.Http;
 
 namespace ARManila.Controllers
@@ -31,6 +32,41 @@ namespace ARManila.Controllers
                 {
                     return InternalServerError();
                 }
+            }
+
+        }
+        [HttpGet]
+        [Route("Email")]
+        public IHttpActionResult SendEmail(string recipient, string sender, string subject, string message)
+        {
+            try
+            {
+                var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
+                const string fromPassword = "Boo18!<3";
+
+                SmtpClient smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+                MailMessage mail = new MailMessage();
+                mail.IsBodyHtml = true;
+                mail.From = fromAddress;                
+                mail.To.Add(recipient);
+                mail.CC.Add(sender);
+                
+                mail.Subject = subject;
+                mail.Body = message;
+                smtp.Send(mail);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
             }
 
         }

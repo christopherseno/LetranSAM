@@ -117,6 +117,8 @@ namespace ARManila.Controllers
                     StudentId = backaccount.StudentID
                 };
                 var student = db.Student.Find(backaccount.StudentID);
+                var fromenrollment = db.Student_Section.FirstOrDefault(m => m.StudentID == backaccount.StudentID && m.Section.PeriodID == backaccount.SemID);
+                backaccountwrapper.FromAssessmentId = fromenrollment?.Student_SectionID;
                 backaccountwrapper.StudentNo = student.StudentNo;
                 backaccountwrapper.StudentName = student.FullName;
                 if (backaccount.Student_SectionID.HasValue)
@@ -124,10 +126,10 @@ namespace ARManila.Controllers
                     var assessment = db.Student_Section.Find(backaccount.Student_SectionID);
                     backaccountwrapper.AssessmentId = assessment.Student_SectionID;
                     backaccountwrapper.AssessmentPeriodId = assessment.Section.PeriodID;
-                    backaccountwrapper.AssessmentPeriod = assessment.Section.Period.SchoolYear.SchoolYearName + ", " + assessment.Section.Period.Period1;
+                    backaccountwrapper.AssessmentPeriod = assessment.Section.Period.FullName;
                 }
                 var period = db.Period.Find(backaccount.SemID);
-                backaccountwrapper.Period = period.SchoolYear.SchoolYearName + ", " + period.Period1;
+                backaccountwrapper.Period = period.FullName;
 
                 GetBackaccountPaymentDMCM(backaccount, backaccountwrapper);
 
@@ -151,6 +153,7 @@ namespace ARManila.Controllers
                 backaccountPaymentWrapper.ORNo = item.Payment.ORNo;
                 backaccountPaymentWrapper.PaymentDate = item.Payment.DateReceived;
                 backaccountPaymentWrapper.PaymentId = item.PaymentID;
+                backaccountPaymentWrapper.Remarks = item.Payment.StudentID.HasValue ? item.Payment.Period.FullName : item.Payment.CheckNo;
                 backaccountwrapper.BackaccountPaymentWrappers.Add(backaccountPaymentWrapper);
             }
             /* for future use

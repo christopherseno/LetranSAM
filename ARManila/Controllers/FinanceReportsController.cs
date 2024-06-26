@@ -51,6 +51,12 @@ namespace ARManila.Controllers
         {
             return View();
         }
+        public ActionResult ARDetailsWithBalance(List<Period> periodids, DateTime asofdate, Dictionary<int, List<Period>> consolidatedperiodids)
+        {
+            ARSetupSummary summary = new ARSetupSummary();
+            GetARSummaryDataViaArTrail(periodids, asofdate, summary, consolidatedperiodids);
+            return View(summary);
+        }
 
         [HttpPost]
         public ActionResult ARSetupSummary(DateTime asofdate, int viewas, string isconsolidated, string isschoolyear)
@@ -273,6 +279,7 @@ namespace ARManila.Controllers
             summary.TotalStudentsWithBalance.Item = "";
             summary.CollectionPercent1.Item = "Collections in %age";
             summary.ARBalancePercent1.Item = "A/R Balance in %age";
+            var noofstudentswithbalancerunninglist = new List<StudentCount>();            
             if (consolidatedperiodids.Count() > 0)
             {
                 summary.ARSetupSummaryConsolidatedItems.Add(1, new ARSetupSummaryConsolidatedItem { Item = "Basic Ed", ARFeesSetup = 0, ARBalance = 0 });
@@ -304,8 +311,10 @@ namespace ARManila.Controllers
                         var artrails = db.ArTrail2024(item.PeriodID, asofdate).ToList();
                         List<StudentCount> templist = artrails.Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
                         studentnos.AddRange(templist);
+                        List<StudentCount> templistnobalance = artrails.Where(m => m.ArBalance <= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();                        
                         List<StudentCount> templistbalance = artrails.Where(m => m.ArBalance > 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
                         studentnoswithbalance.AddRange(templistbalance);
+                        studentnoswithbalance = studentnoswithbalance.Where(m => !templistnobalance.Any(p => p.StudentNo == m.StudentNo)).ToList();
                         SumARSetupData(summary, consolidatedperiod.Key, artrails);
 
                         switch (item.EducLevelID.Value)
@@ -337,10 +346,11 @@ namespace ARManila.Controllers
                         }
                     }
 
-                }
+                }                
                 var arsetuptotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARFeesSetup);
                 var arbalancetotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARBalance);
-                summary.TotalStudent.TotalRW = studentnos.Select(student => student.StudentNo).Distinct().Count();
+                var enrolledstudents = studentnos.Select(student => student.StudentNo).Distinct();
+                summary.TotalStudent.TotalRW = enrolledstudents.Count();
                 summary.TotalStudentsWithBalance.TotalRW = studentnoswithbalance.Select(student => student.StudentNo).Distinct().Count();
                 summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
                 summary.CollectionPercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : 1 - summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
@@ -351,6 +361,7 @@ namespace ARManila.Controllers
             else
             {
                 int i = 0;
+                List<StudentCount> studentnosnobalance = new List<StudentCount>();
                 List<StudentCount> studentnos = new List<StudentCount>();
                 List<StudentCount> studentnoswithbalance = new List<StudentCount>();
                 foreach (var item in periodids)
@@ -361,14 +372,20 @@ namespace ARManila.Controllers
                         summary.ARBalance.IsARTotalUsingBeginningBalance = true;
                     }
                     var artrails = db.ArTrail2024(item.PeriodID, asofdate).ToList();
-                    List<StudentCount> templist = artrails.Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                    studentnos.AddRange(templist);
-                    List<StudentCount> templistbalance = artrails.Where(m => m.ArBalance >= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                    studentnoswithbalance.AddRange(templistbalance);
-                    summary.Periods.Add(item.Period1);
-                    SumARSetupData(summary, i, artrails);
-                    i++;
+                    if (artrails.Count > 1)
+                    {
+                        List<StudentCount> templist = artrails.Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
+                        studentnos.AddRange(templist);
+                        List<StudentCount> templistnobalance = artrails.Where(m => m.ArBalance <= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
+                        studentnosnobalance = templistnobalance;
+                        List<StudentCount> templistbalance = artrails.Where(m => m.ArBalance >= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
+                        studentnoswithbalance.AddRange(templistbalance);
+                        summary.Periods.Add(item.Period1);
+                        SumARSetupData(summary, i, artrails);
+                        i++;
+                    }
                 }
+                studentnoswithbalance = studentnoswithbalance.Where(m => !studentnosnobalance.Any(p => p.StudentNo == m.StudentNo)).ToList();
                 summary.TotalStudent.TotalRW = studentnos.Select(student => student.StudentNo).Distinct().Count();
                 summary.TotalStudentsWithBalance.TotalRW = studentnoswithbalance.Select(student => student.StudentNo).Distinct().Count();
                 summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
