@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="LetranIntegratedSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BackaccountTransactionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime" Nullable="false" />
+          <Property Name="Remarks" Type="varchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="EducationalLevelDepartment">
           <Key>
             <PropertyRef Name="Id" />
@@ -215,6 +224,7 @@
           <Property Name="TuitionDiscountRate" Type="decimal" Precision="18" Scale="2" />
           <Property Name="TotalUnits" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MaxUnit" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TuitionForDiscount" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="AssessmentPaymentDate">
           <Key>
@@ -3095,6 +3105,11 @@
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="asofdate" Type="date" Mode="In" />
         </Function>
+        <Function Name="ArTrailByStudent" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
+          <Parameter Name="periodid" Type="int" Mode="In" />
+          <Parameter Name="asofdate" Type="date" Mode="In" />
+          <Parameter Name="studentid" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetCollectionSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="asofdate" Type="date" Mode="In" />
@@ -3380,6 +3395,7 @@
           <Parameter Name="deptid" Type="int" Mode="In" />
         </Function>
         <EntityContainer Name="LetranIntegratedSystemModelStoreContainer">
+          <EntitySet Name="BackaccountTransactionLog" EntityType="Self.BackaccountTransactionLog" Schema="AR" store:Type="Tables" />
           <EntitySet Name="EducationalLevelDepartment" EntityType="Self.EducationalLevelDepartment" Schema="AR" store:Type="Tables" />
           <EntitySet Name="GradeLevel" EntityType="Self.GradeLevel" Schema="AR" store:Type="Tables" />
           <EntitySet Name="JournalEntryType" EntityType="Self.JournalEntryType" Schema="AR" store:Type="Tables" />
@@ -4182,6 +4198,7 @@
           <Property Name="MaxUnit" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Assessment_Student_Section" FromRole="Assessment" ToRole="Student_Section" />
           <NavigationProperty Name="Fee" Relationship="LetranIntegratedSystemModel.FK_Assessment_Fee" FromRole="Assessment" ToRole="Fee" />
+          <Property Name="TuitionForDiscount" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="AssessmentPaymentDate">
           <Key>
@@ -7354,6 +7371,12 @@
             <Parameter Name="periodid" Mode="In" Type="Int32" />
             <Parameter Name="asofdate" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="ArTrailByStudent" ReturnType="Collection(LetranIntegratedSystemModel.ArTrailByStudent_Result)">
+            <Parameter Name="periodid" Mode="In" Type="Int32" />
+            <Parameter Name="asofdate" Mode="In" Type="DateTime" />
+            <Parameter Name="studentid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="BackaccountTransactionLog" EntityType="LetranIntegratedSystemModel.BackaccountTransactionLog" />
           </EntityContainer>
         <EntityType Name="SMSLog">
           <Key>
@@ -9004,6 +9027,44 @@
           <Property Type="String" Name="GLCode" Nullable="true" MaxLength="10" />
           <Property Type="Int32" Name="AcaDeptID" Nullable="false" />
         </ComplexType>
+        <ComplexType Name="ArTrailByStudent_Result">
+          <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
+          <Property Type="Double" Name="Assessment" Nullable="false" />
+          <Property Type="Double" Name="TuitionFee" Nullable="false" />
+          <Property Type="Double" Name="MiscFee" Nullable="false" />
+          <Property Type="Double" Name="LabFee" Nullable="false" />
+          <Property Type="Double" Name="VariousFee" Nullable="false" />
+          <Property Type="Double" Name="Balance" Nullable="false" />
+          <Property Type="Double" Name="DNForm" Nullable="false" />
+          <Property Type="Double" Name="CMForm" Nullable="false" />
+          <Property Type="Double" Name="DebitMemo" Nullable="false" />
+          <Property Type="Double" Name="CreditMemo" Nullable="false" />
+          <Property Type="Double" Name="Discount" Nullable="false" />
+          <Property Type="Double" Name="Voucher" Nullable="false" />
+          <Property Type="Double" Name="AdjDiscount" Nullable="false" />
+          <Property Type="Decimal" Name="Payment" Nullable="false" Precision="38" Scale="2" />
+          <Property Type="Double" Name="Processing" Nullable="false" />
+          <Property Type="DateTime" Name="ValidationDate" Nullable="true" />
+          <Property Type="DateTime" Name="AssessmentDate" Nullable="true" />
+          <Property Type="Int32" Name="PeriodID" Nullable="true" />
+          <Property Type="String" Name="AcaAcronym" Nullable="true" MaxLength="10" />
+          <Property Type="Int16" Name="GradeYear" Nullable="false" />
+          <Property Type="String" Name="Paymode" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="EducLevelName" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="Period" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="SchoolYearName" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="GLCode" Nullable="true" MaxLength="10" />
+          <Property Type="Int32" Name="AcaDeptID" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="BackaccountTransactionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Remarks" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -9080,6 +9141,7 @@
           <EntitySetMapping Name="Assessment">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Assessment">
               <MappingFragment StoreEntitySet="Assessment">
+                <ScalarProperty Name="TuitionForDiscount" ColumnName="TuitionForDiscount" />
                 <ScalarProperty Name="AssessmentID" ColumnName="AssessmentID" />
                 <ScalarProperty Name="Student_SectionID" ColumnName="Student_SectionID" />
                 <ScalarProperty Name="FeeID" ColumnName="FeeID" />
@@ -11035,6 +11097,49 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ArTrailByStudent" FunctionName="LetranIntegratedSystemModel.Store.ArTrailByStudent">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.ArTrailByStudent_Result">
+                <ScalarProperty Name="StudentNo" ColumnName="StudentNo" />
+                <ScalarProperty Name="Assessment" ColumnName="Assessment" />
+                <ScalarProperty Name="TuitionFee" ColumnName="TuitionFee" />
+                <ScalarProperty Name="MiscFee" ColumnName="MiscFee" />
+                <ScalarProperty Name="LabFee" ColumnName="LabFee" />
+                <ScalarProperty Name="VariousFee" ColumnName="VariousFee" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="DNForm" ColumnName="DNForm" />
+                <ScalarProperty Name="CMForm" ColumnName="CMForm" />
+                <ScalarProperty Name="DebitMemo" ColumnName="DebitMemo" />
+                <ScalarProperty Name="CreditMemo" ColumnName="CreditMemo" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Voucher" ColumnName="Voucher" />
+                <ScalarProperty Name="AdjDiscount" ColumnName="AdjDiscount" />
+                <ScalarProperty Name="Payment" ColumnName="Payment" />
+                <ScalarProperty Name="Processing" ColumnName="Processing" />
+                <ScalarProperty Name="ValidationDate" ColumnName="ValidationDate" />
+                <ScalarProperty Name="AssessmentDate" ColumnName="AssessmentDate" />
+                <ScalarProperty Name="PeriodID" ColumnName="PeriodID" />
+                <ScalarProperty Name="AcaAcronym" ColumnName="AcaAcronym" />
+                <ScalarProperty Name="GradeYear" ColumnName="GradeYear" />
+                <ScalarProperty Name="Paymode" ColumnName="Paymode" />
+                <ScalarProperty Name="EducLevelName" ColumnName="EducLevelName" />
+                <ScalarProperty Name="Period" ColumnName="Period" />
+                <ScalarProperty Name="SchoolYearName" ColumnName="SchoolYearName" />
+                <ScalarProperty Name="GLCode" ColumnName="GLCode" />
+                <ScalarProperty Name="AcaDeptID" ColumnName="AcaDeptID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="BackaccountTransactionLog">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.BackaccountTransactionLog">
+              <MappingFragment StoreEntitySet="BackaccountTransactionLog">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

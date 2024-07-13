@@ -20,9 +20,8 @@ namespace ARManila.Models
         public int? AssessmentId { get; set; }
         public string AssessmentPeriod { get; set; }
         public int? AssessmentPeriodId { get; set; }
-        public List<BackaccountPaymentWrapper> BackaccountPaymentWrappers { get; set; }
-        public List<BackaccountDMCMWrapper> BackaccountDMCMWrappers { get; set; }
-        public List<BackaccountPaymentWrapper> FloatingBackaccountPaymentWrappers { get; set; }
+        public List<BackaccountPaymentWrapper> BackaccountPaymentWrappers { get; set; } = new List<BackaccountPaymentWrapper>();
+        public List<BackaccountDMCMWrapper> BackaccountDMCMWrappers { get; set; } = new List<BackaccountDMCMWrapper>();
 
     }
     public class BackaccountPaymentWrapper
@@ -39,9 +38,21 @@ namespace ARManila.Models
     {
         public int BackaccountDMCMId { get; set; }
         public int BackaccountId { get; set; }
-        public int? DMCMId { get; set; }        
+        public int? DMCMId { get; set; }
         public double? Amount { get; set; }
         public DateTime? TransactionDate { get; set; }
         public int? DocNo { get; set; }
+        public string DC { get; set; }
+        public string Remarks { get; set; }
+    }
+    public partial class BackAccount
+    {
+        public string FromPeriod
+        {
+            get
+            {
+                return this.Period.FullName;
+            }
+        }
     }
 }

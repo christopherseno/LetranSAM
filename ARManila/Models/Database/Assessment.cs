@@ -28,6 +28,7 @@ namespace ARManila.Models
         public Nullable<decimal> TuitionDiscountRate { get; set; }
         public Nullable<decimal> TotalUnits { get; set; }
         public Nullable<decimal> MaxUnit { get; set; }
+        public Nullable<decimal> TuitionForDiscount { get; set; }
     
         public virtual Student_Section Student_Section { get; set; }
         public virtual Fee Fee { get; set; }

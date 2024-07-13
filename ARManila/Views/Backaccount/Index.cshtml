@@ -4,165 +4,368 @@
     ViewBag.Title = "Index";
 }
 
-<div class="p-3">
-    <h2>View Backaccount</h2>
-    @using (Html.BeginForm("Index", "Backaccount", FormMethod.Post))
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Backaccount Menu</span>
+        <span class="breadcrumb-item active">Student's Backaccount List</span>
+    </nav>
+    @using (Html.BeginForm())
     {
-        @Html.Partial("_studentfinder")
-        <input type="text" placeholder="Student Number" name="id" id="id" />
-        <input type="submit" value="Search" class="btn btn-primary" />
-    }
-    <br />
-    @if (Model != null && Model.Count > 0)
-    {
-        <h2>
-            Student's Backaccount History
-            <button class="buttonload" style="display:none" id="deletebackaccountloading">
-                <i class="fa fa-spinner fa-spin"></i>Processing
-            </button>
-        </h2>
-        <p>
-            Student No: @Model.FirstOrDefault().StudentNo
-            <br />
-            Student Name: @Model.FirstOrDefault().StudentName
-        </p>
-        <table class="table table-bordered" id="table">
-            <thead>
-                <tr>
-                    <th>
-                        Backaccount From
-                    </th>
-                    <th>
-                        Amount
-                    </th>
-                    <th>
-                        Forwarded To
-                    </th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    var a = "key" + item.BackaccountId;
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Period)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Amount)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.AssessmentPeriod)
-                        </td>
-                        <td>
-                            <button data-toggle="collapse" data-target="#@a">View Details</button>
-                            <br />
-                            <div id="@a" class="collapse">
-                                @if (item.BackaccountPaymentWrappers.Count > 0)
-                                {
-                                    <table class="table table-bordered">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="mb-4">
+                    <input type="button" class="btn btn-sm rounded-pill btn-outline-danger" id="studentfinderbutton" value="Student No Finder" />
+                </div>
+                <div class="mb-4">
+                    <div class="input-group">
+                        @*<div class="col-xs-2">*@
+                        <input type="text" class="form-control" id="studentno" name="studentno" placeholder="Student No" />
+                        @*</div>*@
+                        <input type="submit" value="Search" class="btn btn-primary" id="search" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="block block-rounded">
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        <div class="block-header block-header-default">
+                            <h3 class="block-title"><b>@Model.FirstOrDefault().StudentNo</b> - @Model.FirstOrDefault().StudentName</h3>
+                        </div>
+
+                        <div class="block-content">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-striped">
+                                    <caption class="text-primary caption-top ">Enrollment History</caption>
+                                    @foreach (var item in (IEnumerable<ARManila.Models.Student_Section>)ViewBag.enrollments)
+                                    {
                                         <tr>
-                                            <th>OR No</th>
-                                            <th>Transaction Date</th>
-                                            <th>Amount</th>
-                                            <th></th>
+                                            <td>@item.Section.Period.FullName</td>
+                                            <td>@item.Section.SectionName</td>
+                                            <td>@item.ValidationDate.Value.ToShortDateString()</td>
+                                            <td align="right">@item.EndTermBalance.ToString("#,##0.00")</td>
                                         </tr>
-                                        @foreach (var detail in item.BackaccountPaymentWrappers)
-                                        {
-                                            <tr>
-                                                <td>@detail.ORNo</td>
-                                                <td>@detail.PaymentDate</td>
-                                                <td>@detail.Amount</td>
-                                                <td> @Html.ActionLink("Unlink Payment", "UnlinkBackaccountPayment", "Backaccount", new { id = detail.BackaccountPaymentId }, new { @class = "btn btn-primary" })</td>
-                                            </tr>
-
-                                        }
-                                    </table>
-                                }
-                                else
-                                {
-                                    <span>No Payment associated with this backaccount</span>
-                                }
+                                    }
+                                </table>
                             </div>
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.BackaccountId })
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-primary" onclick="deletebackaccount(@item.BackaccountId)" data-toggle="modal" data-target="#confirm-submit">Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="block-header block-header-default">
+                            <h3 class="block-title fw-bold text-warning">No Student Backaccount Record Found</h3>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
     }
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="table-responsive">
+                @if (Model != null && Model.Count > 0)
+                {
+                    <h2>
+                        Student's Backaccount History
+                        <button class="buttonload" style="display:none" id="deletebackaccountloading">
+                            <i class="fa fa-spinner fa-spin"></i>Processing
+                        </button>
+                    </h2>
+                    <table class="table table-bordered table-hover table-striped" id="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Backaccount From
+                                </th>
+                                <th>
+                                    Amount
+                                </th>
+                                <th>
+                                    Forwarded To
+                                </th>
+                                <th>Payments / DMCM</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var a = "key" + item.BackaccountId;
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Period)
+                                    </td>
+                                    <td align="right">
+                                        @item.Amount.Value.ToString("#,##0.00")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.AssessmentPeriod)
+                                    </td>
+                                    <td>
+
+                                        @if (item.BackaccountPaymentWrappers.Count > 0)
+                                        {
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>OR No</th>
+                                                    <th>Transaction Date</th>
+                                                    <th>Amount</th>
+                                                    <th></th>
+                                                </tr>
+                                                @foreach (var detail in item.BackaccountPaymentWrappers)
+                                                {
+                                                    <tr>
+                                                        <td>@detail.ORNo</td>
+                                                        <td>@detail.PaymentDate.ToShortDateString()</td>
+                                                        <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                                        <td>
+                                                            <a href="#" onclick="unlinkBackaccountPayment(@detail.BackaccountPaymentId)" class="btn btn-primary">Unlink Payment</a>
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <span>No Payment associated with this backaccount</span>
+                                        }
+
+                                        <hr />
+
+                                        @if (item.BackaccountDMCMWrappers.Count > 0)
+                                        {
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Doc No</th>
+                                                    <th>Transaction Date</th>
+                                                    <th>Is D/C?</th>
+                                                    <th>Amount</th>
+                                                    <th>Remarks</th>
+                                                    <th></th>
+                                                </tr>
+                                                @foreach (var detail in item.BackaccountDMCMWrappers)
+                                                {
+                                                    <tr>
+                                                        <td>@detail.DocNo</td>
+                                                        <td>@detail.TransactionDate.Value.ToShortDateString()</td>
+                                                        <td>@detail.DC</td>
+                                                        <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                                        <td>@detail.Remarks</td>
+                                                        <td> @Html.ActionLink("Unlink DMCM", "UnlinkDMCM", "Backaccount", new { id = detail.BackaccountDMCMId }, new { @class = "btn btn-primary" })</td>
+                                                    </tr>
+
+                                                }
+                                            </table>
+                                        }
+                                        else
+                                        {
+                                            <span>No DMCM associated with this backaccount</span>
+                                        }
+
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "Edit", new { id = item.BackaccountId }, new { @class = "btn btn-primary" })
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-primary" onclick="deletebackaccount(@item.BackaccountId)" data-toggle="modal" data-target="#confirm-submit">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <hr />
+                    <h2>
+                        Floating Backaccount Payment
+                    </h2>
+                    <table class="table table-bordered table-hover table-striped" id="table1">
+                        <thead>
+                            <tr>
+                                <th>OR No</th>
+                                <th>Transaction Date</th>
+                                <th>Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in (List<ARManila.Models.BackaccountPaymentWrapper>)ViewBag.floatingbackaccountpayments)
+                            {
+                                <tr>
+                                    <td>@detail.ORNo</td>
+                                    <td>@detail.PaymentDate.ToShortDateString()</td>
+                                    <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                    <td>
+                                        @using (Html.BeginForm("LinkPayment", "Backaccount", FormMethod.Post))
+                                        {
+                                            @Html.DropDownList("BackaccountId", (SelectList)ViewBag.backaccountlist, "", null)
+                                            <input type="hidden" id="PaymentId" name="PaymentId" value="@detail.PaymentId" />
+                                            <input type="submit" value="Link" class="btn btn-primary" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr />
+                    <h2>
+                        Floating DMCM
+                    </h2>
+                    <table class="table table-bordered table-hover table-striped" id="table2">
+                        <thead>
+                            <tr>
+                                <th>Doc No</th>
+                                <th>Transaction Date</th>
+                                <th>D/C</th>
+                                <th>Amount</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in (List<ARManila.Models.BackaccountDMCMWrapper>)ViewBag.floatingbackaccountdmcms)
+                            {
+                                <tr>
+                                    <td>@detail.DocNo</td>
+                                    <td>@detail.TransactionDate.Value.ToShortDateString()</td>
+                                    <td>@detail.DC</td>
+                                    <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                    <td>@detail.Remarks</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal" id="searchstudentmodal" tabindex="-1" role="dialog" aria-labelledby="modal-extra-large" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Confirm Delete</h2>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete this backaccount?
-                <table class="table">
-                    <tr>
-                        <th>Period</th>
-                        <td id="Period"></td>
-                    </tr>
-                    <tr>
-                        <th>Amount</th>
-                        <td id="Amount"></td>
-                    </tr>
-                </table>
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Search Student</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="block-content fs-sm">
 
-            </div>
+                    <div class="mb-4">
+                        <div class="input-group">
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a href="#" id="submit" class="btn btn-success success">Submit</a>
+                            <input type="text" class="form-control" id="searchstudenttext" placeholder="Enter Lastname or Firstname">
+                            <button type="button" class="btn btn-primary" id="searchstudentbutton">
+                                <i class="fa fa-search me-1"></i> Search
+                            </button>
+
+                        </div>
+                    </div>
+
+                    @*<input type="text" class="input-group" id="searchstudenttext" placeholder="Enter Lastname or Firstname" />
+                        <button class="btn btn-primary" id="searchstudentbutton">Search</button>
+                        <button class="buttonload" style="display:none" id="searchstudentloading">
+                            <i class="fa fa-spinner fa-spin"></i>Loading
+                        </button>*@
+                    <div class="table-responsive">
+                        <table id="searchstudenttable" class="table table-striped table-bordered"><thead><tr><td>Student No</td><td>Last Name</td><td>First Name</td><td>Prgram</td></tr></thead></table>
+                    </div>
+
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal" id="confirmunlinkpayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Unlink Payment</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to unlink the payment to the backaccount?
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <a href="#" id="unlinkpayment" class="btn btn-success success">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts
 {
     <script type="text/javascript">
-        var backaccountidfordeletion = 0;
-        function deletebackaccount (backaccountid) {
-            var backaccountarray = @Html.Raw(Json.Encode(Model));
-            for (var i = 0; i < backaccountarray.length; i++) {
-                if (backaccountarray[i].BackaccountId == backaccountid) {
-                    $('#Period').text((backaccountarray[i].Period));
-                    $('#Amount').text((backaccountarray[i].Amount));
-                    backaccountidfordeletion = backaccountarray[i].BackaccountId;
-                }
-            }
+        $(document).ready(function () {
+            $("#studentfinderbutton").click(function () {
+                $("#searchstudenttext").val("");
+                $('#searchstudenttable').empty();
+                $("#searchstudentmodal").modal('show');
+            });
+            $("#searchstudentbutton").click(function () {
+                getStudents($("#searchstudenttext").val());
+                $('#searchstudenttable').html('<p class="text-center">Loading...</p>');   //loader here
+            });
+        });
+        var backaccountpaymentid;
+        function unlinkBackaccountPayment(id) {
+            backaccountpaymentid = id;
+            $("#confirmunlinkpayment").modal('show');
         }
 
-        $('#submit').click(function () {
-            window.location.href = '@Url.Action("DeleteBackaccount", "Backaccount")/' + backaccountidfordeletion;
-            //$.ajax({
-            //    type: "GET",
-            //    url: "/Backaccount/DeleteBackaccount/" + backaccountidfordeletion,
-            //    beforeSend: function (data) {
-            //        $("#deletebackaccountloading").css("display", "inline");
-            //    },
-            //    complete: function (data) {
-            //        $("#deletebackaccountloading").css("display", "none");
-            //    },
-            //    success: function (data) {
-
-            //    },
-            //    error: function (data) {
-            //        alert("Error");
-            //        $("#deletebackaccountloading").css("display", "none");
-            //    }
-            //});
+        $('#unlinkpayment').click(function () {
+            window.location.href = '@Url.Action("UnlinkBackaccountPayment", "Backaccount")/' + backaccountpaymentid;
         });
+        function getStudentNo(sn) {
+            $("#studentno").val(sn);
+            $("#searchstudentmodal").modal('hide');
+        }
+
+        function getStudents(searchtext) {
+            $.ajax({
+                type: "GET",
+                url: "https://api.letran.edu.ph/SearchStudent/" + searchtext,
+                beforeSend: function (data) {
+                    $("#searchstudentloading").css("display", "inline");
+                },
+                complete: function (data) {
+                    $("#searchstudentloading").css("display", "none");
+                },
+                success: function (data) {
+
+                    var searchstudenttable = $('#searchstudenttable');
+                    searchstudenttable.empty();
+                    searchstudenttable.append('<thead class="thead-dark"><tr><th>Student No</th><th>Last Name</th><th>First Name</th>' +
+                        '<th>Program</th></tr ></thead > <tbody>');
+                    $.each(data, function (index, val) {
+                        searchstudenttable.append('<tr><td><a href="#" onclick="getStudentNo(' + val.StudentNo + ')">' + val.StudentNo + '</a></td><td>' + val.LastName + '</td>' +
+                            '<td>' + val.FirstName + '</td><td>' + val.Program + '</td></tr>');
+                    });
+                },
+                error: function (data) {
+
+                }
+            });
+        }
+
+
     </script>
 }

@@ -8,13 +8,33 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
-    public partial class ArTrail2024_Result
+    public partial class Student_Section
     {
-        public decimal ArBalance {
+        public decimal EndTermBalance
+        {
             get
             {
-                return (decimal)(this.Assessment + this.Balance + this.DNForm + this.CMForm + this.DebitMemo - this.CreditMemo - this.Discount - this.AdjDiscount - this.Voucher  - this.Processing) - this.Payment;
-            } 
+                LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
+                var artrail = db.ArTrailByStudent(this.Section.PeriodID, DateTime.Today, this.StudentID).FirstOrDefault();
+                if(artrail!= null)
+                {
+                    return (decimal)(artrail.Assessment + artrail.Balance + artrail.DNForm + artrail.CMForm + artrail.DebitMemo - artrail.CreditMemo - artrail.Discount - artrail.AdjDiscount - artrail.Voucher - artrail.Processing) - artrail.Payment;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+    public partial class ArTrail2024_Result
+    {
+        public decimal ArBalance
+        {
+            get
+            {
+                return (decimal)(this.Assessment + this.Balance + this.DNForm + this.CMForm + this.DebitMemo - this.CreditMemo - this.Discount - this.AdjDiscount - this.Voucher - this.Processing) - this.Payment;
+            }
         }
     }
     public partial class SchoolYear
@@ -26,7 +46,7 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
-        [Required(ErrorMessage ="Description is required")]
+        [Required(ErrorMessage = "Description is required")]
         public int? FeeNameId { get; set; }
     }
 
@@ -49,7 +69,7 @@ namespace ARManila.Models
         }
     }
     public partial class SubChartOfAccounts
-    { 
+    {
         public string FullName
         {
             get
@@ -74,7 +94,7 @@ namespace ARManila.Models
         {
             get
             {
-                return this.EducLevelID < 4 ? "SY " + this.SchoolYear.SchoolYearName: this.Period1 +", SY " + this.SchoolYear.SchoolYearName ;
+                return this.EducLevelID < 4 ? "SY " + this.SchoolYear.SchoolYearName : this.Period1 + ", SY " + this.SchoolYear.SchoolYearName;
             }
         }
     }
@@ -108,7 +128,7 @@ namespace ARManila.Models
                 }
                 else
                 {
-                    return Utility.Decrypt256(this.LastName256) + ", " + Utility.Decrypt256(this.FirstName256); 
+                    return Utility.Decrypt256(this.LastName256) + ", " + Utility.Decrypt256(this.FirstName256);
                 }
             }
         }
@@ -187,10 +207,10 @@ namespace ARManila.Models
         public decimal Total { get; set; }
     }
 
-    [MetadataType(typeof(GetSummaryOfFees_ResultMetadata))] 
+    [MetadataType(typeof(GetSummaryOfFees_ResultMetadata))]
     public partial class GetSummaryOfFees_Result
     {
-        
+
     }
     public class GetSummaryOfFeesCollege_ResultMetadata
     {

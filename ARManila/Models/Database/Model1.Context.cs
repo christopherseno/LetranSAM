@@ -107,6 +107,7 @@ namespace ARManila.Models
         public virtual DbSet<EducationalLevelDepartment> EducationalLevelDepartment { get; set; }
         public virtual DbSet<QnePostingLog> QnePostingLog { get; set; }
         public virtual DbSet<JournalEntryType> JournalEntryType { get; set; }
+        public virtual DbSet<BackaccountTransactionLog> BackaccountTransactionLog { get; set; }
     
         public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
         {
@@ -1090,6 +1091,23 @@ namespace ARManila.Models
                 new ObjectParameter("asofdate", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrail2024_Result>("ArTrail2024", periodidParameter, asofdateParameter);
+        }
+    
+        public virtual ObjectResult<ArTrailByStudent_Result> ArTrailByStudent(Nullable<int> periodid, Nullable<System.DateTime> asofdate, Nullable<int> studentid)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            var studentidParameter = studentid.HasValue ?
+                new ObjectParameter("studentid", studentid) :
+                new ObjectParameter("studentid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrailByStudent_Result>("ArTrailByStudent", periodidParameter, asofdateParameter, studentidParameter);
         }
     }
 }
