@@ -1,0 +1,48 @@
+﻿@model IEnumerable<ARManila.Models.Student_Section>
+@{
+    ViewBag.Title = "Unvalidated Enrollment";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Enrollment Menu</span>
+        <span class="breadcrumb-item active">Unvalidated Assessment</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="table-responsive">
+                <h3>Unvalidated Assessment</h3>
+                <table class="table table-responsive table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student No</th>
+                            <th>Student Name</th>
+                            <th>Section</th>
+                            <th>Assessment Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Student.StudentNo</td>
+                                <td>@item.Student.FullName256</td>
+                                <td>@item.Section.SectionName</td>
+                                <td>@item.AssessmentDate.Value.ToShortDateString()</td>
+                                <td>
+                                    @using (Html.BeginForm())
+                                    {
+                                        <input type="date" id="validationdate" name="validationdate" required />
+                                        <input type="hidden" id="studentsectionid" name="studentsectionid" value="@item.Student_SectionID" />
+                                        <input type="submit" value="Save" class="btn btn-primary" />
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

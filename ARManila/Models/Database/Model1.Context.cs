@@ -108,6 +108,7 @@ namespace ARManila.Models
         public virtual DbSet<QnePostingLog> QnePostingLog { get; set; }
         public virtual DbSet<JournalEntryType> JournalEntryType { get; set; }
         public virtual DbSet<BackaccountTransactionLog> BackaccountTransactionLog { get; set; }
+        public virtual DbSet<EnrollmentTransactionLog> EnrollmentTransactionLog { get; set; }
     
         public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
         {
@@ -1125,6 +1126,23 @@ namespace ARManila.Models
                 new ObjectParameter("studentno", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertBackaccountTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        }
+    
+        public virtual int InsertEnrollmentTransactionLog(string username, string remarks, string studentno)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var remarksParameter = remarks != null ?
+                new ObjectParameter("remarks", remarks) :
+                new ObjectParameter("remarks", typeof(string));
+    
+            var studentnoParameter = studentno != null ?
+                new ObjectParameter("studentno", studentno) :
+                new ObjectParameter("studentno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertEnrollmentTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
         }
     }
 }

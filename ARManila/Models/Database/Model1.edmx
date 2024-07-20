@@ -23,6 +23,16 @@
           <Property Name="EducationalLevelId" Type="int" Nullable="false" />
           <Property Name="AcademicDepartmentId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="EnrollmentTransactionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime" Nullable="false" />
+          <Property Name="Remarks" Type="varchar(max)" Nullable="false" />
+          <Property Name="StudentNo" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
         <EntityType Name="GradeLevel">
           <Key>
             <PropertyRef Name="GradeLevelId" />
@@ -3151,6 +3161,11 @@
           <Parameter Name="remarks" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="studentno" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="InsertEnrollmentTransactionLog" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
+          <Parameter Name="username" Type="nvarchar" Mode="In" />
+          <Parameter Name="remarks" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="studentno" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="MakeARJournalEntryCreditForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="sdate" Type="date" Mode="In" />
           <Parameter Name="edate" Type="date" Mode="In" />
@@ -3403,6 +3418,7 @@
         <EntityContainer Name="LetranIntegratedSystemModelStoreContainer">
           <EntitySet Name="BackaccountTransactionLog" EntityType="Self.BackaccountTransactionLog" Schema="AR" store:Type="Tables" />
           <EntitySet Name="EducationalLevelDepartment" EntityType="Self.EducationalLevelDepartment" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="EnrollmentTransactionLog" EntityType="Self.EnrollmentTransactionLog" Schema="AR" store:Type="Tables" />
           <EntitySet Name="GradeLevel" EntityType="Self.GradeLevel" Schema="AR" store:Type="Tables" />
           <EntitySet Name="JournalEntryType" EntityType="Self.JournalEntryType" Schema="AR" store:Type="Tables" />
           <EntitySet Name="PaymentDefaultPeriod" EntityType="Self.PaymentDefaultPeriod" Schema="AR" store:Type="Tables" />
@@ -7388,6 +7404,12 @@
             <Parameter Name="studentno" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="BackaccountTransactionLog" EntityType="LetranIntegratedSystemModel.BackaccountTransactionLog" />
+          <EntitySet Name="EnrollmentTransactionLog" EntityType="LetranIntegratedSystemModel.EnrollmentTransactionLog" />
+          <FunctionImport Name="InsertEnrollmentTransactionLog">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="remarks" Mode="In" Type="String" />
+            <Parameter Name="studentno" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="SMSLog">
           <Key>
@@ -9068,6 +9090,16 @@
           <Property Type="Int32" Name="AcaDeptID" Nullable="false" />
         </ComplexType>
         <EntityType Name="BackaccountTransactionLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Remarks" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="StudentNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="EnrollmentTransactionLog">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -11154,6 +11186,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="EnrollmentTransactionLog">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.EnrollmentTransactionLog">
+              <MappingFragment StoreEntitySet="EnrollmentTransactionLog">
+                <ScalarProperty Name="StudentNo" ColumnName="StudentNo" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="InsertEnrollmentTransactionLog" FunctionName="LetranIntegratedSystemModel.Store.InsertEnrollmentTransactionLog" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

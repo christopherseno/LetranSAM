@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ARManila.Models.Student_Section>
+@{
+    ViewBag.Title = "Enlisted";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Enrollment Menu</span>
+        <span class="breadcrumb-item active">Enlisted Students</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="table-responsive">
+                <h3>Enlisted Students</h3>
+                <table class="table table-responsive table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student No</th>
+                            <th>Student Name</th>
+                            <th>Section</th>
+                            <th>Enlisted Date</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Student.StudentNo</td>
+                                <td>@item.Student.FullName256</td>
+                                <td>@item.Section.SectionName</td>
+                                <td>@item.EnlistmentDate.Value.ToShortDateString()</td>
+                                
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

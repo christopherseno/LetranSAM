@@ -348,6 +348,9 @@
     <Compile Include="Models\Database\Employee.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Database\EnrollmentTransactionLog.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Database\Faculty.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -5038,6 +5041,9 @@
     <Content Include="Views\Backaccount\TransactionLog.cshtml" />
     <Content Include="Views\Enrollment\Index.cshtml" />
     <Content Include="Views\Enrollment\OfficiallyEnrolled.cshtml" />
+    <Content Include="Views\Enrollment\UnvalidatedAssessment.cshtml" />
+    <Content Include="Views\Enrollment\Enlisted.cshtml" />
+    <Content Include="Views\Enrollment\TransactionLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -39,7 +39,7 @@ namespace ARManila.Controllers
             while (morerecords)
             {
                 var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("DbCode", "LetranQNEDB");
+                httpClient.DefaultRequestHeaders.Add("DbCode", "LetranQNEDB");            
                 HttpResponseMessage response = await httpClient.GetAsync("https://qneapi.letran.edu.ph:5513/api/GLAccounts?%24skip=" + skip + "&%24top=1000");
                 if (response.IsSuccessStatusCode)
                 {

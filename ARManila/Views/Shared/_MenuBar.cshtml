@@ -54,6 +54,44 @@
     <li class="nav-main-item">
         <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
             <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Enrollment</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "Enrollment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Manual Assessment</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("OfficiallyEnrolled", "Enrollment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Officially Enrolled</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("UnvalidatedAssessment", "Enrollment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Assessed Students</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("Enlisted", "Enrollment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Enlisted Students</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("TransactionLog", "Enrollment")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Transaction Logs</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
             <span class="nav-main-link-name">Backaccount</span>
         </a>
         <ul class="nav-main-submenu">
