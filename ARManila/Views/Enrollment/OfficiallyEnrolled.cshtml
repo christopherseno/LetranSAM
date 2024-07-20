@@ -1,0 +1,89 @@
+﻿@model IEnumerable<ARManila.Models.Student_Section>
+@{
+    ViewBag.Title = "OfficiallyEnrolled";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Enrollment Menu</span>
+        <span class="breadcrumb-item active">Officially Enrolled</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="table-responsive">
+                <h3>Officially Enrolled Students</h3>
+                <table class="table table-responsive table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student No</th>
+                            <th>Student Name</th>
+                            <th>Section</th>
+                            <th>Validation Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Student.StudentNo</td>
+                                <td>@item.Student.FullName256</td>
+                                <td>@item.Section.SectionName</td>
+                                <td>@item.ValidationDate.Value.ToShortDateString()</td>
+                                <td>
+                                    <a href="#" onclick="deletevalidation(@item.Student_SectionID)"
+                                       class="btn btn-primary">Remove Validation Date</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="confirmdeletevalidationdate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Delete Validation Date</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the validation date of this assessment?
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <a href="#" id="deletevalidationdate" class="btn btn-success success">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+        var studentsectionid;
+        function deletevalidation(id) {
+            studentsectionid = id;
+            $("#confirmdeletevalidationdate").modal('show');
+        }
+        $('#deletevalidationdate').click(function () {
+            window.location.href = '@Url.Action("DeleteValidationDate", "Enrollment")/' + studentsectionid;
+        });
+
+
+
+
+    </script>
+}

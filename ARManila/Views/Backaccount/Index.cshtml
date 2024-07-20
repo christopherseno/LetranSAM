@@ -42,6 +42,7 @@
                                         <tr>
                                             <td>@item.Section.Period.FullName</td>
                                             <td>@item.Section.SectionName</td>
+                                            <td>OAF No. @item.Student_SectionID</td>
                                             <td>@item.ValidationDate.Value.ToShortDateString()</td>
                                             <td align="right">@item.EndTermBalance.ToString("#,##0.00")</td>
                                         </tr>
@@ -67,11 +68,33 @@
                 @if (Model != null && Model.Count > 0)
                 {
                     <h2>
-                        Student's Backaccount History
+                        Student's Backaccount History <a href=@Url.Action("Add", "Backaccount", new { id=Model.FirstOrDefault().StudentId})><i class="fas fa-plus"></i></a>
                         <button class="buttonload" style="display:none" id="deletebackaccountloading">
                             <i class="fa fa-spinner fa-spin"></i>Processing
                         </button>
                     </h2>
+                    {
+                        var sp = (ARManila.Models.CheckStudentBackAccount_Result)ViewBag.spbackaccount;
+
+                        if (sp != null)
+                        {
+                        <table class="table table-bordered">
+                            <tr><th colspan="5">SP Check backaccount Used in Current Assessment</th></tr>
+                            <tr>
+                                <th>Source</th>
+                                <th align="center">Amount</th>
+                                <th align="center"> N </th>                                
+                                <th>Forwarded To</th>
+                            </tr>
+                            <tr>
+                                <td>@sp.Period @sp.SchoolYearName</td>
+                                <td align="right">@sp.Balance.Value.ToString("#,##0.00")</td>
+                                <td align="right">@sp.N.Value.ToString("#,##0.00")</td>
+                                <td>OAF No.: @sp.Student_SectionID</td>
+                            </tr>
+                        </table>
+                        }
+                    }
                     <table class="table table-bordered table-hover table-striped" id="table">
                         <thead>
                             <tr>
@@ -92,87 +115,93 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                var a = "key" + item.BackaccountId;
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Period)
-                                    </td>
-                                    <td align="right">
-                                        @item.Amount.Value.ToString("#,##0.00")
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.AssessmentPeriod)
-                                    </td>
-                                    <td>
+                                if (item.BackaccountId > 0)
+                                {
+                                    var a = "key" + item.BackaccountId;
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Period)
+                                        </td>
+                                        <td align="right">
+                                            @item.Amount.Value.ToString("#,##0.00")
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AssessmentPeriod)
+                                        </td>
+                                        <td>
 
-                                        @if (item.BackaccountPaymentWrappers.Count > 0)
-                                        {
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <th>OR No</th>
-                                                    <th>Transaction Date</th>
-                                                    <th>Amount</th>
-                                                    <th></th>
-                                                </tr>
-                                                @foreach (var detail in item.BackaccountPaymentWrappers)
-                                                {
+                                            @if (item.BackaccountPaymentWrappers.Count > 0)
+                                            {
+                                                <table class="table table-bordered">
                                                     <tr>
-                                                        <td>@detail.ORNo</td>
-                                                        <td>@detail.PaymentDate.ToShortDateString()</td>
-                                                        <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
-                                                        <td>
-                                                            <a href="#" onclick="unlinkBackaccountPayment(@detail.BackaccountPaymentId)" class="btn btn-primary">Unlink Payment</a>
-                                                        </td>
+                                                        <th>OR No</th>
+                                                        <th>Transaction Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Period</th>
+                                                        <th></th>
                                                     </tr>
+                                                    @foreach (var detail in item.BackaccountPaymentWrappers)
+                                                    {
+                                                        <tr>
+                                                            <td>@detail.ORNo</td>
+                                                            <td>@detail.PaymentDate.ToShortDateString()</td>
+                                                            <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                                            <td>@detail.Period</td>
+                                                            <td>
+                                                                <a href="#" onclick="unlinkBackaccountPayment(@detail.BackaccountPaymentId)" class="btn btn-primary">Unlink Payment</a>
+                                                            </td>
+                                                        </tr>
 
-                                                }
-                                            </table>
-                                        }
-                                        else
-                                        {
-                                            <span>No Payment associated with this backaccount</span>
-                                        }
+                                                    }
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <span>No Payment associated with this backaccount</span>
+                                            }
 
-                                        <hr />
+                                            <hr />
 
-                                        @if (item.BackaccountDMCMWrappers.Count > 0)
-                                        {
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <th>Doc No</th>
-                                                    <th>Transaction Date</th>
-                                                    <th>Is D/C?</th>
-                                                    <th>Amount</th>
-                                                    <th>Remarks</th>
-                                                    <th></th>
-                                                </tr>
-                                                @foreach (var detail in item.BackaccountDMCMWrappers)
-                                                {
+                                            @if (item.BackaccountDMCMWrappers.Count > 0)
+                                            {
+                                                <table class="table table-bordered">
                                                     <tr>
-                                                        <td>@detail.DocNo</td>
-                                                        <td>@detail.TransactionDate.Value.ToShortDateString()</td>
-                                                        <td>@detail.DC</td>
-                                                        <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
-                                                        <td>@detail.Remarks</td>
-                                                        <td> @Html.ActionLink("Unlink DMCM", "UnlinkDMCM", "Backaccount", new { id = detail.BackaccountDMCMId }, new { @class = "btn btn-primary" })</td>
+                                                        <th>Doc No</th>
+                                                        <th>Transaction Date</th>
+                                                        <th>Is D/C?</th>
+                                                        <th>Amount</th>
+                                                        <th>Period</th>
+                                                        <th>Remarks</th>
+                                                        <th></th>
                                                     </tr>
+                                                    @foreach (var detail in item.BackaccountDMCMWrappers)
+                                                    {
+                                                        <tr>
+                                                            <td>@detail.DocNo</td>
+                                                            <td>@detail.TransactionDate.Value.ToShortDateString()</td>
+                                                            <td>@detail.DC</td>
+                                                            <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td><td>@detail.Period</td>
+                                                            <td>@detail.Remarks</td>
+                                                            <td>  <a href="#" onclick="unlinkdmcm(@detail.BackaccountDMCMId)" class="btn btn-primary">Unlink DMCM</a></td>
+                                                        </tr>
 
-                                                }
-                                            </table>
-                                        }
-                                        else
-                                        {
-                                            <span>No DMCM associated with this backaccount</span>
-                                        }
+                                                    }
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <span>No DMCM associated with this backaccount</span>
+                                            }
 
-                                    </td>
-                                    <td>
-                                        @Html.ActionLink("Edit", "Edit", new { id = item.BackaccountId }, new { @class = "btn btn-primary" })
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary" onclick="deletebackaccount(@item.BackaccountId)" data-toggle="modal" data-target="#confirm-submit">Delete</a>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.BackaccountId }, new { @class = "btn btn-primary" })
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-primary" onclick="deletebackaccount(@item.BackaccountId)" data-toggle="modal" data-target="#confirm-submit">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -186,25 +215,30 @@
                                 <th>OR No</th>
                                 <th>Transaction Date</th>
                                 <th>Amount</th>
+                                <th>Period</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var detail in (List<ARManila.Models.BackaccountPaymentWrapper>)ViewBag.floatingbackaccountpayments)
+                            @if (ViewBag.floatingbackaccountpayments != null)
                             {
-                                <tr>
-                                    <td>@detail.ORNo</td>
-                                    <td>@detail.PaymentDate.ToShortDateString()</td>
-                                    <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
-                                    <td>
-                                        @using (Html.BeginForm("LinkPayment", "Backaccount", FormMethod.Post))
-                                        {
-                                            @Html.DropDownList("BackaccountId", (SelectList)ViewBag.backaccountlist, "", null)
-                                            <input type="hidden" id="PaymentId" name="PaymentId" value="@detail.PaymentId" />
-                                            <input type="submit" value="Link" class="btn btn-primary" />
-                                        }
-                                    </td>
-                                </tr>
+                                foreach (var detail in (List<ARManila.Models.BackaccountPaymentWrapper>)ViewBag.floatingbackaccountpayments)
+                                {
+                                    <tr>
+                                        <td>@detail.ORNo</td>
+                                        <td>@detail.PaymentDate.ToShortDateString()</td>
+                                        <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                        <td>@detail.Period</td>
+                                        <td>
+                                            @using (Html.BeginForm("LinkPayment", "Backaccount", FormMethod.Post))
+                                            {
+                                                @Html.DropDownList("BackaccountId", (SelectList)ViewBag.backaccountlist, "", null)
+                                                <input type="hidden" id="PaymentId" name="PaymentId" value="@detail.PaymentId" />
+                                                <input type="submit" value="Link" class="btn btn-primary" />
+                                            }
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -218,21 +252,35 @@
                             <tr>
                                 <th>Doc No</th>
                                 <th>Transaction Date</th>
+                                <th>Period</th>
                                 <th>D/C</th>
                                 <th>Amount</th>
                                 <th>Remarks</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var detail in (List<ARManila.Models.BackaccountDMCMWrapper>)ViewBag.floatingbackaccountdmcms)
+                            @if (ViewBag.floatingbackaccountdmcms != null)
                             {
-                                <tr>
-                                    <td>@detail.DocNo</td>
-                                    <td>@detail.TransactionDate.Value.ToShortDateString()</td>
-                                    <td>@detail.DC</td>
-                                    <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
-                                    <td>@detail.Remarks</td>
-                                </tr>
+                                foreach (var detail in (List<ARManila.Models.BackaccountDMCMWrapper>)ViewBag.floatingbackaccountdmcms)
+                                {
+                                    <tr>
+                                        <td>@detail.DocNo</td>
+                                        <td>@detail.TransactionDate.Value.ToShortDateString()</td>
+                                        <td>@detail.Period</td>
+                                        <td>@detail.DC</td>
+                                        <td align="right">@detail.Amount.Value.ToString("#,##0.00")</td>
+                                        <td>@detail.Remarks</td>
+                                        <td>
+                                            @using (Html.BeginForm("LinkDmcm", "Backaccount", FormMethod.Post))
+                                            {
+                                                @Html.DropDownList("BackaccountId", (SelectList)ViewBag.backaccountlist, "", null)
+                                                <input type="hidden" id="DmcmId" name="DmcmId" value="@detail.DMCMId" />
+                                                <input type="submit" value="Link" class="btn btn-primary" />
+                                            }
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -299,13 +347,64 @@
                     </div>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to unlink the payment to the backaccount?
+                    Are you sure you want to unlink the payment from the backaccount?
                 </div>
                 <div class="block-content block-content-full block-content-sm text-end border-top">
                     <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
                         Close
                     </button>
                     <a href="#" id="unlinkpayment" class="btn btn-success success">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="confirmunlinkdmcm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Unlink DMCM</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to unlink the DMCM from the backaccount?
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <a href="#" id="unlinkdmcm" class="btn btn-success success">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="confirmdeletebackaccount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Delete Backaccount</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this backaccount?
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <a href="#" id="deletebackaccount" class="btn btn-success success">Submit</a>
                 </div>
             </div>
         </div>
@@ -326,13 +425,28 @@
             });
         });
         var backaccountpaymentid;
+        var backaccountid;
+        var backaccountdmcmid;
         function unlinkBackaccountPayment(id) {
             backaccountpaymentid = id;
             $("#confirmunlinkpayment").modal('show');
         }
-
+        function unlinkdmcm(id) {
+            backaccountdmcmid = id;
+            $("#confirmunlinkdmcm").modal('show');
+        }
+        function deletebackaccount(id) {
+            backaccountid = id;
+            $("#confirmdeletebackaccount").modal('show');
+        }
+        $('#deletebackaccount').click(function () {
+            window.location.href = '@Url.Action("DeleteBackaccount", "Backaccount")/' + backaccountid;
+        });
         $('#unlinkpayment').click(function () {
             window.location.href = '@Url.Action("UnlinkBackaccountPayment", "Backaccount")/' + backaccountpaymentid;
+        });
+        $('#unlinkdmcm').click(function () {
+            window.location.href = '@Url.Action("UnlinkDmcm", "Backaccount")/' + backaccountdmcmid;
         });
         function getStudentNo(sn) {
             $("#studentno").val(sn);

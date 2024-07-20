@@ -1109,5 +1109,22 @@ namespace ARManila.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrailByStudent_Result>("ArTrailByStudent", periodidParameter, asofdateParameter, studentidParameter);
         }
+    
+        public virtual int InsertBackaccountTransactionLog(string username, string remarks, string studentno)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var remarksParameter = remarks != null ?
+                new ObjectParameter("remarks", remarks) :
+                new ObjectParameter("remarks", typeof(string));
+    
+            var studentnoParameter = studentno != null ?
+                new ObjectParameter("studentno", studentno) :
+                new ObjectParameter("studentno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertBackaccountTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        }
     }
 }

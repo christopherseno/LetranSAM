@@ -18,5 +18,6 @@ namespace ARManila.Models
         public string Username { get; set; }
         public System.DateTime TransactionDate { get; set; }
         public string Remarks { get; set; }
+        public string StudentNo { get; set; }
     }
 }

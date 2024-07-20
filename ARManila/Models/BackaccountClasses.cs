@@ -11,6 +11,7 @@ namespace ARManila.Models
         [Key]
         public int BackaccountId { get; set; }
         public double? Amount { get; set; }
+        public double? ForwardedAmount { get; set; }
         public int? PeriodId { get; set; }
         public int? StudentId { get; set; }
         public int? FromAssessmentId { get; set; }
@@ -32,6 +33,7 @@ namespace ARManila.Models
         public string ORNo { get; set; }
         public double? Amount { get; set; }
         public DateTime PaymentDate { get; set; }
+        public string Period { get; set; }
         public string Remarks { get; set; }
     }
     public class BackaccountDMCMWrapper
@@ -43,6 +45,7 @@ namespace ARManila.Models
         public DateTime? TransactionDate { get; set; }
         public int? DocNo { get; set; }
         public string DC { get; set; }
+        public string Period { get; set; }
         public string Remarks { get; set; }
     }
     public partial class BackAccount

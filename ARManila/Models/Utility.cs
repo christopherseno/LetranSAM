@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -153,6 +156,47 @@ namespace ARManila.Models
                 SmtpServer.EnableSsl = true;
                 SmtpServer.SendMailAsync(email);
             });
+        }
+        public static string DecryptStringFromBytes_Aes(string Text)
+        {
+            SHA256 sha2 = new SHA256CryptoServiceProvider();
+            byte[] Key = sha2.ComputeHash(Encoding.ASCII.GetBytes("1T3@mWoRk053ñ0"));
+
+            byte[] IV = sha2.ComputeHash(Encoding.ASCII.GetBytes("N3tWoRk!nG23"));
+            Array.Resize(ref IV, 16);
+            if (Text == null || Text.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            string plaintext = null;
+            byte[] cipherText = Convert.FromBase64String(Text.Replace(' ', '+'));
+
+            using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+                aesAlg.Mode = CipherMode.CBC;
+                aesAlg.Padding = PaddingMode.PKCS7;
+
+
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+
+            }
+            return plaintext;
         }
     }
     public class outboundSMSMessageRequest

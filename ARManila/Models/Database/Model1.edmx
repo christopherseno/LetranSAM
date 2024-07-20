@@ -13,6 +13,7 @@
           <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="TransactionDate" Type="datetime" Nullable="false" />
           <Property Name="Remarks" Type="varchar(max)" Nullable="false" />
+          <Property Name="StudentNo" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="EducationalLevelDepartment">
           <Key>
@@ -3144,6 +3145,11 @@
           <Parameter Name="sectionid" Type="int" Mode="In" />
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="duedate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="InsertBackaccountTransactionLog" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
+          <Parameter Name="username" Type="nvarchar" Mode="In" />
+          <Parameter Name="remarks" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="studentno" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="MakeARJournalEntryCreditForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="sdate" Type="date" Mode="In" />
@@ -7376,6 +7382,11 @@
             <Parameter Name="asofdate" Mode="In" Type="DateTime" />
             <Parameter Name="studentid" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="InsertBackaccountTransactionLog">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="remarks" Mode="In" Type="String" />
+            <Parameter Name="studentno" Mode="In" Type="String" />
+          </FunctionImport>
           <EntitySet Name="BackaccountTransactionLog" EntityType="LetranIntegratedSystemModel.BackaccountTransactionLog" />
           </EntityContainer>
         <EntityType Name="SMSLog">
@@ -9064,6 +9075,7 @@
           <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Remarks" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="StudentNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -11130,9 +11142,11 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertBackaccountTransactionLog" FunctionName="LetranIntegratedSystemModel.Store.InsertBackaccountTransactionLog" />
           <EntitySetMapping Name="BackaccountTransactionLog">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.BackaccountTransactionLog">
               <MappingFragment StoreEntitySet="BackaccountTransactionLog">
+                <ScalarProperty Name="StudentNo" ColumnName="StudentNo" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
                 <ScalarProperty Name="Username" ColumnName="Username" />

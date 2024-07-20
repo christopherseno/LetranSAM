@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ARManila.Models.BackaccountTransactionLog>
+
+@{
+    ViewBag.Title = "TransactionLog";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Backaccount Menu</span>
+        <span class="breadcrumb-item active">Transaction Log</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="row">
+                <h3>Backaccount Transaction Logs</h3>
+                <table class="table table-responsive">
+                    <tr>
+                        <th>
+                            Username
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Student No
+                        </th>
+                        <th>
+                            Remarks
+                        </th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Username)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TransactionDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StudentNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Remarks)
+                            </td>
+
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

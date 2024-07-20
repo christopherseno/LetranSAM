@@ -34,6 +34,7 @@ namespace ARManila.Controllers
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response = httpClient.GetAsync("https://api.letran.edu.ph/Assessment/ARQueryByFinance/" + studentno + "/" + periodid).Result;
                 var statuscode = response.StatusCode;
+                if (!response.IsSuccessStatusCode) throw new Exception("Expired token. Please try to login again.");
                 var reason = response.ReasonPhrase;
                 model = response.Content.ReadAsAsync<ARWrapper>().Result;
             }

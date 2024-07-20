@@ -132,6 +132,20 @@ namespace ARManila.Models
                 }
             }
         }
+        public string FullName256
+        {
+            get
+            {
+                if (this.LastName256 == null || this.LastName256.Length < 0)
+                {
+                    return "N/A";
+                }
+                else
+                {
+                    return Utility.DecryptStringFromBytes_Aes(this.LastName256) + ", " + Utility.DecryptStringFromBytes_Aes(this.FirstName256);
+                }
+            }
+        }
         public string DLastName
         {
             get

@@ -7,12 +7,12 @@
 <div class="content">
     <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
         <span class="breadcrumb-item">Backaccount Menu</span>
-        <span class="breadcrumb-item active">Forwarded Backaccount</span>
+        <span class="breadcrumb-item active">Backaccount</span>
     </nav>
     <div class="block block-rounded">
         <div class="block-content">
             <div class="row">
-                <h3>List of Backaccounts Forwarded to this period.</h3>
+                <h3>List of Backaccounts From this period.</h3>
                 <br />
                 @if (Model != null && Model.Count() > 0)
                 {
@@ -22,7 +22,7 @@
                                 <th>Student No</th>
                                 <th>Student Name</th>
                                 <th>
-                                    Backaccount From
+                                    Forwarded To
                                 </th>
                                 <th>
                                     Amount
@@ -35,10 +35,10 @@
                             {
                                 var a = "key" + item.BankAccountID;
                                 <tr>
-                                    <td>@item.Student.StudentNo</td>  
+                                    <td>@item.Student.StudentNo</td>
                                     <td>@item.Student.FullName256</td>
                                     <td>
-                                        @item.Period.FullName
+                                        @(item.Student_SectionID.HasValue ? item.Student_Section.Section.Period.FullName: "" )
                                     </td>
                                     <td>
                                         @item.Balance.Value.ToString("#,##0.00")

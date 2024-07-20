@@ -1,0 +1,52 @@
+﻿@model ARManila.Models.Student
+
+@{
+    ViewBag.Title = "Add";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Backaccount Menu</span>
+        <span class="breadcrumb-item active">Add Backaccount</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h4>Backaccount Editor</h4>
+                    <p class="text-muted">
+                        Student No: @Model.StudentNo
+                        <br />Student Name: @Model.FullName
+                        <br />Change the selected period/semester at the side menu.
+                    </p>
+                </div>
+                <div class="col-lg-8 col-xl-5">
+                    @using (Html.BeginForm("Add", "Backaccount", FormMethod.Post, new { @class = "mb-5" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.Hidden("StudentId",Model.StudentID)
+                        <div class="row mb-4">
+                            <label class="col-sm-4 col-form-label" for="">Amount</label>
+                            <div class="col-sm-8">
+                                @Html.TextBox("Amount", "0.00",new { @class = "form-control", @type = "number", @step = "0.01" })                                
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <label class="col-sm-4 col-form-label" for="">Forward to this assessment or select none to unlink to any assessment.</label>
+                            <div class="col-sm-8">
+                                @Html.DropDownList("AssessmentId", (ViewBag.assessment==null ? null :(List<SelectListItem>)ViewBag.assessment), "None", new { @class = "form-select" })                                
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-sm-8 ms-auto">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
