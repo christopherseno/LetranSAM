@@ -31,6 +31,7 @@ namespace ARManila.Models
             this.SystemParameters = new HashSet<SystemParameters>();
             this.Faculty = new HashSet<Faculty>();
             this.EducationalLevelDepartment = new HashSet<EducationalLevelDepartment>();
+            this.Alpha4 = new HashSet<Alpha4>();
         }
     
         public int EducLevelID { get; set; }
@@ -74,5 +75,7 @@ namespace ARManila.Models
         public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EducationalLevelDepartment> EducationalLevelDepartment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Alpha4> Alpha4 { get; set; }
     }
 }

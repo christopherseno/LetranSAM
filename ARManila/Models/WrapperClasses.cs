@@ -8,6 +8,17 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public class FloatingPayment
+    {
+        public int PaymentId { get; set; }
+        public string OrNo { get; set; }
+        public int StudentId { get; set; }
+        public string StudentNo { get; set; }
+        public string StudentName { get; set; }
+        public int PeriodId { get; set; }
+        public string PeriodName { get; set; }
+        public decimal Amount { get; set; }
+    }
     public partial class Student_Section
     {
         public decimal EndTermBalance

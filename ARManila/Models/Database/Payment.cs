@@ -21,6 +21,7 @@ namespace ARManila.Models
             this.BackAccount = new HashSet<BackAccount>();
             this.BackAccountPayment = new HashSet<BackAccountPayment>();
             this.PaymentDetails = new HashSet<PaymentDetails>();
+            this.Alpha4Payment = new HashSet<Alpha4Payment>();
         }
     
         public int PaymentID { get; set; }
@@ -64,5 +65,7 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentDetails> PaymentDetails { get; set; }
         public virtual Student Student { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Alpha4Payment> Alpha4Payment { get; set; }
     }
 }

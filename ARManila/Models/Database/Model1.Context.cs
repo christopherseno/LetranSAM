@@ -109,6 +109,8 @@ namespace ARManila.Models
         public virtual DbSet<JournalEntryType> JournalEntryType { get; set; }
         public virtual DbSet<BackaccountTransactionLog> BackaccountTransactionLog { get; set; }
         public virtual DbSet<EnrollmentTransactionLog> EnrollmentTransactionLog { get; set; }
+        public virtual DbSet<Alpha4> Alpha4 { get; set; }
+        public virtual DbSet<Alpha4Payment> Alpha4Payment { get; set; }
     
         public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
         {
@@ -1143,6 +1145,16 @@ namespace ARManila.Models
                 new ObjectParameter("studentno", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertEnrollmentTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        }
+    
+        public virtual ObjectResult<GetFloatingDMCM_Result> GetFloatingDMCM()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingDMCM_Result>("GetFloatingDMCM");
+        }
+    
+        public virtual ObjectResult<GetFloatingPayment_Result> GetFloatingPayment()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingPayment_Result>("GetFloatingPayment");
         }
     }
 }

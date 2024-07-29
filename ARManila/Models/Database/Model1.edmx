@@ -5,6 +5,33 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="LetranIntegratedSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Alpha4">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StudentNo" Type="varchar" MaxLength="50" />
+          <Property Name="StudentId" Type="int" />
+          <Property Name="LastName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="BADate" Type="varchar" MaxLength="10" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="EducLevelId" Type="int" Nullable="false" />
+          <Property Name="Remarks" Type="varchar" MaxLength="255" />
+          <Property Name="FirstName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="MiddleName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Alpha4Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Alpha4Id" Type="int" />
+          <Property Name="OrNo" Type="varchar" MaxLength="50" />
+          <Property Name="PaymentDate" Type="date" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Remarks" Type="varchar" MaxLength="255" />
+          <Property Name="PaymentId" Type="int" />
+        </EntityType>
         <EntityType Name="BackaccountTransactionLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -1525,6 +1552,42 @@
             </Principal>
             <Dependent Role="Aircon">
               <PropertyRef Name="FeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4_EducationalLevel">
+          <End Role="EducationalLevel" Type="Self.EducationalLevel" Multiplicity="1" />
+          <End Role="Alpha4" Type="Self.Alpha4" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EducationalLevel">
+              <PropertyRef Name="EducLevelID" />
+            </Principal>
+            <Dependent Role="Alpha4">
+              <PropertyRef Name="EducLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4_Student">
+          <End Role="Student" Type="Self.Student" Multiplicity="0..1" />
+          <End Role="Alpha4" Type="Self.Alpha4" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="StudentID" />
+            </Principal>
+            <Dependent Role="Alpha4">
+              <PropertyRef Name="StudentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4Payment_Payment">
+          <End Role="Payment" Type="Self.Payment" Multiplicity="0..1" />
+          <End Role="Alpha4Payment" Type="Self.Alpha4Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="PaymentID" />
+            </Principal>
+            <Dependent Role="Alpha4Payment">
+              <PropertyRef Name="PaymentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3125,6 +3188,8 @@
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="asofdate" Type="date" Mode="In" />
         </Function>
+        <Function Name="GetFloatingDMCM" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR" />
+        <Function Name="GetFloatingPayment" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR" />
         <Function Name="GetSummaryOfFees" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="typeid" Type="int" Mode="In" />
           <Parameter Name="asofdatevalue" Type="date" Mode="In" />
@@ -3416,6 +3481,8 @@
           <Parameter Name="deptid" Type="int" Mode="In" />
         </Function>
         <EntityContainer Name="LetranIntegratedSystemModelStoreContainer">
+          <EntitySet Name="Alpha4" EntityType="Self.Alpha4" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="Alpha4Payment" EntityType="Self.Alpha4Payment" Schema="AR" store:Type="Tables" />
           <EntitySet Name="BackaccountTransactionLog" EntityType="Self.BackaccountTransactionLog" Schema="AR" store:Type="Tables" />
           <EntitySet Name="EducationalLevelDepartment" EntityType="Self.EducationalLevelDepartment" Schema="AR" store:Type="Tables" />
           <EntitySet Name="EnrollmentTransactionLog" EntityType="Self.EnrollmentTransactionLog" Schema="AR" store:Type="Tables" />
@@ -3593,6 +3660,18 @@
           <AssociationSet Name="FK_Aircon_Fee" Association="Self.FK_Aircon_Fee">
             <End Role="Fee" EntitySet="Fee" />
             <End Role="Aircon" EntitySet="Aircon" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4_EducationalLevel" Association="Self.FK_Alpha4_EducationalLevel">
+            <End Role="EducationalLevel" EntitySet="EducationalLevel" />
+            <End Role="Alpha4" EntitySet="Alpha4" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4_Student" Association="Self.FK_Alpha4_Student">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="Alpha4" EntitySet="Alpha4" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4Payment_Payment" Association="Self.FK_Alpha4Payment_Payment">
+            <End Role="Payment" EntitySet="Payment" />
+            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
           </AssociationSet>
           <AssociationSet Name="FK_ARMessage_Student" Association="Self.FK_ARMessage_Student">
             <End Role="Student" EntitySet="Student" />
@@ -4496,6 +4575,7 @@
           <NavigationProperty Name="ChartOfAccounts" Relationship="LetranIntegratedSystemModel.FK_EducationalLevel_ChartOfAccounts" FromRole="EducationalLevel" ToRole="ChartOfAccounts" />
           <NavigationProperty Name="SubChartOfAccounts" Relationship="LetranIntegratedSystemModel.FK_EducationalLevel_SubChartOfAccounts" FromRole="EducationalLevel" ToRole="SubChartOfAccounts" />
           <NavigationProperty Name="EducationalLevelDepartment" Relationship="LetranIntegratedSystemModel.FK_EducationalLevelDepartment_EducationalLevel" FromRole="EducationalLevel" ToRole="EducationalLevelDepartment" />
+          <NavigationProperty Name="Alpha4" Relationship="LetranIntegratedSystemModel.FK_Alpha4_EducationalLevel" FromRole="EducationalLevel" ToRole="Alpha4" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -4783,6 +4863,7 @@
           <NavigationProperty Name="Period" Relationship="Self.FK_Payment_Period" FromRole="Payment" ToRole="Period" />
           <NavigationProperty Name="PaymentDetails" Relationship="Self.FK_PaymentDetails_Payment" FromRole="Payment" ToRole="PaymentDetails" />
           <NavigationProperty Name="Student" Relationship="LetranIntegratedSystemModel.FK_Payment_Student" FromRole="Payment" ToRole="Student" />
+          <NavigationProperty Name="Alpha4Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" FromRole="Payment" ToRole="Alpha4Payment" />
         </EntityType>
         <EntityType Name="PaymentDetails">
           <Key>
@@ -7410,6 +7491,22 @@
             <Parameter Name="remarks" Mode="In" Type="String" />
             <Parameter Name="studentno" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="GetFloatingDMCM" ReturnType="Collection(LetranIntegratedSystemModel.GetFloatingDMCM_Result)" />
+          <FunctionImport Name="GetFloatingPayment" ReturnType="Collection(LetranIntegratedSystemModel.GetFloatingPayment_Result)" />
+          <EntitySet Name="Alpha4" EntityType="LetranIntegratedSystemModel.Alpha4" />
+          <EntitySet Name="Alpha4Payment" EntityType="LetranIntegratedSystemModel.Alpha4Payment" />
+          <AssociationSet Name="FK_Alpha4_EducationalLevel" Association="LetranIntegratedSystemModel.FK_Alpha4_EducationalLevel">
+            <End Role="EducationalLevel" EntitySet="EducationalLevel" />
+            <End Role="Alpha4" EntitySet="Alpha4" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4_Student" Association="LetranIntegratedSystemModel.FK_Alpha4_Student">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="Alpha4" EntitySet="Alpha4" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4Payment_Payment" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment">
+            <End Role="Payment" EntitySet="Payment" />
+            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="SMSLog">
           <Key>
@@ -8482,6 +8579,7 @@
           <NavigationProperty Name="Promissory" Relationship="LetranIntegratedSystemModel.FK_Promissory_Student" FromRole="Student" ToRole="Promissory" />
           <NavigationProperty Name="Student_Curriculum" Relationship="LetranIntegratedSystemModel.FK_Student_Curriculum_Student" FromRole="Student" ToRole="Student_Curriculum" />
           <NavigationProperty Name="Student_Section" Relationship="LetranIntegratedSystemModel.FK_Student_Section_Student" FromRole="Student" ToRole="Student_Section" />
+          <NavigationProperty Name="Alpha4" Relationship="LetranIntegratedSystemModel.FK_Alpha4_Student" FromRole="Student" ToRole="Alpha4" />
         </EntityType>
         <Association Name="FK_ARMessage_Student">
           <End Type="LetranIntegratedSystemModel.Student" Role="Student" Multiplicity="1" />
@@ -9109,6 +9207,116 @@
           <Property Name="Remarks" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="StudentNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <ComplexType Name="GetFloatingDMCM_Result">
+          <Property Type="Int32" Name="DMCMID" Nullable="false" />
+          <Property Type="Int32" Name="PeriodID" Nullable="true" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="150" />
+          <Property Type="Double" Name="Amount" Nullable="true" />
+          <Property Type="String" Name="AccountNumber" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="DocNum" Nullable="true" />
+          <Property Type="DateTime" Name="TransactionDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DC" Nullable="false" MaxLength="1" />
+          <Property Type="Int32" Name="StudentID" Nullable="true" />
+          <Property Type="Boolean" Name="ChargeToStudentAr" Nullable="true" />
+          <Property Type="Boolean" Name="ChargeToAssessment" Nullable="true" />
+          <Property Type="String" Name="AccountName" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="AcaDeptID" Nullable="true" />
+          <Property Type="Int32" Name="AcctID" Nullable="true" />
+          <Property Type="Int32" Name="SubAcctID" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetFloatingPayment_Result">
+          <Property Type="Int32" Name="PaymentID" Nullable="false" />
+          <Property Type="String" Name="ORNo" Nullable="false" MaxLength="120" />
+          <Property Type="Int32" Name="CashierID" Nullable="false" />
+          <Property Type="Binary" Name="Datestamp" Nullable="false" MaxLength="8" />
+          <Property Type="DateTime" Name="DateReceived" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="StudentID" Nullable="true" />
+          <Property Type="String" Name="Bank" Nullable="true" MaxLength="50" />
+          <Property Type="Double" Name="CheckAmount" Nullable="true" />
+          <Property Type="String" Name="CheckNo" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="SemID" Nullable="true" />
+          <Property Type="String" Name="Branch" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="EducLevel" Nullable="true" />
+          <Property Type="Int32" Name="CurriculumID" Nullable="true" />
+          <Property Type="Int32" Name="OtherClientID" Nullable="true" />
+          <Property Type="Int64" Name="SOAID" Nullable="true" />
+          <Property Type="Int32" Name="EmployeeID" Nullable="true" />
+          <Property Type="Int32" Name="ApplicantID" Nullable="true" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="OrNoBankDeposit" Nullable="true" MaxLength="120" />
+          <Property Type="DateTime" Name="OrIssuedDate" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="OrIssuedCashierID" Nullable="true" />
+          <Property Type="DateTime" Name="BankDate" Nullable="true" />
+          <Property Type="Int32" Name="CCTransactionID" Nullable="true" />
+          <Property Type="Int32" Name="DPTransactionID" Nullable="true" />
+          <Property Type="Double" Name="Amount" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="Alpha4">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StudentNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StudentId" Type="Int32" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BADate" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="EducLevelId" Type="Int32" Nullable="false" />
+          <Property Name="Remarks" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_Alpha4_EducationalLevel" FromRole="Alpha4" ToRole="EducationalLevel" />
+          <NavigationProperty Name="Student" Relationship="LetranIntegratedSystemModel.FK_Alpha4_Student" FromRole="Alpha4" ToRole="Student" />
+        </EntityType>
+        <EntityType Name="Alpha4Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Alpha4Id" Type="Int32" />
+          <Property Name="OrNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentDate" Type="DateTime" Precision="0" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Remarks" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentId" Type="Int32" />
+          <NavigationProperty Name="Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" FromRole="Alpha4Payment" ToRole="Payment" />
+        </EntityType>
+        <Association Name="FK_Alpha4_EducationalLevel">
+          <End Type="LetranIntegratedSystemModel.EducationalLevel" Role="EducationalLevel" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.Alpha4" Role="Alpha4" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EducationalLevel">
+              <PropertyRef Name="EducLevelID" />
+            </Principal>
+            <Dependent Role="Alpha4">
+              <PropertyRef Name="EducLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4_Student">
+          <End Type="LetranIntegratedSystemModel.Student" Role="Student" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Alpha4" Role="Alpha4" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="StudentID" />
+            </Principal>
+            <Dependent Role="Alpha4">
+              <PropertyRef Name="StudentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4Payment_Payment">
+          <End Type="LetranIntegratedSystemModel.Payment" Role="Payment" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="PaymentID" />
+            </Principal>
+            <Dependent Role="Alpha4Payment">
+              <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11198,6 +11406,87 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="InsertEnrollmentTransactionLog" FunctionName="LetranIntegratedSystemModel.Store.InsertEnrollmentTransactionLog" />
+          <FunctionImportMapping FunctionImportName="GetFloatingDMCM" FunctionName="LetranIntegratedSystemModel.Store.GetFloatingDMCM">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetFloatingDMCM_Result">
+                <ScalarProperty Name="DMCMID" ColumnName="DMCMID" />
+                <ScalarProperty Name="PeriodID" ColumnName="PeriodID" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="DocNum" ColumnName="DocNum" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="DC" ColumnName="DC" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="ChargeToStudentAr" ColumnName="ChargeToStudentAr" />
+                <ScalarProperty Name="ChargeToAssessment" ColumnName="ChargeToAssessment" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="AcaDeptID" ColumnName="AcaDeptID" />
+                <ScalarProperty Name="AcctID" ColumnName="AcctID" />
+                <ScalarProperty Name="SubAcctID" ColumnName="SubAcctID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetFloatingPayment" FunctionName="LetranIntegratedSystemModel.Store.GetFloatingPayment">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetFloatingPayment_Result">
+                <ScalarProperty Name="PaymentID" ColumnName="PaymentID" />
+                <ScalarProperty Name="ORNo" ColumnName="ORNo" />
+                <ScalarProperty Name="CashierID" ColumnName="CashierID" />
+                <ScalarProperty Name="Datestamp" ColumnName="Datestamp" />
+                <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="Bank" ColumnName="Bank" />
+                <ScalarProperty Name="CheckAmount" ColumnName="CheckAmount" />
+                <ScalarProperty Name="CheckNo" ColumnName="CheckNo" />
+                <ScalarProperty Name="SemID" ColumnName="SemID" />
+                <ScalarProperty Name="Branch" ColumnName="Branch" />
+                <ScalarProperty Name="EducLevel" ColumnName="EducLevel" />
+                <ScalarProperty Name="CurriculumID" ColumnName="CurriculumID" />
+                <ScalarProperty Name="OtherClientID" ColumnName="OtherClientID" />
+                <ScalarProperty Name="SOAID" ColumnName="SOAID" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="ApplicantID" ColumnName="ApplicantID" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="OrNoBankDeposit" ColumnName="OrNoBankDeposit" />
+                <ScalarProperty Name="OrIssuedDate" ColumnName="OrIssuedDate" />
+                <ScalarProperty Name="OrIssuedCashierID" ColumnName="OrIssuedCashierID" />
+                <ScalarProperty Name="BankDate" ColumnName="BankDate" />
+                <ScalarProperty Name="CCTransactionID" ColumnName="CCTransactionID" />
+                <ScalarProperty Name="DPTransactionID" ColumnName="DPTransactionID" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Alpha4">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Alpha4">
+              <MappingFragment StoreEntitySet="Alpha4">
+                <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="EducLevelId" ColumnName="EducLevelId" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="BADate" ColumnName="BADate" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="StudentNo" ColumnName="StudentNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Alpha4Payment">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Alpha4Payment">
+              <MappingFragment StoreEntitySet="Alpha4Payment">
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
+                <ScalarProperty Name="OrNo" ColumnName="OrNo" />
+                <ScalarProperty Name="Alpha4Id" ColumnName="Alpha4Id" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
