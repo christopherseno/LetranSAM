@@ -57,29 +57,36 @@ namespace ARManila.Controllers
                     return View(await GetDcrJournalEntryAsync(OrDate, IsQne));
                 }     
                
-                var receiptvouchers = await GetDcrJournalEntryAsync(OrDate, IsQne);                
+                var receiptvouchers = await GetDcrJournalEntryAsync(OrDate, IsQne);
+                if (receiptvouchers.Any(m => m.CanBePosted == false)) throw new Exception("One of the items has no QNE Code.");
+                if(coh == null) throw new Exception("CASH ON HAND has no QNE Code.");
+                QNEDBEntities qnedb = new QNEDBEntities();
                 foreach (var item in receiptvouchers)
                 {
-                    item.depositToAccount = cashonhand;
-                    string json = JsonConvert.SerializeObject(item);
-                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                    using (var httpClient = new HttpClient())
+                    var existingreceipt = qnedb.Receipts.FirstOrDefault(m => m.ReceiptCode.Equals(item.receiptCode));
+                    if (existingreceipt == null)
                     {
-                        httpClient.DefaultRequestHeaders.Add("DbCode", "LetranQNEDB");
-                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                        var httpResponse = await httpClient.PostAsync("https://qneapi.letran.edu.ph:5513/api/ReceiptVouchers", httpContent);
-                        if (httpResponse.IsSuccessStatusCode)
+                        item.depositToAccount = cashonhand;
+                        string json = JsonConvert.SerializeObject(item);
+                        var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                        using (var httpClient = new HttpClient())
                         {
-                            var content = await httpResponse.Content.ReadAsAsync<Dcr>();
-                        }
-                        else
-                        {
-                            var error = await httpResponse.Content.ReadAsAsync<QneError>();
-                            throw new Exception(error.message);
+                            httpClient.DefaultRequestHeaders.Add("DbCode", "LetranQNEDB");
+                            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            var httpResponse = await httpClient.PostAsync("https://qneapi.letran.edu.ph:5513/api/ReceiptVouchers", httpContent);
+                            if (httpResponse.IsSuccessStatusCode)
+                            {
+                                var content = await httpResponse.Content.ReadAsAsync<Dcr>();
+                            }
+                            else
+                            {
+                                var error = await httpResponse.Content.ReadAsAsync<QneError>();
+                                throw new Exception(error.message);
+                            }
                         }
                     }
                 }
-                return RedirectToAction("ViewReceiptVoucher");
+                return RedirectToAction("ViewReceiptVoucher", new { OrDate = OrDate});
             }
             return View(new List<Dcr>());
         }
@@ -88,7 +95,7 @@ namespace ARManila.Controllers
         {
             LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
-            var period = db.Period.Find(periodid);
+            var period = db.Period.Find(periodid);            
             if (period == null) throw new Exception("Invalid period id.");
             List<Dcr> dcrs = new List<Dcr>();
             DateTime enddate = ordate.AddDays(1);
@@ -118,11 +125,13 @@ namespace ARManila.Controllers
                     if (isqne)
                     {
                         receiptdetail.account = paycode.Paycode.SubCOANo.HasValue ? (paycode.Paycode.SubChartOfAccounts.QNEGLAccount != null ? paycode.Paycode.SubChartOfAccounts.QNEGLAccount.AccountCode : "NOTSET") : (paycode.Paycode.COANo.HasValue ? (paycode.Paycode.ChartOfAccounts.QNEGLAccount != null ? paycode.Paycode.ChartOfAccounts.QNEGLAccount.AccountCode : "NOTSET") : "NOTSET");
+                                               
                     }
                     else
                     {
                         receiptdetail.account = paycode.Paycode.SubCOANo.HasValue ? paycode.Paycode.SubChartOfAccounts.SubAcctNo : (paycode.Paycode.COANo.HasValue ? paycode.Paycode.ChartOfAccounts.AcctNo : "NOTSET");
                     }
+                    receiptvoucher.CanBePosted = receiptvoucher.CanBePosted = false ? receiptvoucher.CanBePosted : !receiptdetail.account.Equals("NOTSET");
                     receiptdetail.project = project;
                     receiptdetail.amount = (decimal)paycode.Amount;
                     receiptdetail.description = paycode.Paycode.Description;

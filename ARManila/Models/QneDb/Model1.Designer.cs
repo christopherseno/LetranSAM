@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\Kyle Manuyag\Documents\ARManilaWebAppliocation\ARManila\Models\QneDb\Model1.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\Seno\source\repos\ARSystem2024\ARManila\Models\QneDb\Model1.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

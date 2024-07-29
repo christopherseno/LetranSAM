@@ -49,6 +49,7 @@ namespace ARManila.Models
         public string project { get; set; }
         [JsonIgnore]
         public string Department { get; set; }
+        
     }
     public class Dcr
     {
@@ -60,6 +61,8 @@ namespace ARManila.Models
         public string description { get; set; }
         public string depositToAccount { get; set; }
         public List<DcrDetail> details { get; set; } = new List<DcrDetail>();
+        [JsonIgnore]
+        public bool CanBePosted { get; set; }
     }
     public class DcrDetail
     {

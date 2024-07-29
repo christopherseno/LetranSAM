@@ -11,20 +11,20 @@
         <AssociationConnector Association="QNEDBModel.FK_JournalDetails_BDJournalId" ManuallyRouted="false" />
         <AssociationConnector Association="QNEDBModel.FK_JournalDetails_JournalId" ManuallyRouted="false" />
         <AssociationConnector Association="QNEDBModel.FK_JournalDetails_RecoveredJournalDetailId" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="QNEDBModel.GLAccounts" Width="1.5" PointX="0.75" PointY="7.375" />
-        <EntityTypeShape EntityType="QNEDBModel.ReceiptDetails" Width="1.5" PointX="8.25" PointY="13.375" />
-        <EntityTypeShape EntityType="QNEDBModel.Receipts" Width="1.5" PointX="3" PointY="15.5" />
-        <AssociationConnector Association="QNEDBModel.FK_JournalDetails_GLAccountId" />
-        <AssociationConnector Association="QNEDBModel.FK_ReceiptDetails_GLAccountId" />
-        <AssociationConnector Association="QNEDBModel.FK_Receipts_GLAccountId" />
-        <AssociationConnector Association="QNEDBModel.FK_Receipts_RoundingAdjustmentAccount" />
-        <AssociationConnector Association="QNEDBModel.FK_ReceiptDetails_ReceiptId" />
         <EntityTypeShape EntityType="QNEDBModel.Projects" Width="1.5" PointX="0.75" PointY="12.875" />
         <AssociationConnector Association="QNEDBModel.FK_JournalDetails_ProjectId" />
         <AssociationConnector Association="QNEDBModel.FK_Journals_ProjectId" />
         <AssociationConnector Association="QNEDBModel.FK_Projects_ParentId" />
+        <EntityTypeShape EntityType="QNEDBModel.ReceiptDetails" Width="1.5" PointX="8.25" PointY="9.375" />
+        <EntityTypeShape EntityType="QNEDBModel.Receipts" Width="1.5" PointX="6" PointY="5.625" />
         <AssociationConnector Association="QNEDBModel.FK_ReceiptDetails_ProjectId" />
         <AssociationConnector Association="QNEDBModel.FK_Receipts_ProjectId" />
+        <AssociationConnector Association="QNEDBModel.FK_ReceiptDetails_ReceiptId" />
+        <EntityTypeShape EntityType="QNEDBModel.GLAccounts" Width="1.5" PointX="0.75" PointY="9.5" />
+        <AssociationConnector Association="QNEDBModel.FK_JournalDetails_GLAccountId" />
+        <AssociationConnector Association="QNEDBModel.FK_ReceiptDetails_GLAccountId" />
+        <AssociationConnector Association="QNEDBModel.FK_Receipts_GLAccountId" />
+        <AssociationConnector Association="QNEDBModel.FK_Receipts_RoundingAdjustmentAccount" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

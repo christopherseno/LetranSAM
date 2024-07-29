@@ -98,15 +98,18 @@ namespace ARManila.Models.QneDb
         public string Remark3 { get; set; }
         public string Remark4 { get; set; }
         public string Remark5 { get; set; }
+        public Nullable<decimal> WVatTotalAmount { get; set; }
+        public Nullable<decimal> WVatTotalAmountLocal { get; set; }
         public Nullable<System.DateTime> ChequeDate { get; set; }
+        public Nullable<bool> IsESales { get; set; }
         public Nullable<decimal> TotalWtaxAmount { get; set; }
         public Nullable<bool> HasDeposit { get; set; }
         public Nullable<System.DateTime> WTaxDate { get; set; }
     
-        public virtual GLAccounts GLAccounts { get; set; }
-        public virtual GLAccounts GLAccounts1 { get; set; }
+        public virtual Projects Projects { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ReceiptDetails> ReceiptDetails { get; set; }
-        public virtual Projects Projects { get; set; }
+        public virtual GLAccounts GLAccounts { get; set; }
+        public virtual GLAccounts GLAccounts1 { get; set; }
     }
 }

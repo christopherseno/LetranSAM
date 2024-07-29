@@ -103,6 +103,7 @@ namespace ARManila.Models.QneDb
         public Nullable<System.Guid> ServiceTaxCode { get; set; }
         public Nullable<System.DateTime> ServicePostingDate { get; set; }
         public Nullable<decimal> ServiceTaxAmount { get; set; }
+        public Nullable<decimal> LocalOneCentsDiff { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<JournalDetails> JournalDetails1 { get; set; }
@@ -112,7 +113,7 @@ namespace ARManila.Models.QneDb
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<JournalDetails> JournalDetails11 { get; set; }
         public virtual JournalDetails JournalDetails3 { get; set; }
-        public virtual GLAccounts GLAccounts { get; set; }
         public virtual Projects Projects { get; set; }
+        public virtual GLAccounts GLAccounts { get; set; }
     }
 }

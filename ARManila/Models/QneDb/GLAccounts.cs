@@ -44,7 +44,6 @@ namespace ARManila.Models.QneDb
         public string SAC { get; set; }
         public int RowIndex { get; set; }
         public Nullable<bool> HasChildInCoa { get; set; }
-        public Nullable<int> AmoebaAccountId { get; set; }
         public Nullable<bool> IncludeInCashFlowForecastAdvisor { get; set; }
         public string SSTTariffCode { get; set; }
         public Nullable<int> TariffCodeId { get; set; }

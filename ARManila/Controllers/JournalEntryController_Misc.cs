@@ -29,19 +29,22 @@ namespace ARManila.Controllers
         [HttpPost]
         public async Task<ActionResult> MiscJournalEntry(QneJournal model)
         {
+            LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+
             if (model.Action.Equals("Post to QNE") && model.IsQne && (model.description == null || model.description.Trim().Length < 1))
                 ModelState.AddModelError("Description", "Description is required!");
             if (model.Action.Equals("Post to QNE") && model.IsQne && (model.docCode == null || model.docCode.Trim().Length < 1))
                 ModelState.AddModelError("DocCode", "Journal Code is required!");
             if (model.Action.Equals("Post to QNE") && !model.IsQne)
                 ModelState.AddModelError("DocCode", "Posting is for QNE accounts only!");
-            LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
+            
             ViewBag.journalentrytype = new SelectList(db.JournalEntryType, "JournalEntryTypeId", "JounalEntryTypeName");
             if (ModelState.IsValid)
             {
-                var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
-                var period = db.Period.Find(periodid);
-                if (period == null) throw new Exception("Invalid period id.");
+                
                 var journalentrytype = db.JournalEntryType.Find(model.JournalEntryTypeId);
 
                 if (model.Action.Equals("Show Data"))

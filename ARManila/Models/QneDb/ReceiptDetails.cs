@@ -55,11 +55,15 @@ namespace ARManila.Models.QneDb
         public Nullable<System.Guid> GLBIRClsInfo { get; set; }
         public int RowIndex { get; set; }
         public Nullable<int> TariffCodeId { get; set; }
+        public Nullable<System.Guid> WVatCode { get; set; }
+        public Nullable<decimal> WVatRate { get; set; }
+        public Nullable<decimal> WVatAmount { get; set; }
+        public Nullable<decimal> WVatAmountLocal { get; set; }
         public Nullable<System.DateTime> ServicePostingDate { get; set; }
         public Nullable<System.Guid> ATCCodeId { get; set; }
     
-        public virtual GLAccounts GLAccounts { get; set; }
-        public virtual Receipts Receipts { get; set; }
         public virtual Projects Projects { get; set; }
+        public virtual Receipts Receipts { get; set; }
+        public virtual GLAccounts GLAccounts { get; set; }
     }
 }

@@ -27,9 +27,9 @@ namespace ARManila.Models.QneDb
     
         public virtual DbSet<JournalDetails> JournalDetails { get; set; }
         public virtual DbSet<Journals> Journals { get; set; }
-        public virtual DbSet<GLAccounts> GLAccounts { get; set; }
+        public virtual DbSet<Projects> Projects { get; set; }
         public virtual DbSet<ReceiptDetails> ReceiptDetails { get; set; }
         public virtual DbSet<Receipts> Receipts { get; set; }
-        public virtual DbSet<Projects> Projects { get; set; }
+        public virtual DbSet<GLAccounts> GLAccounts { get; set; }
     }
 }

@@ -44,7 +44,7 @@
                     </td>
                     <td>@(item.Projects != null ? item.Projects.ProjectCode:"")</td>
                     <td>@paycode.Description</td>
-                    <td>@paycode.GLAccounts.GLAccountCode</td>
+                    <td>@(paycode.GLAccounts==null ? "" : paycode.GLAccounts.GLAccountCode)</td>
                     <td align="right">@paycode.Amount.Value.ToString("#,##0.00")</td>
                 </tr>
             }

@@ -52,6 +52,7 @@ namespace ARManila.Models.QneDb
         public Nullable<int> ProjectId { get; set; }
         public Nullable<int> CostCentreId { get; set; }
         public Nullable<bool> IsSSTBadDebt { get; set; }
+        public Nullable<bool> IsESales { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<JournalDetails> JournalDetails { get; set; }

@@ -30,7 +30,6 @@
           <Property Name="SAC" Type="nvarchar" MaxLength="20" />
           <Property Name="RowIndex" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="HasChildInCoa" Type="bit" />
-          <Property Name="AmoebaAccountId" Type="int" />
           <Property Name="IncludeInCashFlowForecastAdvisor" Type="bit" />
           <Property Name="SSTTariffCode" Type="nvarchar" MaxLength="12" />
           <Property Name="TariffCodeId" Type="int" />
@@ -109,6 +108,7 @@
           <Property Name="IgstCreditLocal" Type="decimal" Precision="28" Scale="2" />
           <Property Name="RowIndex" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TariffCodeId" Type="int" />
+          <Property Name="LocalOneCentsDiff" Type="decimal" Precision="28" Scale="2" />
           <Property Name="RecoveredPastInvoiceId" Type="uniqueidentifier" />
           <Property Name="BDJournalId" Type="uniqueidentifier" />
           <Property Name="BDInvoiceId" Type="uniqueidentifier" />
@@ -158,6 +158,7 @@
           <Property Name="ProjectId" Type="int" />
           <Property Name="CostCentreId" Type="int" />
           <Property Name="IsSSTBadDebt" Type="bit" />
+          <Property Name="IsESales" Type="bit" />
         </EntityType>
         <EntityType Name="Projects">
           <Key>
@@ -245,6 +246,10 @@
           <Property Name="GLBIRClsInfo" Type="uniqueidentifier" />
           <Property Name="RowIndex" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TariffCodeId" Type="int" />
+          <Property Name="WVatCode" Type="uniqueidentifier" />
+          <Property Name="WVatRate" Type="money" />
+          <Property Name="WVatAmount" Type="money" />
+          <Property Name="WVatAmountLocal" Type="money" />
           <Property Name="ServicePostingDate" Type="datetime" />
           <Property Name="ATCCodeId" Type="uniqueidentifier" />
         </EntityType>
@@ -330,7 +335,10 @@
           <Property Name="Remark3" Type="nvarchar" MaxLength="100" />
           <Property Name="Remark4" Type="nvarchar" MaxLength="100" />
           <Property Name="Remark5" Type="nvarchar" MaxLength="100" />
+          <Property Name="WVatTotalAmount" Type="money" />
+          <Property Name="WVatTotalAmountLocal" Type="money" />
           <Property Name="ChequeDate" Type="datetime" />
+          <Property Name="IsESales" Type="bit" />
           <Property Name="TotalWtaxAmount" Type="money" />
           <Property Name="HasDeposit" Type="bit" />
           <Property Name="WTaxDate" Type="date" />
@@ -663,8 +671,9 @@
           <NavigationProperty Name="Journals1" Relationship="Self.FK_JournalDetails_JournalId" FromRole="JournalDetails" ToRole="Journals" />
           <NavigationProperty Name="JournalDetails11" Relationship="Self.FK_JournalDetails_RecoveredJournalDetailId" FromRole="JournalDetails" ToRole="JournalDetails1" />
           <NavigationProperty Name="JournalDetails3" Relationship="Self.FK_JournalDetails_RecoveredJournalDetailId" FromRole="JournalDetails1" ToRole="JournalDetails" />
-          <NavigationProperty Name="GLAccounts" Relationship="QNEDBModel.FK_JournalDetails_GLAccountId" FromRole="JournalDetails" ToRole="GLAccounts" />
           <NavigationProperty Name="Projects" Relationship="QNEDBModel.FK_JournalDetails_ProjectId" FromRole="JournalDetails" ToRole="Projects" />
+          <Property Name="LocalOneCentsDiff" Type="Decimal" Precision="28" Scale="2" />
+          <NavigationProperty Name="GLAccounts" Relationship="QNEDBModel.FK_JournalDetails_GLAccountId" FromRole="JournalDetails" ToRole="GLAccounts" />
         </EntityType>
         <EntityType Name="Journals">
           <Key>
@@ -704,6 +713,7 @@
           <NavigationProperty Name="JournalDetails" Relationship="Self.FK_JournalDetails_BDJournalId" FromRole="Journals" ToRole="JournalDetails" />
           <NavigationProperty Name="JournalDetails1" Relationship="Self.FK_JournalDetails_JournalId" FromRole="Journals" ToRole="JournalDetails" />
           <NavigationProperty Name="Projects" Relationship="QNEDBModel.FK_Journals_ProjectId" FromRole="Journals" ToRole="Projects" />
+          <Property Name="IsESales" Type="Boolean" />
         </EntityType>
         <Association Name="FK_JournalDetails_BDJournalDetailId">
           <End Role="JournalDetails" Type="Self.JournalDetails" Multiplicity="0..1" />
@@ -772,9 +782,34 @@
             <End Role="JournalDetails" EntitySet="JournalDetails" />
             <End Role="JournalDetails1" EntitySet="JournalDetails" />
           </AssociationSet>
-          <EntitySet Name="GLAccounts" EntityType="QNEDBModel.GLAccounts" />
+          <EntitySet Name="Projects" EntityType="QNEDBModel.Projects" />
+          <AssociationSet Name="FK_JournalDetails_ProjectId" Association="QNEDBModel.FK_JournalDetails_ProjectId">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="JournalDetails" EntitySet="JournalDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Journals_ProjectId" Association="QNEDBModel.FK_Journals_ProjectId">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Journals" EntitySet="Journals" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Projects_ParentId" Association="QNEDBModel.FK_Projects_ParentId">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Projects1" EntitySet="Projects" />
+          </AssociationSet>
           <EntitySet Name="ReceiptDetails" EntityType="QNEDBModel.ReceiptDetails" />
           <EntitySet Name="Receipts" EntityType="QNEDBModel.Receipts" />
+          <AssociationSet Name="FK_ReceiptDetails_ProjectId" Association="QNEDBModel.FK_ReceiptDetails_ProjectId">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ReceiptDetails" EntitySet="ReceiptDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Receipts_ProjectId" Association="QNEDBModel.FK_Receipts_ProjectId">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Receipts" EntitySet="Receipts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ReceiptDetails_ReceiptId" Association="QNEDBModel.FK_ReceiptDetails_ReceiptId">
+            <End Role="Receipts" EntitySet="Receipts" />
+            <End Role="ReceiptDetails" EntitySet="ReceiptDetails" />
+          </AssociationSet>
+          <EntitySet Name="GLAccounts" EntityType="QNEDBModel.GLAccounts" />
           <AssociationSet Name="FK_JournalDetails_GLAccountId" Association="QNEDBModel.FK_JournalDetails_GLAccountId">
             <End Role="GLAccounts" EntitySet="GLAccounts" />
             <End Role="JournalDetails" EntitySet="JournalDetails" />
@@ -791,269 +826,7 @@
             <End Role="GLAccounts" EntitySet="GLAccounts" />
             <End Role="Receipts" EntitySet="Receipts" />
           </AssociationSet>
-          <AssociationSet Name="FK_ReceiptDetails_ReceiptId" Association="QNEDBModel.FK_ReceiptDetails_ReceiptId">
-            <End Role="Receipts" EntitySet="Receipts" />
-            <End Role="ReceiptDetails" EntitySet="ReceiptDetails" />
-          </AssociationSet>
-          <EntitySet Name="Projects" EntityType="QNEDBModel.Projects" />
-          <AssociationSet Name="FK_JournalDetails_ProjectId" Association="QNEDBModel.FK_JournalDetails_ProjectId">
-            <End Role="Projects" EntitySet="Projects" />
-            <End Role="JournalDetails" EntitySet="JournalDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Journals_ProjectId" Association="QNEDBModel.FK_Journals_ProjectId">
-            <End Role="Projects" EntitySet="Projects" />
-            <End Role="Journals" EntitySet="Journals" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Projects_ParentId" Association="QNEDBModel.FK_Projects_ParentId">
-            <End Role="Projects" EntitySet="Projects" />
-            <End Role="Projects1" EntitySet="Projects" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ReceiptDetails_ProjectId" Association="QNEDBModel.FK_ReceiptDetails_ProjectId">
-            <End Role="Projects" EntitySet="Projects" />
-            <End Role="ReceiptDetails" EntitySet="ReceiptDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Receipts_ProjectId" Association="QNEDBModel.FK_Receipts_ProjectId">
-            <End Role="Projects" EntitySet="Projects" />
-            <End Role="Receipts" EntitySet="Receipts" />
-          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="GLAccounts">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ParentId" Type="Guid" />
-          <Property Name="GLAccountCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="AccountId" Type="Guid" />
-          <Property Name="SpecialAccountId" Type="Int32" />
-          <Property Name="CurrencyId" Type="Int32" />
-          <Property Name="GSTTypeId" Type="Int32" />
-          <Property Name="Description" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="DRCR" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
-          <Property Name="IsCreditCard" Type="Boolean" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="GSTGroup" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="IsRevaluation" Type="Boolean" />
-          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="IsSubAccount" Type="Boolean" />
-          <Property Name="BankAccountNo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="GSTMSICCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="OptimisticLockField" Type="Int32" />
-          <Property Name="SAC" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="RowIndex" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="HasChildInCoa" Type="Boolean" />
-          <Property Name="AmoebaAccountId" Type="Int32" />
-          <Property Name="IncludeInCashFlowForecastAdvisor" Type="Boolean" />
-          <Property Name="SSTTariffCode" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
-          <Property Name="TariffCodeId" Type="Int32" />
-          <Property Name="ATCCodeId" Type="Guid" />
-          <NavigationProperty Name="JournalDetails" Relationship="QNEDBModel.FK_JournalDetails_GLAccountId" FromRole="GLAccounts" ToRole="JournalDetails" />
-          <NavigationProperty Name="ReceiptDetails" Relationship="QNEDBModel.FK_ReceiptDetails_GLAccountId" FromRole="GLAccounts" ToRole="ReceiptDetails" />
-          <NavigationProperty Name="Receipts" Relationship="QNEDBModel.FK_Receipts_GLAccountId" FromRole="GLAccounts" ToRole="Receipts" />
-          <NavigationProperty Name="Receipts1" Relationship="QNEDBModel.FK_Receipts_RoundingAdjustmentAccount" FromRole="GLAccounts" ToRole="Receipts" />
-        </EntityType>
-        <EntityType Name="ReceiptDetails">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ReceiptId" Type="Guid" Nullable="false" />
-          <Property Name="Pos" Type="Int32" Nullable="false" />
-          <Property Name="GLAccountId" Type="Guid" />
-          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="ProjectId" Type="Int32" />
-          <Property Name="DepartmentId" Type="Int32" />
-          <Property Name="ReferenceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="IsProcessed" Type="Boolean" />
-          <Property Name="WTaxTypeId" Type="Int32" />
-          <Property Name="WTaxAmount" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="GSTTypeId" Type="Int32" />
-          <Property Name="GSTAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="TaxableSales" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="CostCentreId" Type="Int32" />
-          <Property Name="AmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ItemTypeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="TaxCodeId" Type="Guid" />
-          <Property Name="IsTaxInclusive" Type="Boolean" />
-          <Property Name="TaxRate" Type="Decimal" Precision="28" Scale="4" />
-          <Property Name="TaxClass" Type="Int32" />
-          <Property Name="TaxClassValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TaxAmount" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="TaxAmountLocal" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="NetAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="NetAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="SubAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="SubAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="TaxClassValueRef" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="TaxExclusiveAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="TaxExclusiveAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="OptimisticLockField" Type="Int32" />
-          <Property Name="WTaxCode" Type="Guid" />
-          <Property Name="WTaxRate" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="WTaxAmountLocal" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="PaymentReceiptInfoId" Type="Guid" />
-          <Property Name="GLBIRClsInfo" Type="Guid" />
-          <Property Name="RowIndex" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TariffCodeId" Type="Int32" />
-          <Property Name="ServicePostingDate" Type="DateTime" Precision="3" />
-          <Property Name="ATCCodeId" Type="Guid" />
-          <NavigationProperty Name="GLAccounts" Relationship="QNEDBModel.FK_ReceiptDetails_GLAccountId" FromRole="ReceiptDetails" ToRole="GLAccounts" />
-          <NavigationProperty Name="Receipts" Relationship="QNEDBModel.FK_ReceiptDetails_ReceiptId" FromRole="ReceiptDetails" ToRole="Receipts" />
-          <NavigationProperty Name="Projects" Relationship="QNEDBModel.FK_ReceiptDetails_ProjectId" FromRole="ReceiptDetails" ToRole="Projects" />
-        </EntityType>
-        <EntityType Name="Receipts">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ReceiptCode" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="ReceiptDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="GLAccountId" Type="Guid" />
-          <Property Name="ReferenceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ProjectId" Type="Int32" />
-          <Property Name="CurrencyId" Type="Int32" Nullable="false" />
-          <Property Name="CurrencyRate" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="DebtorId" Type="Guid" />
-          <Property Name="DebtorName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="TotalAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="IsCancelled" Type="Boolean" Nullable="false" />
-          <Property Name="IsDetailForGLPosting" Type="Boolean" />
-          <Property Name="GSTTypeId" Type="Int32" />
-          <Property Name="GSTTaxRate" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="GSTAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="GSTTaxAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="TotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="GSTAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="WTaxAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="IsPostDatedCheque" Type="Boolean" />
-          <Property Name="ChequePreparedDate" Type="DateTime" Precision="0" />
-          <Property Name="ChequeReceivedDate" Type="DateTime" Precision="0" />
-          <Property Name="IsBouncedCheque" Type="Boolean" />
-          <Property Name="BouncedChequeDate" Type="DateTime" Precision="0" />
-          <Property Name="IsMultiPayment" Type="Boolean" />
-          <Property Name="Balance" Type="Decimal" Precision="38" Scale="12" />
-          <Property Name="SalesPersonId" Type="Int32" />
-          <Property Name="DepartmentId" Type="Int32" />
-          <Property Name="CostCentreId" Type="Int32" />
-          <Property Name="TaxTotalAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="TaxTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="NetTotalAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="NetTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="SubtotalAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="SubtotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="BankChargesAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ObjectType" Type="Int32" />
-          <Property Name="TaxDate" Type="DateTime" Precision="0" />
-          <Property Name="BankCharges" Type="Guid" />
-          <Property Name="PaymentReceiptInfoId" Type="Guid" />
-          <Property Name="TaxExclusiveTotalAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="TaxExclusiveTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="IsDepositDoc" Type="Boolean" />
-          <Property Name="IsTaxInclusive" Type="Boolean" />
-          <Property Name="IsTaxInclusiveOnly" Type="Boolean" />
-          <Property Name="RoundingAdjustmentAccount" Type="Guid" />
-          <Property Name="RoundingAdjustment" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="RoundingAdjustmentLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="IsRounding" Type="Boolean" />
-          <Property Name="OptimisticLockField" Type="Int32" />
-          <Property Name="TaxCodeId" Type="Guid" />
-          <Property Name="TaxRate" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="WTaxTotalAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="WTaxTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="PostGLDescription" Type="Boolean" />
-          <Property Name="UseMultiPayment" Type="Boolean" />
-          <Property Name="UnmatchAmount" Type="Decimal" Precision="28" Scale="2" />
-          <Property Name="Cost" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="CostLocal" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="ClearedDate" Type="DateTime" Precision="0" />
-          <Property Name="RowIndex" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PaymentMethodMaintenanceId" Type="Guid" />
-          <Property Name="TotalCashAmount" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="TotalChequeAmount" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="ReverseRate" Type="Decimal" Precision="28" Scale="8" />
-          <Property Name="Ref1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Ref2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Ref3" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Ref4" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Ref5" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Remark1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Remark2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Remark3" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Remark4" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Remark5" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ChequeDate" Type="DateTime" Precision="3" />
-          <Property Name="TotalWtaxAmount" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="HasDeposit" Type="Boolean" />
-          <Property Name="WTaxDate" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="GLAccounts" Relationship="QNEDBModel.FK_Receipts_GLAccountId" FromRole="Receipts" ToRole="GLAccounts" />
-          <NavigationProperty Name="GLAccounts1" Relationship="QNEDBModel.FK_Receipts_RoundingAdjustmentAccount" FromRole="Receipts" ToRole="GLAccounts" />
-          <NavigationProperty Name="ReceiptDetails" Relationship="QNEDBModel.FK_ReceiptDetails_ReceiptId" FromRole="Receipts" ToRole="ReceiptDetails" />
-          <NavigationProperty Name="Projects" Relationship="QNEDBModel.FK_Receipts_ProjectId" FromRole="Receipts" ToRole="Projects" />
-        </EntityType>
-        <Association Name="FK_JournalDetails_GLAccountId">
-          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
-          <End Type="QNEDBModel.JournalDetails" Role="JournalDetails" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GLAccounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="JournalDetails">
-              <PropertyRef Name="GLAccountId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ReceiptDetails_GLAccountId">
-          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
-          <End Type="QNEDBModel.ReceiptDetails" Role="ReceiptDetails" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GLAccounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ReceiptDetails">
-              <PropertyRef Name="GLAccountId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Receipts_GLAccountId">
-          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
-          <End Type="QNEDBModel.Receipts" Role="Receipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GLAccounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Receipts">
-              <PropertyRef Name="GLAccountId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Receipts_RoundingAdjustmentAccount">
-          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
-          <End Type="QNEDBModel.Receipts" Role="Receipts" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GLAccounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Receipts">
-              <PropertyRef Name="RoundingAdjustmentAccount" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ReceiptDetails_ReceiptId">
-          <End Type="QNEDBModel.Receipts" Role="Receipts" Multiplicity="1" />
-          <End Type="QNEDBModel.ReceiptDetails" Role="ReceiptDetails" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Receipts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ReceiptDetails">
-              <PropertyRef Name="ReceiptId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Projects">
           <Key>
             <PropertyRef Name="Id" />
@@ -1137,6 +910,155 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ReceiptDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ReceiptId" Type="Guid" Nullable="false" />
+          <Property Name="Pos" Type="Int32" Nullable="false" />
+          <Property Name="GLAccountId" Type="Guid" />
+          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ProjectId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
+          <Property Name="ReferenceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="IsProcessed" Type="Boolean" />
+          <Property Name="WTaxTypeId" Type="Int32" />
+          <Property Name="WTaxAmount" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="GSTTypeId" Type="Int32" />
+          <Property Name="GSTAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="TaxableSales" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="CostCentreId" Type="Int32" />
+          <Property Name="AmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ItemTypeCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="TaxCodeId" Type="Guid" />
+          <Property Name="IsTaxInclusive" Type="Boolean" />
+          <Property Name="TaxRate" Type="Decimal" Precision="28" Scale="4" />
+          <Property Name="TaxClass" Type="Int32" />
+          <Property Name="TaxClassValue" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TaxAmount" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="TaxAmountLocal" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="NetAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="NetAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="SubAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="SubAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="TaxClassValueRef" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TaxExclusiveAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="TaxExclusiveAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="OptimisticLockField" Type="Int32" />
+          <Property Name="WTaxCode" Type="Guid" />
+          <Property Name="WTaxRate" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="WTaxAmountLocal" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="PaymentReceiptInfoId" Type="Guid" />
+          <Property Name="GLBIRClsInfo" Type="Guid" />
+          <Property Name="RowIndex" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TariffCodeId" Type="Int32" />
+          <Property Name="WVatCode" Type="Guid" />
+          <Property Name="WVatRate" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="WVatAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="WVatAmountLocal" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ServicePostingDate" Type="DateTime" Precision="3" />
+          <Property Name="ATCCodeId" Type="Guid" />
+          <NavigationProperty Name="Projects" Relationship="QNEDBModel.FK_ReceiptDetails_ProjectId" FromRole="ReceiptDetails" ToRole="Projects" />
+          <NavigationProperty Name="Receipts" Relationship="QNEDBModel.FK_ReceiptDetails_ReceiptId" FromRole="ReceiptDetails" ToRole="Receipts" />
+          <NavigationProperty Name="GLAccounts" Relationship="QNEDBModel.FK_ReceiptDetails_GLAccountId" FromRole="ReceiptDetails" ToRole="GLAccounts" />
+        </EntityType>
+        <EntityType Name="Receipts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ReceiptCode" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiptDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="GLAccountId" Type="Guid" />
+          <Property Name="ReferenceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProjectId" Type="Int32" />
+          <Property Name="CurrencyId" Type="Int32" Nullable="false" />
+          <Property Name="CurrencyRate" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="DebtorId" Type="Guid" />
+          <Property Name="DebtorName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="IsCancelled" Type="Boolean" Nullable="false" />
+          <Property Name="IsDetailForGLPosting" Type="Boolean" />
+          <Property Name="GSTTypeId" Type="Int32" />
+          <Property Name="GSTTaxRate" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="GSTAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="GSTTaxAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="TotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="GSTAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="WTaxAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="IsPostDatedCheque" Type="Boolean" />
+          <Property Name="ChequePreparedDate" Type="DateTime" Precision="0" />
+          <Property Name="ChequeReceivedDate" Type="DateTime" Precision="0" />
+          <Property Name="IsBouncedCheque" Type="Boolean" />
+          <Property Name="BouncedChequeDate" Type="DateTime" Precision="0" />
+          <Property Name="IsMultiPayment" Type="Boolean" />
+          <Property Name="Balance" Type="Decimal" Precision="38" Scale="12" />
+          <Property Name="SalesPersonId" Type="Int32" />
+          <Property Name="DepartmentId" Type="Int32" />
+          <Property Name="CostCentreId" Type="Int32" />
+          <Property Name="TaxTotalAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="TaxTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="NetTotalAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="NetTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="SubtotalAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="SubtotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="BankChargesAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ObjectType" Type="Int32" />
+          <Property Name="TaxDate" Type="DateTime" Precision="0" />
+          <Property Name="BankCharges" Type="Guid" />
+          <Property Name="PaymentReceiptInfoId" Type="Guid" />
+          <Property Name="TaxExclusiveTotalAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="TaxExclusiveTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="IsDepositDoc" Type="Boolean" />
+          <Property Name="IsTaxInclusive" Type="Boolean" />
+          <Property Name="IsTaxInclusiveOnly" Type="Boolean" />
+          <Property Name="RoundingAdjustmentAccount" Type="Guid" />
+          <Property Name="RoundingAdjustment" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="RoundingAdjustmentLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="IsRounding" Type="Boolean" />
+          <Property Name="OptimisticLockField" Type="Int32" />
+          <Property Name="TaxCodeId" Type="Guid" />
+          <Property Name="TaxRate" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="WTaxTotalAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="WTaxTotalAmountLocal" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="PostGLDescription" Type="Boolean" />
+          <Property Name="UseMultiPayment" Type="Boolean" />
+          <Property Name="UnmatchAmount" Type="Decimal" Precision="28" Scale="2" />
+          <Property Name="Cost" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="CostLocal" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="ClearedDate" Type="DateTime" Precision="0" />
+          <Property Name="RowIndex" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentMethodMaintenanceId" Type="Guid" />
+          <Property Name="TotalCashAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TotalChequeAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ReverseRate" Type="Decimal" Precision="28" Scale="8" />
+          <Property Name="Ref1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Ref2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Ref3" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Ref4" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Ref5" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Remark1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Remark2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Remark3" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Remark4" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Remark5" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="WVatTotalAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="WVatTotalAmountLocal" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ChequeDate" Type="DateTime" Precision="3" />
+          <Property Name="IsESales" Type="Boolean" />
+          <Property Name="TotalWtaxAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="HasDeposit" Type="Boolean" />
+          <Property Name="WTaxDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Projects" Relationship="QNEDBModel.FK_Receipts_ProjectId" FromRole="Receipts" ToRole="Projects" />
+          <NavigationProperty Name="ReceiptDetails" Relationship="QNEDBModel.FK_ReceiptDetails_ReceiptId" FromRole="Receipts" ToRole="ReceiptDetails" />
+          <NavigationProperty Name="GLAccounts" Relationship="QNEDBModel.FK_Receipts_GLAccountId" FromRole="Receipts" ToRole="GLAccounts" />
+          <NavigationProperty Name="GLAccounts1" Relationship="QNEDBModel.FK_Receipts_RoundingAdjustmentAccount" FromRole="Receipts" ToRole="GLAccounts" />
+        </EntityType>
         <Association Name="FK_ReceiptDetails_ProjectId">
           <End Type="QNEDBModel.Projects" Role="Projects" Multiplicity="0..1" />
           <End Type="QNEDBModel.ReceiptDetails" Role="ReceiptDetails" Multiplicity="*" />
@@ -1161,6 +1083,100 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ReceiptDetails_ReceiptId">
+          <End Type="QNEDBModel.Receipts" Role="Receipts" Multiplicity="1" />
+          <End Type="QNEDBModel.ReceiptDetails" Role="ReceiptDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Receipts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ReceiptDetails">
+              <PropertyRef Name="ReceiptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GLAccounts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ParentId" Type="Guid" />
+          <Property Name="GLAccountCode" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="AccountId" Type="Guid" />
+          <Property Name="SpecialAccountId" Type="Int32" />
+          <Property Name="CurrencyId" Type="Int32" />
+          <Property Name="GSTTypeId" Type="Int32" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DRCR" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="IsCreditCard" Type="Boolean" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="GSTGroup" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsRevaluation" Type="Boolean" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsSubAccount" Type="Boolean" />
+          <Property Name="BankAccountNo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="GSTMSICCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="OptimisticLockField" Type="Int32" />
+          <Property Name="SAC" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="RowIndex" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HasChildInCoa" Type="Boolean" />
+          <Property Name="IncludeInCashFlowForecastAdvisor" Type="Boolean" />
+          <Property Name="SSTTariffCode" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="TariffCodeId" Type="Int32" />
+          <Property Name="ATCCodeId" Type="Guid" />
+          <NavigationProperty Name="JournalDetails" Relationship="QNEDBModel.FK_JournalDetails_GLAccountId" FromRole="GLAccounts" ToRole="JournalDetails" />
+          <NavigationProperty Name="ReceiptDetails" Relationship="QNEDBModel.FK_ReceiptDetails_GLAccountId" FromRole="GLAccounts" ToRole="ReceiptDetails" />
+          <NavigationProperty Name="Receipts" Relationship="QNEDBModel.FK_Receipts_GLAccountId" FromRole="GLAccounts" ToRole="Receipts" />
+          <NavigationProperty Name="Receipts1" Relationship="QNEDBModel.FK_Receipts_RoundingAdjustmentAccount" FromRole="GLAccounts" ToRole="Receipts" />
+        </EntityType>
+        <Association Name="FK_JournalDetails_GLAccountId">
+          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
+          <End Type="QNEDBModel.JournalDetails" Role="JournalDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GLAccounts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JournalDetails">
+              <PropertyRef Name="GLAccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ReceiptDetails_GLAccountId">
+          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
+          <End Type="QNEDBModel.ReceiptDetails" Role="ReceiptDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GLAccounts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ReceiptDetails">
+              <PropertyRef Name="GLAccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Receipts_GLAccountId">
+          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
+          <End Type="QNEDBModel.Receipts" Role="Receipts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GLAccounts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Receipts">
+              <PropertyRef Name="GLAccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Receipts_RoundingAdjustmentAccount">
+          <End Type="QNEDBModel.GLAccounts" Role="GLAccounts" Multiplicity="0..1" />
+          <End Type="QNEDBModel.Receipts" Role="Receipts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GLAccounts">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Receipts">
+              <PropertyRef Name="RoundingAdjustmentAccount" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1170,6 +1186,7 @@
           <EntitySetMapping Name="JournalDetails">
             <EntityTypeMapping TypeName="QNEDBModel.JournalDetails">
               <MappingFragment StoreEntitySet="JournalDetails">
+                <ScalarProperty Name="LocalOneCentsDiff" ColumnName="LocalOneCentsDiff" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="JournalId" ColumnName="JournalId" />
                 <ScalarProperty Name="Pos" ColumnName="Pos" />
@@ -1258,6 +1275,7 @@
           <EntitySetMapping Name="Journals">
             <EntityTypeMapping TypeName="QNEDBModel.Journals">
               <MappingFragment StoreEntitySet="Journals">
+                <ScalarProperty Name="IsESales" ColumnName="IsESales" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="JournalCode" ColumnName="JournalCode" />
                 <ScalarProperty Name="JournalDate" ColumnName="JournalDate" />
@@ -1292,34 +1310,44 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="GLAccounts">
-            <EntityTypeMapping TypeName="QNEDBModel.GLAccounts">
-              <MappingFragment StoreEntitySet="GLAccounts">
-                <ScalarProperty Name="ATCCodeId" ColumnName="ATCCodeId" />
-                <ScalarProperty Name="TariffCodeId" ColumnName="TariffCodeId" />
-                <ScalarProperty Name="SSTTariffCode" ColumnName="SSTTariffCode" />
-                <ScalarProperty Name="IncludeInCashFlowForecastAdvisor" ColumnName="IncludeInCashFlowForecastAdvisor" />
-                <ScalarProperty Name="AmoebaAccountId" ColumnName="AmoebaAccountId" />
-                <ScalarProperty Name="HasChildInCoa" ColumnName="HasChildInCoa" />
-                <ScalarProperty Name="RowIndex" ColumnName="RowIndex" />
-                <ScalarProperty Name="SAC" ColumnName="SAC" />
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="QNEDBModel.Projects">
+              <MappingFragment StoreEntitySet="Projects">
+                <ScalarProperty Name="RDOData" ColumnName="RDOData" />
+                <ScalarProperty Name="CBIRClassification" ColumnName="CBIRClassification" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="GSTApprovalNo" ColumnName="GSTApprovalNo" />
+                <ScalarProperty Name="Signatory" ColumnName="Signatory" />
+                <ScalarProperty Name="BusinessNature" ColumnName="BusinessNature" />
+                <ScalarProperty Name="HomePage" ColumnName="HomePage" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Fax2" ColumnName="Fax2" />
+                <ScalarProperty Name="Fax1" ColumnName="Fax1" />
+                <ScalarProperty Name="GSTRegNo" ColumnName="GSTRegNo" />
+                <ScalarProperty Name="Phone2" ColumnName="Phone2" />
+                <ScalarProperty Name="Phone1" ColumnName="Phone1" />
+                <ScalarProperty Name="ContactPerson" ColumnName="ContactPerson" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="TradeName" ColumnName="TradeName" />
+                <ScalarProperty Name="Address5" ColumnName="Address5" />
+                <ScalarProperty Name="Address4" ColumnName="Address4" />
+                <ScalarProperty Name="Address3" ColumnName="Address3" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="RegNo" ColumnName="RegNo" />
+                <ScalarProperty Name="CompanyName2" ColumnName="CompanyName2" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
                 <ScalarProperty Name="OptimisticLockField" ColumnName="OptimisticLockField" />
-                <ScalarProperty Name="GSTMSICCode" ColumnName="GSTMSICCode" />
-                <ScalarProperty Name="BankAccountNo" ColumnName="BankAccountNo" />
-                <ScalarProperty Name="IsSubAccount" ColumnName="IsSubAccount" />
-                <ScalarProperty Name="Notes" ColumnName="Notes" />
-                <ScalarProperty Name="IsRevaluation" ColumnName="IsRevaluation" />
-                <ScalarProperty Name="GSTGroup" ColumnName="GSTGroup" />
+                <ScalarProperty Name="DivisionId" ColumnName="DivisionId" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsCreditCard" ColumnName="IsCreditCard" />
-                <ScalarProperty Name="DRCR" ColumnName="DRCR" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="GSTTypeId" ColumnName="GSTTypeId" />
-                <ScalarProperty Name="CurrencyId" ColumnName="CurrencyId" />
-                <ScalarProperty Name="SpecialAccountId" ColumnName="SpecialAccountId" />
-                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
-                <ScalarProperty Name="GLAccountCode" ColumnName="GLAccountCode" />
+                <ScalarProperty Name="ContractSum" ColumnName="ContractSum" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="ProjectedEndDate" ColumnName="ProjectedEndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1329,6 +1357,10 @@
               <MappingFragment StoreEntitySet="ReceiptDetails">
                 <ScalarProperty Name="ATCCodeId" ColumnName="ATCCodeId" />
                 <ScalarProperty Name="ServicePostingDate" ColumnName="ServicePostingDate" />
+                <ScalarProperty Name="WVatAmountLocal" ColumnName="WVatAmountLocal" />
+                <ScalarProperty Name="WVatAmount" ColumnName="WVatAmount" />
+                <ScalarProperty Name="WVatRate" ColumnName="WVatRate" />
+                <ScalarProperty Name="WVatCode" ColumnName="WVatCode" />
                 <ScalarProperty Name="TariffCodeId" ColumnName="TariffCodeId" />
                 <ScalarProperty Name="RowIndex" ColumnName="RowIndex" />
                 <ScalarProperty Name="GLBIRClsInfo" ColumnName="GLBIRClsInfo" />
@@ -1379,7 +1411,10 @@
                 <ScalarProperty Name="WTaxDate" ColumnName="WTaxDate" />
                 <ScalarProperty Name="HasDeposit" ColumnName="HasDeposit" />
                 <ScalarProperty Name="TotalWtaxAmount" ColumnName="TotalWtaxAmount" />
+                <ScalarProperty Name="IsESales" ColumnName="IsESales" />
                 <ScalarProperty Name="ChequeDate" ColumnName="ChequeDate" />
+                <ScalarProperty Name="WVatTotalAmountLocal" ColumnName="WVatTotalAmountLocal" />
+                <ScalarProperty Name="WVatTotalAmount" ColumnName="WVatTotalAmount" />
                 <ScalarProperty Name="Remark5" ColumnName="Remark5" />
                 <ScalarProperty Name="Remark4" ColumnName="Remark4" />
                 <ScalarProperty Name="Remark3" ColumnName="Remark3" />
@@ -1461,44 +1496,33 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Projects">
-            <EntityTypeMapping TypeName="QNEDBModel.Projects">
-              <MappingFragment StoreEntitySet="Projects">
-                <ScalarProperty Name="RDOData" ColumnName="RDOData" />
-                <ScalarProperty Name="CBIRClassification" ColumnName="CBIRClassification" />
-                <ScalarProperty Name="Picture" ColumnName="Picture" />
-                <ScalarProperty Name="GSTApprovalNo" ColumnName="GSTApprovalNo" />
-                <ScalarProperty Name="Signatory" ColumnName="Signatory" />
-                <ScalarProperty Name="BusinessNature" ColumnName="BusinessNature" />
-                <ScalarProperty Name="HomePage" ColumnName="HomePage" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Fax2" ColumnName="Fax2" />
-                <ScalarProperty Name="Fax1" ColumnName="Fax1" />
-                <ScalarProperty Name="GSTRegNo" ColumnName="GSTRegNo" />
-                <ScalarProperty Name="Phone2" ColumnName="Phone2" />
-                <ScalarProperty Name="Phone1" ColumnName="Phone1" />
-                <ScalarProperty Name="ContactPerson" ColumnName="ContactPerson" />
-                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
-                <ScalarProperty Name="TradeName" ColumnName="TradeName" />
-                <ScalarProperty Name="Address5" ColumnName="Address5" />
-                <ScalarProperty Name="Address4" ColumnName="Address4" />
-                <ScalarProperty Name="Address3" ColumnName="Address3" />
-                <ScalarProperty Name="Address2" ColumnName="Address2" />
-                <ScalarProperty Name="Address1" ColumnName="Address1" />
-                <ScalarProperty Name="RegNo" ColumnName="RegNo" />
-                <ScalarProperty Name="CompanyName2" ColumnName="CompanyName2" />
-                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
-                <ScalarProperty Name="Header" ColumnName="Header" />
+          <EntitySetMapping Name="GLAccounts">
+            <EntityTypeMapping TypeName="QNEDBModel.GLAccounts">
+              <MappingFragment StoreEntitySet="GLAccounts">
+                <ScalarProperty Name="ATCCodeId" ColumnName="ATCCodeId" />
+                <ScalarProperty Name="TariffCodeId" ColumnName="TariffCodeId" />
+                <ScalarProperty Name="SSTTariffCode" ColumnName="SSTTariffCode" />
+                <ScalarProperty Name="IncludeInCashFlowForecastAdvisor" ColumnName="IncludeInCashFlowForecastAdvisor" />
+                <ScalarProperty Name="HasChildInCoa" ColumnName="HasChildInCoa" />
+                <ScalarProperty Name="RowIndex" ColumnName="RowIndex" />
+                <ScalarProperty Name="SAC" ColumnName="SAC" />
                 <ScalarProperty Name="OptimisticLockField" ColumnName="OptimisticLockField" />
-                <ScalarProperty Name="DivisionId" ColumnName="DivisionId" />
+                <ScalarProperty Name="GSTMSICCode" ColumnName="GSTMSICCode" />
+                <ScalarProperty Name="BankAccountNo" ColumnName="BankAccountNo" />
+                <ScalarProperty Name="IsSubAccount" ColumnName="IsSubAccount" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="IsRevaluation" ColumnName="IsRevaluation" />
+                <ScalarProperty Name="GSTGroup" ColumnName="GSTGroup" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ContractSum" ColumnName="ContractSum" />
-                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
-                <ScalarProperty Name="ProjectedEndDate" ColumnName="ProjectedEndDate" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="IsCreditCard" ColumnName="IsCreditCard" />
+                <ScalarProperty Name="DRCR" ColumnName="DRCR" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="ProjectCode" ColumnName="ProjectCode" />
+                <ScalarProperty Name="GSTTypeId" ColumnName="GSTTypeId" />
+                <ScalarProperty Name="CurrencyId" ColumnName="CurrencyId" />
+                <ScalarProperty Name="SpecialAccountId" ColumnName="SpecialAccountId" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="GLAccountCode" ColumnName="GLAccountCode" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
