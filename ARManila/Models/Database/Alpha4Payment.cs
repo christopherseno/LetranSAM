@@ -15,13 +15,14 @@ namespace ARManila.Models
     public partial class Alpha4Payment
     {
         public int Id { get; set; }
-        public Nullable<int> Alpha4Id { get; set; }
+        public int Alpha4Id { get; set; }
         public string OrNo { get; set; }
         public Nullable<System.DateTime> PaymentDate { get; set; }
         public decimal Amount { get; set; }
         public string Remarks { get; set; }
         public Nullable<int> PaymentId { get; set; }
     
+        public virtual Alpha4 Alpha4 { get; set; }
         public virtual Payment Payment { get; set; }
     }
 }

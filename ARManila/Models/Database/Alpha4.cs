@@ -14,6 +14,12 @@ namespace ARManila.Models
     
     public partial class Alpha4
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Alpha4()
+        {
+            this.Alpha4Payment = new HashSet<Alpha4Payment>();
+        }
+    
         public int Id { get; set; }
         public string StudentNo { get; set; }
         public Nullable<int> StudentId { get; set; }
@@ -27,5 +33,7 @@ namespace ARManila.Models
     
         public virtual EducationalLevel EducationalLevel { get; set; }
         public virtual Student Student { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Alpha4Payment> Alpha4Payment { get; set; }
     }
 }

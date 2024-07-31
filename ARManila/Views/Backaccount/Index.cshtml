@@ -43,7 +43,7 @@
                                             <td>@item.Section.Period.FullName</td>
                                             <td>@item.Section.SectionName</td>
                                             <td>OAF No. @item.Student_SectionID</td>
-                                            <td>@item.ValidationDate.Value.ToShortDateString()</td>
+                                            <td>@(item.ValidationDate.HasValue? item.ValidationDate.Value.ToShortDateString():"")</td>
                                             <td align="right">@item.EndTermBalance.ToString("#,##0.00")</td>
                                         </tr>
                                     }
@@ -456,7 +456,7 @@
         function getStudents(searchtext) {
             $.ajax({
                 type: "GET",
-                url: "https://api.letran.edu.ph/SearchStudent/" + searchtext,
+                url: "/SearchStudent/" + searchtext,
                 beforeSend: function (data) {
                     $("#searchstudentloading").css("display", "inline");
                 },

@@ -25,7 +25,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Alpha4Id" Type="int" />
+          <Property Name="Alpha4Id" Type="int" Nullable="false" />
           <Property Name="OrNo" Type="varchar" MaxLength="50" />
           <Property Name="PaymentDate" Type="date" />
           <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
@@ -1576,6 +1576,18 @@
             </Principal>
             <Dependent Role="Alpha4">
               <PropertyRef Name="StudentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4Payment_Alpha4">
+          <End Role="Alpha4" Type="Self.Alpha4" Multiplicity="1" />
+          <End Role="Alpha4Payment" Type="Self.Alpha4Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alpha4">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alpha4Payment">
+              <PropertyRef Name="Alpha4Id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3459,6 +3471,9 @@
           <Parameter Name="ADJUSTMENT_ID" Type="int" Mode="In" />
           <Parameter Name="PERIOD_ID" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetAssessment" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="studentsectionid" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetBankDeposit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DSTART_KEY" Type="date" Mode="In" />
           <Parameter Name="DEND_KEY" Type="date" Mode="In" />
@@ -3474,6 +3489,14 @@
         <Function Name="GetEnrollmentStat2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="sdate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="GetStudentSchedules" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="STUDENT_ID" Type="int" Mode="In" />
+          <Parameter Name="PERIOD_ID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetTotalBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="studentid" Type="int" Mode="In" />
+          <Parameter Name="periodid" Type="int" Mode="In" />
         </Function>
         <Function Name="MakeBankDepositJournalEntry" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="sdate" Type="date" Mode="In" />
@@ -3668,6 +3691,10 @@
           <AssociationSet Name="FK_Alpha4_Student" Association="Self.FK_Alpha4_Student">
             <End Role="Student" EntitySet="Student" />
             <End Role="Alpha4" EntitySet="Alpha4" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4Payment_Alpha4" Association="Self.FK_Alpha4Payment_Alpha4">
+            <End Role="Alpha4" EntitySet="Alpha4" />
+            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
           </AssociationSet>
           <AssociationSet Name="FK_Alpha4Payment_Payment" Association="Self.FK_Alpha4Payment_Payment">
             <End Role="Payment" EntitySet="Payment" />
@@ -7494,7 +7521,6 @@
           <FunctionImport Name="GetFloatingDMCM" ReturnType="Collection(LetranIntegratedSystemModel.GetFloatingDMCM_Result)" />
           <FunctionImport Name="GetFloatingPayment" ReturnType="Collection(LetranIntegratedSystemModel.GetFloatingPayment_Result)" />
           <EntitySet Name="Alpha4" EntityType="LetranIntegratedSystemModel.Alpha4" />
-          <EntitySet Name="Alpha4Payment" EntityType="LetranIntegratedSystemModel.Alpha4Payment" />
           <AssociationSet Name="FK_Alpha4_EducationalLevel" Association="LetranIntegratedSystemModel.FK_Alpha4_EducationalLevel">
             <End Role="EducationalLevel" EntitySet="EducationalLevel" />
             <End Role="Alpha4" EntitySet="Alpha4" />
@@ -7503,10 +7529,26 @@
             <End Role="Student" EntitySet="Student" />
             <End Role="Alpha4" EntitySet="Alpha4" />
           </AssociationSet>
+          <EntitySet Name="Alpha4Payment" EntityType="LetranIntegratedSystemModel.Alpha4Payment" />
+          <AssociationSet Name="FK_Alpha4Payment_Alpha4" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4">
+            <End Role="Alpha4" EntitySet="Alpha4" />
+            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
+          </AssociationSet>
           <AssociationSet Name="FK_Alpha4Payment_Payment" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment">
             <End Role="Payment" EntitySet="Payment" />
             <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
           </AssociationSet>
+          <FunctionImport Name="GetAssessment" ReturnType="Collection(LetranIntegratedSystemModel.GetAssessment_Result)">
+          <Parameter Name="studentsectionid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetStudentSchedules" ReturnType="Collection(LetranIntegratedSystemModel.GetStudentSchedules_Result)">
+            <Parameter Name="STUDENT_ID" Mode="In" Type="Int32" />
+            <Parameter Name="PERIOD_ID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetTotalBalance" ReturnType="Collection(LetranIntegratedSystemModel.GetTotalBalance_Result)">
+            <Parameter Name="studentid" Mode="In" Type="Int32" />
+            <Parameter Name="periodid" Mode="In" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="SMSLog">
           <Key>
@@ -9267,19 +9309,7 @@
           <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_Alpha4_EducationalLevel" FromRole="Alpha4" ToRole="EducationalLevel" />
           <NavigationProperty Name="Student" Relationship="LetranIntegratedSystemModel.FK_Alpha4_Student" FromRole="Alpha4" ToRole="Student" />
-        </EntityType>
-        <EntityType Name="Alpha4Payment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Alpha4Id" Type="Int32" />
-          <Property Name="OrNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PaymentDate" Type="DateTime" Precision="0" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="Remarks" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PaymentId" Type="Int32" />
-          <NavigationProperty Name="Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" FromRole="Alpha4Payment" ToRole="Payment" />
+          <NavigationProperty Name="Alpha4Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4" FromRole="Alpha4" ToRole="Alpha4Payment" />
         </EntityType>
         <Association Name="FK_Alpha4_EducationalLevel">
           <End Type="LetranIntegratedSystemModel.EducationalLevel" Role="EducationalLevel" Multiplicity="1" />
@@ -9305,6 +9335,32 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Alpha4Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Alpha4Id" Type="Int32" Nullable="false" />
+          <Property Name="OrNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentDate" Type="DateTime" Precision="0" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Remarks" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentId" Type="Int32" />
+          <NavigationProperty Name="Alpha4" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4" FromRole="Alpha4Payment" ToRole="Alpha4" />
+          <NavigationProperty Name="Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" FromRole="Alpha4Payment" ToRole="Payment" />
+        </EntityType>
+        <Association Name="FK_Alpha4Payment_Alpha4">
+          <End Type="LetranIntegratedSystemModel.Alpha4" Role="Alpha4" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alpha4">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alpha4Payment">
+              <PropertyRef Name="Alpha4Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Alpha4Payment_Payment">
           <End Type="LetranIntegratedSystemModel.Payment" Role="Payment" Multiplicity="0..1" />
           <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
@@ -9317,6 +9373,61 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetAssessment_Result">
+          <Property Type="Int32" Name="studentsectionid" Nullable="true" />
+          <Property Type="Int32" Name="FeeID" Nullable="false" />
+          <Property Type="String" Name="FeeCategory" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="120" />
+          <Property Type="Double" Name="Amount" Nullable="true" />
+          <Property Type="Double" Name="DiscountRate" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetStudentSchedules_Result">
+          <Property Type="Int32" Name="StudentScheduleID" Nullable="false" />
+          <Property Type="Int32" Name="ScheduleID" Nullable="false" />
+          <Property Type="Int32" Name="SubjectID" Nullable="false" />
+          <Property Type="String" Name="SubjectCode" Nullable="false" MaxLength="25" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="100" />
+          <Property Type="Double" Name="Units" Nullable="false" />
+          <Property Type="Int32" Name="SectionID" Nullable="false" />
+          <Property Type="String" Name="SectionName" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="Days" Nullable="true" MaxLength="50" />
+          <Property Type="Time" Name="StartTime" Nullable="true" />
+          <Property Type="Time" Name="EndTime" Nullable="true" />
+          <Property Type="Int32" Name="RoomID" Nullable="true" />
+          <Property Type="String" Name="RoomName" Nullable="true" MaxLength="80" />
+          <Property Type="Int32" Name="Semester_SHS" Nullable="true" />
+          <Property Type="String" Name="FacultyName" Nullable="true" MaxLength="514" />
+        </ComplexType>
+        <ComplexType Name="GetTotalBalance_Result">
+          <Property Type="Double" Name="AmountPaid" Nullable="false" />
+          <Property Type="Double" Name="B1" Nullable="true" />
+          <Property Type="Double" Name="B2" Nullable="true" />
+          <Property Type="Double" Name="B3" Nullable="true" />
+          <Property Type="Double" Name="B4" Nullable="true" />
+          <Property Type="Double" Name="B5" Nullable="true" />
+          <Property Type="Double" Name="B6" Nullable="true" />
+          <Property Type="Double" Name="B7" Nullable="true" />
+          <Property Type="Double" Name="B8" Nullable="true" />
+          <Property Type="Double" Name="B9" Nullable="true" />
+          <Property Type="Int32" Name="PaymodeID" Nullable="true" />
+          <Property Type="Int32" Name="student_sectionid" Nullable="true" />
+          <Property Type="Int32" Name="studentid" Nullable="false" />
+          <Property Type="Int32" Name="periodid" Nullable="false" />
+          <Property Type="Double" Name="T" Nullable="false" />
+          <Property Type="Double" Name="A" Nullable="false" />
+          <Property Type="Double" Name="M" Nullable="false" />
+          <Property Type="Double" Name="L" Nullable="false" />
+          <Property Type="Double" Name="V" Nullable="false" />
+          <Property Type="Double" Name="O" Nullable="false" />
+          <Property Type="Double" Name="S" Nullable="false" />
+          <Property Type="Double" Name="D" Nullable="false" />
+          <Property Type="Double" Name="C" Nullable="true" />
+          <Property Type="Double" Name="N" Nullable="true" />
+          <Property Type="Double" Name="FirstPayment" Nullable="true" />
+          <Property Type="Double" Name="SecondPayment" Nullable="false" />
+          <Property Type="Int32" Name="NoOf2ndPayment" Nullable="true" />
+          <Property Type="Double" Name="tobepaid" Nullable="false" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11487,6 +11598,73 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetAssessment" FunctionName="LetranIntegratedSystemModel.Store.GetAssessment">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetAssessment_Result">
+                <ScalarProperty Name="studentsectionid" ColumnName="studentsectionid" />
+                <ScalarProperty Name="FeeID" ColumnName="FeeID" />
+                <ScalarProperty Name="FeeCategory" ColumnName="FeeCategory" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="DiscountRate" ColumnName="DiscountRate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetStudentSchedules" FunctionName="LetranIntegratedSystemModel.Store.GetStudentSchedules">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetStudentSchedules_Result">
+                <ScalarProperty Name="StudentScheduleID" ColumnName="StudentScheduleID" />
+                <ScalarProperty Name="ScheduleID" ColumnName="ScheduleID" />
+                <ScalarProperty Name="SubjectID" ColumnName="SubjectID" />
+                <ScalarProperty Name="SubjectCode" ColumnName="SubjectCode" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Units" ColumnName="Units" />
+                <ScalarProperty Name="SectionID" ColumnName="SectionID" />
+                <ScalarProperty Name="SectionName" ColumnName="SectionName" />
+                <ScalarProperty Name="Days" ColumnName="Days" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="RoomID" ColumnName="RoomID" />
+                <ScalarProperty Name="RoomName" ColumnName="RoomName" />
+                <ScalarProperty Name="Semester_SHS" ColumnName="Semester_SHS" />
+                <ScalarProperty Name="FacultyName" ColumnName="FacultyName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetTotalBalance" FunctionName="LetranIntegratedSystemModel.Store.GetTotalBalance">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetTotalBalance_Result">
+                <ScalarProperty Name="AmountPaid" ColumnName="AmountPaid" />
+                <ScalarProperty Name="B1" ColumnName="B1" />
+                <ScalarProperty Name="B2" ColumnName="B2" />
+                <ScalarProperty Name="B3" ColumnName="B3" />
+                <ScalarProperty Name="B4" ColumnName="B4" />
+                <ScalarProperty Name="B5" ColumnName="B5" />
+                <ScalarProperty Name="B6" ColumnName="B6" />
+                <ScalarProperty Name="B7" ColumnName="B7" />
+                <ScalarProperty Name="B8" ColumnName="B8" />
+                <ScalarProperty Name="B9" ColumnName="B9" />
+                <ScalarProperty Name="PaymodeID" ColumnName="PaymodeID" />
+                <ScalarProperty Name="student_sectionid" ColumnName="student_sectionid" />
+                <ScalarProperty Name="studentid" ColumnName="studentid" />
+                <ScalarProperty Name="periodid" ColumnName="periodid" />
+                <ScalarProperty Name="T" ColumnName="T" />
+                <ScalarProperty Name="A" ColumnName="A" />
+                <ScalarProperty Name="M" ColumnName="M" />
+                <ScalarProperty Name="L" ColumnName="L" />
+                <ScalarProperty Name="V" ColumnName="V" />
+                <ScalarProperty Name="O" ColumnName="O" />
+                <ScalarProperty Name="S" ColumnName="S" />
+                <ScalarProperty Name="D" ColumnName="D" />
+                <ScalarProperty Name="C" ColumnName="C" />
+                <ScalarProperty Name="N" ColumnName="N" />
+                <ScalarProperty Name="FirstPayment" ColumnName="FirstPayment" />
+                <ScalarProperty Name="SecondPayment" ColumnName="SecondPayment" />
+                <ScalarProperty Name="NoOf2ndPayment" ColumnName="NoOf2ndPayment" />
+                <ScalarProperty Name="tobepaid" ColumnName="tobepaid" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

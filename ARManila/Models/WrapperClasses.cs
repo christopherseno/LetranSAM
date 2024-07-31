@@ -8,6 +8,16 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public partial class Alpha4
+    {
+        public string FullName
+        {
+            get
+            {
+                return this.LastName + ", " + this.FirstName + " " + this.MiddleName;
+            }
+        }
+    }
     public class FloatingPayment
     {
         public int PaymentId { get; set; }
@@ -18,6 +28,20 @@ namespace ARManila.Models
         public int PeriodId { get; set; }
         public string PeriodName { get; set; }
         public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
+    }
+    public class FloatingDMCM
+    {
+        public int DmcmId { get; set; }
+        public string DocNo { get; set; }
+        public int StudentId { get; set; }
+        public string StudentNo { get; set; }
+        public string StudentName { get; set; }
+        public int PeriodId { get; set; }
+        public string PeriodName { get; set; }
+        public decimal Amount { get; set; }
+        public string Remark { get; set; }
+        public DateTime Date { get; set; }
     }
     public partial class Student_Section
     {
@@ -27,7 +51,7 @@ namespace ARManila.Models
             {
                 LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
                 var artrail = db.ArTrailByStudent(this.Section.PeriodID, DateTime.Today, this.StudentID).FirstOrDefault();
-                if(artrail!= null)
+                if (artrail != null)
                 {
                     return (decimal)(artrail.Assessment + artrail.Balance + artrail.DNForm + artrail.CMForm + artrail.DebitMemo - artrail.CreditMemo - artrail.Discount - artrail.AdjDiscount - artrail.Voucher - artrail.Processing) - artrail.Payment;
                 }

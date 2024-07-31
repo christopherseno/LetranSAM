@@ -82,7 +82,7 @@
         function getStudents(searchtext) {
             $.ajax({
                 type: "GET",
-                url: "https://api.letran.edu.ph/SearchStudent/" + searchtext,                
+                url: "/SearchStudent/" + searchtext,                
                 beforeSend: function (data) {
                     $("#searchstudentloading").css("display", "inline");
                 },
@@ -114,7 +114,7 @@
             var total = $("#total");
             $.ajax({
                 type: "GET",
-                url: "https://api.letran.edu.ph/Assessment/ARQueryByFinance/" + studentno + "/" + periodid,
+                url: "/Assessment/ARQueryByFinance/" + studentno + "/" + periodid,
                 beforeSend: function (data) {
                     Codebase.layout('header_loader_on');
                 },

@@ -11,6 +11,55 @@ namespace ARManila.Controllers
     public class BackaccountController : BaseController
     {
         private readonly LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
+
+        public ActionResult FloatingPayment()
+        {
+            var floatingpayments = db.GetFloatingPayment();
+            List<FloatingPayment> floatingPayments = new List<FloatingPayment>();
+            foreach (var item in floatingpayments)
+            {
+                var period = db.Period.Find(item.SemID);
+                var student = db.Student.Find(item.StudentID);
+                floatingPayments.Add(new Models.FloatingPayment
+                {
+                    Amount = (decimal)(item.Amount ?? 0),
+                    OrNo = item.ORNo,
+                    PaymentId = item.PaymentID,
+                    PeriodId = item.SemID ?? 0,
+                    PeriodName = period.FullName,
+                    StudentId = item.StudentID ?? 0,
+                    StudentName = student.FullName,
+                    StudentNo = student.StudentNo,
+                    Date = item.DateReceived
+                });
+            }
+            return View(floatingPayments);
+        }
+        public ActionResult FloatingDmcm()
+        {
+            var floatingdmcms = db.GetFloatingDMCM();
+            List<FloatingDMCM> dmcms = new List<FloatingDMCM>();
+
+            foreach (var item in floatingdmcms)
+            {
+                var period = db.Period.Find(item.PeriodID);
+                var student = db.Student.Find(item.StudentID);
+                dmcms.Add(new FloatingDMCM
+                {
+                    Amount = (decimal)(item.Amount ?? 0),
+                    DmcmId = item.DMCMID,
+                    DocNo = item.DocNum.ToString(),
+                    PeriodId = item.PeriodID.Value,
+                    PeriodName = period.FullName,
+                    Remark = item.Remarks,
+                    StudentId = item.StudentID.Value,
+                    StudentName = student.FullName,
+                    StudentNo = student.StudentNo,
+                    Date = item.TransactionDate ?? DateTime.Today
+                });
+            }
+            return View(dmcms);
+        }
         public ActionResult Index()
         {
             var username = db.AspNetUsers.FirstOrDefault(m => m.UserName == User.Identity.Name);
@@ -89,8 +138,8 @@ namespace ARManila.Controllers
                 backaccountWrappers = GetBackaccounts(backaccounts, paymentids, dmcmids);
             }
             var spCheckBackAccount = db.CheckStudentBackAccount(id);
-            ViewBag.spbackaccount = spCheckBackAccount.FirstOrDefault();          
-          
+            ViewBag.spbackaccount = spCheckBackAccount.FirstOrDefault();
+
             List<BackaccountPaymentWrapper> floatingbackaccountpayments = new List<BackaccountPaymentWrapper>();
             var floatingpayments = db.PaymentDetails.Where(m => m.Payment.StudentID == id && m.PaycodeID == 11 && !paymentids.Contains(m.PaymentID));
             foreach (var item in floatingpayments)
@@ -148,7 +197,7 @@ namespace ARManila.Controllers
 
         public ActionResult TransactionLog()
         {
-            var transactions = db.BackaccountTransactionLog.OrderByDescending(m=>m.TransactionDate);
+            var transactions = db.BackaccountTransactionLog.OrderByDescending(m => m.TransactionDate);
             return View(transactions);
         }
         public ActionResult Edit(int id)
@@ -195,7 +244,7 @@ namespace ARManila.Controllers
             backaccount.Student_SectionID = model.AssessmentId == 0 || model.AssessmentId == null ? null : model.AssessmentId;
             db.SaveChanges();
             var assessment = db.Student_Section.Find(model.AssessmentId);
-            if(assessment != null)
+            if (assessment != null)
             {
                 assessment.Credit = 0 - model.ForwardedAmount;
                 db.SaveChanges();

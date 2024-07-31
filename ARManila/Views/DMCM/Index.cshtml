@@ -130,7 +130,7 @@
         function getStudents(searchtext) {
             $.ajax({
                 type: "GET",
-                url: "https://api.letran.edu.ph/SearchStudent/" + searchtext,                
+                url: "/SearchStudent/" + searchtext,                
                 beforeSend: function (data) {
                     $("#searchstudentloading").css("display", "inline");
                 },

@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ARManila.Models.Alpha4>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Alpha4 Menu</span>
+        <span class="breadcrumb-item active">Index</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="row">
+                <h3>List of Alpha4 Backaccounts.</h3>
+                <br />
+                @if (Model != null && Model.Count() > 0)
+                {
+                    <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                        <thead>
+                            <tr>
+                                <th>Student No</th>
+                                <th>Student Name</th>
+                                <th>
+                                    BA Date
+                                </th>
+                                <th>
+                                    Amount
+                                </th>                                
+                                <th>Level</th>
+                                <th>Valid Student No</th>
+                                <th>Payments</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.StudentNo</td>
+                                    <td>@item.FullName</td>
+                                    <td>
+                                        @item.BADate
+                                    </td>
+                                    <td>
+                                        @item.Amount.ToString("#,##0.00")
+                                    </td>
+                                    <td>@item.EducationalLevel.EducLevelName</td>
+                                    <td>@(item.StudentId.HasValue ? "Yes" : "No")</td>
+                                    <td>
+                                        @if (item.Alpha4Payment.Count > 0)
+                                        {
+                                            <table  class="table table-bordered table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th>OR No</th>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Remarks</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var payment in item.Alpha4Payment)
+                                                    {
+                                                        <tr>
+                                                            <td>@payment.OrNo</td>
+                                                            <td>@(payment.PaymentDate.HasValue ?  payment.PaymentDate.Value.ToShortDateString(): "")</td>
+                                                            <td>@payment.Amount.ToString("#,##0.00")</td>
+                                                            <td>@payment.Remarks</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Add Payment", "AddPayment", new { id = item.Id }, new { @class = "btn btn-primary" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

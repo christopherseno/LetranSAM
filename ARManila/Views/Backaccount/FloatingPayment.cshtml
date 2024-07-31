@@ -1,0 +1,58 @@
+﻿@model List<ARManila.Models.FloatingPayment>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Backaccount Menu</span>
+        <span class="breadcrumb-item active">Floating Payment</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="row">
+                <h3>List of Floating Payments.</h3>
+                <br />
+                @if (Model != null && Model.Count() > 0)
+                {
+                    <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                        <thead>
+                            <tr>
+                                <th>Student No</th>
+                                <th>Student Name</th>
+                                <th>
+                                    Or No
+                                </th>
+                                <th>
+                                    Amount
+                                </th>
+                                <th>Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {                                
+                                <tr>
+                                    <td>@item.StudentNo</td>
+                                    <td>@item.StudentName</td>
+                                    <td>
+                                        @item.OrNo
+                                    </td>
+                                    <td>
+                                        @item.Amount.ToString("#,##0.00")
+                                    </td>
+                                    <td>@item.Date.ToShortDateString()</td>
+                                    <td>
+                                        @Html.ActionLink("Details", "DisplayBackaccounts", new { studentno = item.StudentNo }, new { @class = "btn btn-primary" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

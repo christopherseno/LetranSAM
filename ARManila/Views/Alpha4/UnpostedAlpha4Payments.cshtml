@@ -1,0 +1,56 @@
+﻿@model IEnumerable<ARManila.Models.PaymentDetails>
+
+@{
+    ViewBag.Title = "UnpostedAlpha4Payments";
+}
+
+<div class="content">
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Alpha4 Menu</span>
+        <span class="breadcrumb-item active">Floating Payment</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <div class="row">
+                <h3>Floating Alpha4 Payments.</h3>
+                <br />
+                @if (Model != null && Model.Count() > 0)
+                {
+                    <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                        <thead>
+                            <tr>
+                                <th>Student No</th>
+                                <th>Student Name</th>
+                                <th>
+                                    OR No
+                                </th>
+                                <th>Date</th>
+                                <th>
+                                    Amount
+                                </th>                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Payment.Student.StudentNo</td>
+                                    <td>@item.Payment.Student.FullName
+                                    </td>
+                                    <td>
+                                        @item.Payment.ORNo
+                                    </td>
+                                    <td>@item.Payment.DateReceived.ToShortDateString()</td>
+                                    <td>
+                                        @item.Amount.Value.ToString("#,##0.00")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

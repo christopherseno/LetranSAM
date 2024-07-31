@@ -114,11 +114,44 @@
                 </a>
             </li>
             <li class="nav-main-item">
+                <a href="@Url.Action("FloatingPayment", "Backaccount")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Floating Payment</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("FloatingDmcm", "Backaccount")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Floating DMCM</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
                 <a href="@Url.Action("TransactionLog", "Backaccount")" class="nav-main-link">
                     <i class="nav-main-link-icon fa fa-user-tie"></i>
                     <span class="nav-main-link-name">Transaction Logs</span>
                 </a>
             </li>
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-award"></i>
+            <span class="nav-main-link-name">Alpha4 Backaccount</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("Index", "Alpha4")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">List</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a href="@Url.Action("UnpostedAlpha4Payments", "Alpha4")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-user-tie"></i>
+                    <span class="nav-main-link-name">Floating Payment</span>
+                </a>
+            </li>
+
         </ul>
     </li>
     <li class="nav-main-item">

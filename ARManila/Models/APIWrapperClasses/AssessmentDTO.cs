@@ -32,6 +32,14 @@ namespace ARManila.Models
         public DateTime? ValidationDate { get; set; }
         public decimal Down { get; set; }
         public decimal Due { get; set; }
+        public List<GetStudentSchedules_Result> StudentSchedule { get; set; }
+        public List<PaymentSchedule> PaymentSchedules { get; set; }
 
+    }
+    public class PaymentSchedule
+    {
+        public string Description { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime DueDate { get; set; }
     }
 }

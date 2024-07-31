@@ -1156,5 +1156,40 @@ namespace ARManila.Models
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingPayment_Result>("GetFloatingPayment");
         }
+    
+        public virtual ObjectResult<GetAssessment_Result> GetAssessment(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAssessment_Result>("GetAssessment", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<GetStudentSchedules_Result> GetStudentSchedules(Nullable<int> sTUDENT_ID, Nullable<int> pERIOD_ID)
+        {
+            var sTUDENT_IDParameter = sTUDENT_ID.HasValue ?
+                new ObjectParameter("STUDENT_ID", sTUDENT_ID) :
+                new ObjectParameter("STUDENT_ID", typeof(int));
+    
+            var pERIOD_IDParameter = pERIOD_ID.HasValue ?
+                new ObjectParameter("PERIOD_ID", pERIOD_ID) :
+                new ObjectParameter("PERIOD_ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentSchedules_Result>("GetStudentSchedules", sTUDENT_IDParameter, pERIOD_IDParameter);
+        }
+    
+        public virtual ObjectResult<GetTotalBalance_Result> GetTotalBalance(Nullable<int> studentid, Nullable<int> periodid)
+        {
+            var studentidParameter = studentid.HasValue ?
+                new ObjectParameter("studentid", studentid) :
+                new ObjectParameter("studentid", typeof(int));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTotalBalance_Result>("GetTotalBalance", studentidParameter, periodidParameter);
+        }
     }
 }

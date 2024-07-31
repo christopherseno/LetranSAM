@@ -87,6 +87,8 @@ namespace ARManila.Controllers
                     //user.BearerToken = DateTime.Now.ToString();
                     //IdentityResult resultx = await UserManager.UpdateAsync(user);
 
+                    /*
+                    //disable login in the API 
                     LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
                     var aspnetuser = db.AspNetUsers.Where(m => m.UserName == model.Email).FirstOrDefault();
                     if (aspnetuser != null && (aspnetuser.BearerToken == null || aspnetuser.BearerToken.Length < 1 || aspnetuser.TokenExpiration.HasValue == false || aspnetuser.TokenExpiration.Value < DateTime.Now))
@@ -119,7 +121,7 @@ namespace ARManila.Controllers
 
                         }
                     }
-                    
+                    */
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
