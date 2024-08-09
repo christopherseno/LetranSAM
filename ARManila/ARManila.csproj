@@ -772,10 +772,22 @@
     <Compile Include="Models\Utility.cs" />
     <Compile Include="Models\WrapperClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\AlphaListReport.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AlphaListReport.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Reports\ARJournalEntryCollege.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ARJournalEntryCollege.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\ARQueryAlpha4.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ARQueryAlpha4.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Reports\ARSetupSummaryReportConsolidated.cs">
@@ -5095,6 +5107,8 @@
     <Content Include="Views\Backaccount\FloatingDmcm.cshtml" />
     <Content Include="Views\Alpha4\Index.cshtml" />
     <Content Include="Views\Alpha4\UnpostedAlpha4Payments.cshtml" />
+    <Content Include="Views\Alpha4\Detail.cshtml" />
+    <Content Include="Views\Alpha4\AddPayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -5178,9 +5192,17 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\AlphaListReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>AlphaListReport.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\ARJournalEntryCollege.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>ARJournalEntryCollege.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\ARQueryAlpha4.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ARQueryAlpha4.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\ARSetupSummaryReportConsolidated.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

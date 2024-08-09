@@ -8,13 +8,65 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public class Alpha4Query
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Level { get; set; }
+        public string StudentNumber { get; set; }
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
+        public string Date { get; set; }
+        public decimal Balance { get; set; }
+        public string Remarks { get; set; }        
+        public string DocNo { get; set; }
+        public string Particular { get; set; }
+
+    }
+    public class Alpha4Dto
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Level { get; set; }
+        public string StudentNumber { get; set; }
+        public decimal Amount { get; set; }
+        public string BADate { get; set; }
+        public decimal Balance { get; set; }
+        public string Remarks { get; set; }
+        public decimal PaymentAmount { get; set; }
+        public string OrNo { get; set; }
+        public string PaymentDate { get; set; }
+
+    }
     public partial class Alpha4
     {
+       
+        public string Level
+        {
+            get
+            {
+                return this.EducationalLevel.EducLevelName;
+            }
+        }
         public string FullName
         {
             get
             {
                 return this.LastName + ", " + this.FirstName + " " + this.MiddleName;
+            }
+        }
+        public decimal Balance
+        {
+            get
+            {
+                return this.Amount - this.Alpha4Payment.Sum(m => m.Amount);
+            }
+        }  
+        public string StudentNumber
+        {
+            get
+            {
+                return this.StudentId.HasValue ? this.Student.StudentNo : "";
             }
         }
     }
@@ -249,6 +301,16 @@ namespace ARManila.Models
         public string FirstName { get; set; }
         public string Program { get; set; }
         public DateTime Birthday { get; set; }
+    }
+    public class StudentORWrapper
+    {
+        public int StudentId { get; set; }
+        public string StudentNo { get; set; }
+        public string Fullname { get; set; }
+        public string OrNumber { get; set; }
+        public string Date { get; set; }
+        public string Description { get; set; }
+        public decimal Amount { get; set; }
     }
     public class GetSummaryOfFees_ResultMetadata
     {

@@ -30,6 +30,7 @@
                                 <th>Level</th>
                                 <th>Valid Student No</th>
                                 <th>Payments</th>
+                                <th>Balance</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -73,12 +74,15 @@
                                             </table>
                                         }
                                     </td>
+                                    <td>@item.Balance.ToString("#,##0.00")</td>
                                     <td>
                                         @Html.ActionLink("Add Payment", "AddPayment", new { id = item.Id }, new { @class = "btn btn-primary" })
+                                        @Html.ActionLink("Details", "Detail", new { id = item.Id }, new { @class = "btn btn-success" })
                                     </td>
                                 </tr>
                             }
                         </tbody>
+                        <caption>@Html.ActionLink("Print", "PrintList", new {id=1 }, new {@class="btn btn-primary" })</caption>
                     </table>
                 }
             </div>

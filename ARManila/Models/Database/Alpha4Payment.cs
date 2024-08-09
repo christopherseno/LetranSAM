@@ -21,6 +21,7 @@ namespace ARManila.Models
         public decimal Amount { get; set; }
         public string Remarks { get; set; }
         public Nullable<int> PaymentId { get; set; }
+        public bool IsMigrated { get; set; }
     
         public virtual Alpha4 Alpha4 { get; set; }
         public virtual Payment Payment { get; set; }

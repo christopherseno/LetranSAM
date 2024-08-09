@@ -85,7 +85,76 @@ namespace ARManila.Controllers
                 return InternalServerError(ex);
             }
         }
+        [HttpGet, Route("SearchOrNo/{searchtext}")]
+        public IHttpActionResult SearchOrNo(string searchtext)
+        {
+            try
+            {
+                List<StudentORWrapper> studentors = new List<StudentORWrapper>();
+                using (var db = new LetranIntegratedSystemEntities())
+                {
+                    SqlConnection con = new SqlConnection(db.Database.Connection.ConnectionString);
+                    SqlCommand cmd = new SqlCommand("select a.studentid, a.studentno, [dbo].[DecryptText](a.StudentNo+'1T3@mWoRk0', a.LastName) as lastname, "
+                        + "[dbo].[DecryptText](a.StudentNo + '1T3@mWoRk0', a.FirstName) as firstname,b.ORNo, b.DateReceived, d.Description,"
+                        + "c.Amount from student a join Payment b on a.StudentID = b.StudentID join PaymentDetails c on " +
+                        "c.PaymentID = b.PaymentID join Paycode d on d.PaycodeID = c.PaycodeID where a.studentno like '" + searchtext
+                        + "%' or[dbo].[DecryptText](a.StudentNo + '1T3@mWoRk0', a.LastName) like '%" + searchtext
+                        + "%' or[dbo].[DecryptText](a.StudentNo + '1T3@mWoRk0', a.FirstName) like '%" + searchtext + "%'", con);
+                    con.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        //Type fieldType0 = reader.GetFieldType(0);
+                        //Type fieldType7 = reader.GetFieldType(7);                        
+                        StudentORWrapper studentor = new StudentORWrapper();
+                        studentor.Fullname = reader.GetString(2) + ", " + reader.GetString(3);
+                        studentor.StudentNo = reader.GetString(1);
+                        studentor.Amount = Convert.ToDecimal(reader.GetDouble(7));
+                        studentor.Date = reader.GetDateTime(5).ToString("yyyy-MM-dd");
+                        studentor.Description = reader.GetString(6);
+                        studentor.OrNumber = reader.GetString(4);
+                        //var studentcurriculum = db.Student_Curriculum.Where(m => m.StudentID == sid && m.Status == 1).FirstOrDefault();
 
+                        studentors.Add(studentor);
+                    }
+                }
+                return Ok(studentors);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet, Route("SearchAlphaList/{searchtext}")]
+        public IHttpActionResult SearchStudentAlpha(string searchtext)
+        {
+            try
+            {
+                using (var db = new LetranIntegratedSystemEntities())
+                {
+                    List<AlphaStudent> students = new List<AlphaStudent>();
+                    var alphalist = db.Alpha4.Where(m => m.LastName.Contains(searchtext) || m.FirstName.Contains(searchtext));
+                    foreach (var item in alphalist)
+                    {
+                        students.Add(new AlphaStudent
+                        {
+                            BADate = item.BADate,
+                            FullName = item.FullName,
+                            Id = item.Id,
+                            Level = item.EducationalLevel.EducLevelName,
+                            StudentNo = item.StudentId.HasValue ? item.Student.StudentNo : "N/A"
+                        });
+                    }
+                    return Ok(students);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
         [AllowAnonymous]
         [HttpGet, Route("enrollmentstat/{id:int}/{enddate:datetime}")]
         public HttpResponseMessage Get(int id, DateTime enddate)

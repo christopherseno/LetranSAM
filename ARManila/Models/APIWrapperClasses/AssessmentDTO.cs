@@ -5,6 +5,14 @@ using System.Web;
 
 namespace ARManila.Models
 {
+    public class AlphaStudent
+    {
+        public int Id { get; set; }
+        public string StudentNo { get; set; }
+        public string FullName { get; set; }
+        public string Level { get; set; }
+        public string BADate { get; set; }
+    }
     public class AssessmentDTO
     {
         public int PeriodID { get; set; }

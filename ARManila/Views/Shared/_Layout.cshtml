@@ -94,11 +94,10 @@
         <nav id="sidebar" class="nav">
             <div class="sidebar-content">
                 <div class="content-header justify-content-lg-center">
-                    <div class="text-center">
-                        @*<img src="~/Assets/media/favicons/favicon.png"  />*@
+                    <div class="text-center">                        
                         <img src="~/Images/ManilaSmall.png" style="width:20%;height:20%" />
                         <a class="link-fx fw-bold tracking-wide mx-auto" href="@Url.Action("Index","Home")">
-                            <span class="fs-6 text-dual">AR</span>&nbsp;<span class="fs-6 text-primary">Module</span>
+                            <span class="fs-6 text-dual">SA</span>&nbsp;<span class="fs-6 text-primary">Management</span>
                         </a>
                     </div>
                     <div>
@@ -143,7 +142,16 @@
             <div class="content py-3">
                 <div class="row fs-5">
                     <div class="col-sm-12 order-sm-2 py-1 text-sm-end align-content-end ">
-                        <span style="font-family: 'Old English Text MT'">Colegio de San Juan de Letran </span>  &copy;  @DateTime.Today.Year<a class="fw-semibold" href="https://1.envato.market/95j" target="_blank">. ITSD </a>
+                        @{
+                            var db = new ARManila.Models.LetranIntegratedSystemEntities();
+                            string testingserver = "";
+                            if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
+                            {
+                                testingserver = "Test Database is being used. ";
+                            }
+                        }
+                        <span>@testingserver</span>
+                        <span style="font-family: 'Old English Text MT'">Colegio de San Juan de Letran </span>  &copy;  @DateTime.Today.Year<span>.</span><a class="fw-semibold" href="https://1.envato.market/95j" target="_blank"> ITSD</a>
                     </div>
                 </div>
             </div>

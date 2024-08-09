@@ -31,6 +31,7 @@
           <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="Remarks" Type="varchar" MaxLength="255" />
           <Property Name="PaymentId" Type="int" />
+          <Property Name="IsMigrated" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="BackaccountTransactionLog">
           <Key>
@@ -7529,15 +7530,6 @@
             <End Role="Student" EntitySet="Student" />
             <End Role="Alpha4" EntitySet="Alpha4" />
           </AssociationSet>
-          <EntitySet Name="Alpha4Payment" EntityType="LetranIntegratedSystemModel.Alpha4Payment" />
-          <AssociationSet Name="FK_Alpha4Payment_Alpha4" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4">
-            <End Role="Alpha4" EntitySet="Alpha4" />
-            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Alpha4Payment_Payment" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment">
-            <End Role="Payment" EntitySet="Payment" />
-            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
-          </AssociationSet>
           <FunctionImport Name="GetAssessment" ReturnType="Collection(LetranIntegratedSystemModel.GetAssessment_Result)">
           <Parameter Name="studentsectionid" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -7549,6 +7541,15 @@
             <Parameter Name="studentid" Mode="In" Type="Int32" />
             <Parameter Name="periodid" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="Alpha4Payment" EntityType="LetranIntegratedSystemModel.Alpha4Payment" />
+          <AssociationSet Name="FK_Alpha4Payment_Alpha4" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4">
+            <End Role="Alpha4" EntitySet="Alpha4" />
+            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alpha4Payment_Payment" Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment">
+            <End Role="Payment" EntitySet="Payment" />
+            <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="SMSLog">
           <Key>
@@ -9335,44 +9336,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Alpha4Payment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Alpha4Id" Type="Int32" Nullable="false" />
-          <Property Name="OrNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PaymentDate" Type="DateTime" Precision="0" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="Remarks" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PaymentId" Type="Int32" />
-          <NavigationProperty Name="Alpha4" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4" FromRole="Alpha4Payment" ToRole="Alpha4" />
-          <NavigationProperty Name="Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" FromRole="Alpha4Payment" ToRole="Payment" />
-        </EntityType>
-        <Association Name="FK_Alpha4Payment_Alpha4">
-          <End Type="LetranIntegratedSystemModel.Alpha4" Role="Alpha4" Multiplicity="1" />
-          <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Alpha4">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Alpha4Payment">
-              <PropertyRef Name="Alpha4Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Alpha4Payment_Payment">
-          <End Type="LetranIntegratedSystemModel.Payment" Role="Payment" Multiplicity="0..1" />
-          <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Payment">
-              <PropertyRef Name="PaymentID" />
-            </Principal>
-            <Dependent Role="Alpha4Payment">
-              <PropertyRef Name="PaymentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <ComplexType Name="GetAssessment_Result">
           <Property Type="Int32" Name="studentsectionid" Nullable="true" />
           <Property Type="Int32" Name="FeeID" Nullable="false" />
@@ -9428,6 +9391,45 @@
           <Property Type="Int32" Name="NoOf2ndPayment" Nullable="true" />
           <Property Type="Double" Name="tobepaid" Nullable="false" />
         </ComplexType>
+        <EntityType Name="Alpha4Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Alpha4Id" Type="Int32" Nullable="false" />
+          <Property Name="OrNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentDate" Type="DateTime" Precision="0" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Remarks" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentId" Type="Int32" />
+          <Property Name="IsMigrated" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Alpha4" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4" FromRole="Alpha4Payment" ToRole="Alpha4" />
+          <NavigationProperty Name="Payment" Relationship="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" FromRole="Alpha4Payment" ToRole="Payment" />
+        </EntityType>
+        <Association Name="FK_Alpha4Payment_Alpha4">
+          <End Type="LetranIntegratedSystemModel.Alpha4" Role="Alpha4" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alpha4">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Alpha4Payment">
+              <PropertyRef Name="Alpha4Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alpha4Payment_Payment">
+          <End Type="LetranIntegratedSystemModel.Payment" Role="Payment" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Alpha4Payment" Role="Alpha4Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Payment">
+              <PropertyRef Name="PaymentID" />
+            </Principal>
+            <Dependent Role="Alpha4Payment">
+              <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11585,19 +11587,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Alpha4Payment">
-            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Alpha4Payment">
-              <MappingFragment StoreEntitySet="Alpha4Payment">
-                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
-                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
-                <ScalarProperty Name="OrNo" ColumnName="OrNo" />
-                <ScalarProperty Name="Alpha4Id" ColumnName="Alpha4Id" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="GetAssessment" FunctionName="LetranIntegratedSystemModel.Store.GetAssessment">
             <ResultMapping>
               <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetAssessment_Result">
@@ -11665,6 +11654,20 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Alpha4Payment">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Alpha4Payment">
+              <MappingFragment StoreEntitySet="Alpha4Payment">
+                <ScalarProperty Name="IsMigrated" ColumnName="IsMigrated" />
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
+                <ScalarProperty Name="OrNo" ColumnName="OrNo" />
+                <ScalarProperty Name="Alpha4Id" ColumnName="Alpha4Id" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
