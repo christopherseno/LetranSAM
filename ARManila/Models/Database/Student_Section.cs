@@ -27,6 +27,8 @@ namespace ARManila.Models
             this.Promissory = new HashSet<Promissory>();
             this.Student_Section_ReAss = new HashSet<Student_Section_ReAss>();
             this.StudentSchedule = new HashSet<StudentSchedule>();
+            this.OriginalStudentSchedule = new HashSet<OriginalStudentSchedule>();
+            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
         }
     
         public int Student_SectionID { get; set; }
@@ -84,5 +86,9 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StudentSchedule> StudentSchedule { get; set; }
         public virtual Student Student { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
     }
 }

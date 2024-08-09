@@ -28,5 +28,6 @@ namespace ARManila.Models
         public virtual Schedule Schedule { get; set; }
         public virtual Student_Section_ReAss Student_Section_ReAss { get; set; }
         public virtual Subject Subject { get; set; }
+        public virtual StudentSectionReAssessment StudentSectionReAssessment { get; set; }
     }
 }

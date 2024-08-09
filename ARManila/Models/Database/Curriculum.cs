@@ -24,6 +24,7 @@ namespace ARManila.Models
             this.Student_Section = new HashSet<Student_Section>();
             this.Student_Section_ReAss = new HashSet<Student_Section_ReAss>();
             this.Tuition = new HashSet<Tuition>();
+            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
         }
     
         public int CurriculumID { get; set; }
@@ -48,5 +49,7 @@ namespace ARManila.Models
         public virtual ICollection<Student_Section_ReAss> Student_Section_ReAss { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tuition> Tuition { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
     }
 }

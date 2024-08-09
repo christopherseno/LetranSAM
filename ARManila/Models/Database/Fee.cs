@@ -19,6 +19,7 @@ namespace ARManila.Models
         {
             this.AdjustmentDetailFees = new HashSet<AdjustmentDetailFees>();
             this.Assessment = new HashSet<Assessment>();
+            this.ReAssessment = new HashSet<ReAssessment>();
         }
     
         public int FeeID { get; set; }
@@ -45,5 +46,7 @@ namespace ARManila.Models
         public virtual Miscellaneous Miscellaneous { get; set; }
         public virtual Supplemental Supplemental { get; set; }
         public virtual Tuition Tuition { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ReAssessment> ReAssessment { get; set; }
     }
 }

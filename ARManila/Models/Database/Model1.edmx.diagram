@@ -249,6 +249,20 @@
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Alpha4Payment" Width="1.5" PointX="17.25" PointY="122.5" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Alpha4" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Alpha4Payment_Payment" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.OriginalStudentSchedule" Width="1.5" PointX="30.5" PointY="123.625" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.StudentSectionReAssessment" Width="1.5" PointX="33.5" PointY="113.625" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Schedule" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Student_Section" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Student_Section_ReAss1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Student_Section_ReAss1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Curriculum1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Paymode1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_SC1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Section1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_StudentStatus1" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.ReAssessment" Width="1.5" PointX="35.75" PointY="104.625" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Student_Section" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

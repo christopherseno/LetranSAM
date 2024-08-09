@@ -22,5 +22,6 @@ namespace ARManila.Models
     
         public virtual Student_Section_ReAss Student_Section_ReAss { get; set; }
         public virtual Paycode Paycode { get; set; }
+        public virtual StudentSectionReAssessment StudentSectionReAssessment { get; set; }
     }
 }

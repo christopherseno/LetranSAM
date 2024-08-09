@@ -111,6 +111,9 @@ namespace ARManila.Models
         public virtual DbSet<EnrollmentTransactionLog> EnrollmentTransactionLog { get; set; }
         public virtual DbSet<Alpha4> Alpha4 { get; set; }
         public virtual DbSet<Alpha4Payment> Alpha4Payment { get; set; }
+        public virtual DbSet<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
+        public virtual DbSet<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        public virtual DbSet<ReAssessment> ReAssessment { get; set; }
     
         public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
         {

@@ -78,6 +78,14 @@
           <Property Name="PostingMessage" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="JournalCode" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="OriginalStudentSchedule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScheduleID" Type="int" Nullable="false" />
+          <Property Name="StudentSectionID" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="PaymentDefaultPeriod">
           <Key>
             <PropertyRef Name="EducationalLevelId" />
@@ -141,12 +149,59 @@
           <Property Name="PostedBy" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsSuccessful" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="ReAssessment">
+          <Key>
+            <PropertyRef Name="ReAssessmentID" />
+          </Key>
+          <Property Name="ReAssessmentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StudentSectionReAssessmentID" Type="int" />
+          <Property Name="FeeID" Type="int" />
+          <Property Name="Description" Type="nvarchar" MaxLength="50" />
+          <Property Name="FeeType" Type="char" MaxLength="1" />
+          <Property Name="Amount" Type="float" />
+          <Property Name="Discount" Type="float" />
+          <Property Name="Total" Type="float" StoreGeneratedPattern="Computed" />
+          <Property Name="DiscountAmount" Type="float" StoreGeneratedPattern="Computed" />
+          <Property Name="Locked" Type="bit" Nullable="false" />
+          <Property Name="TuitionRate" Type="money" />
+          <Property Name="TuitionDiscountRate" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TotalUnits" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MaxUnit" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TuitionForDiscount" Type="decimal" Precision="18" Scale="2" />
+        </EntityType>
         <EntityType Name="ReportName">
           <Key>
             <PropertyRef Name="ReportNameId" />
           </Key>
           <Property Name="ReportNameId" Type="int" Nullable="false" />
           <Property Name="ReportName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="StudentSectionReAssessment">
+          <Key>
+            <PropertyRef Name="StudentSectionReAssessmentID" />
+          </Key>
+          <Property Name="StudentSectionReAssessmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Student_SectionID" Type="int" Nullable="false" />
+          <Property Name="SectionID" Type="int" Nullable="false" />
+          <Property Name="PaymodeID" Type="int" />
+          <Property Name="NewStatus" Type="bit" Nullable="false" />
+          <Property Name="CurriculumID" Type="int" />
+          <Property Name="DatePrinted" Type="datetime" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="TuitionFee" Type="float" />
+          <Property Name="MiscFee" Type="float" />
+          <Property Name="SuppFee" Type="float" />
+          <Property Name="LabFee" Type="float" />
+          <Property Name="Discount" Type="float" />
+          <Property Name="Net" Type="float" StoreGeneratedPattern="Computed" />
+          <Property Name="DownPayment" Type="float" />
+          <Property Name="SecondPayment" Type="float" />
+          <Property Name="Credit" Type="float" />
+          <Property Name="AssessmentDate" Type="date" />
+          <Property Name="AssessedBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="Locked" Type="bit" Nullable="false" />
+          <Property Name="StudentStatus" Type="int" />
+          <Property Name="SectionID2" Type="int" />
         </EntityType>
         <EntityType Name="AcademicDepartment">
           <Key>
@@ -1113,33 +1168,6 @@
           <Property Name="NoOfPayment" Type="int" />
           <Property Name="WillAvailModule" Type="bit" />
         </EntityType>
-        <EntityType Name="Student_Section_ReAss">
-          <Key>
-            <PropertyRef Name="Student_Section_ReAssID" />
-          </Key>
-          <Property Name="Student_Section_ReAssID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Student_SectionID" Type="int" Nullable="false" />
-          <Property Name="SectionID" Type="int" Nullable="false" />
-          <Property Name="PaymodeID" Type="int" />
-          <Property Name="NewStatus" Type="bit" Nullable="false" />
-          <Property Name="CurriculumID" Type="int" />
-          <Property Name="DatePrinted" Type="datetime" />
-          <Property Name="Status" Type="int" Nullable="false" />
-          <Property Name="TuitionFee" Type="float" />
-          <Property Name="MiscFee" Type="float" />
-          <Property Name="SuppFee" Type="float" />
-          <Property Name="LabFee" Type="float" />
-          <Property Name="Discount" Type="float" />
-          <Property Name="Net" Type="float" StoreGeneratedPattern="Computed" />
-          <Property Name="DownPayment" Type="float" />
-          <Property Name="SecondPayment" Type="float" />
-          <Property Name="Credit" Type="float" />
-          <Property Name="AssessmentDate" Type="date" />
-          <Property Name="AssessedBy" Type="nvarchar" MaxLength="50" />
-          <Property Name="Locked" Type="bit" Nullable="false" />
-          <Property Name="StudentStatus" Type="int" />
-          <Property Name="SectionID2" Type="int" />
-        </EntityType>
         <EntityType Name="StudentSchedule">
           <Key>
             <PropertyRef Name="StudentScheduleID" />
@@ -1361,6 +1389,18 @@
             </Principal>
             <Dependent Role="Lab">
               <PropertyRef Name="FeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK:OriginalStudentSchedule-Schedule">
+          <End Role="Schedule" Type="Self.Schedule" Multiplicity="1" />
+          <End Role="OriginalStudentSchedule" Type="Self.OriginalStudentSchedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleID" />
+            </Principal>
+            <Dependent Role="OriginalStudentSchedule">
+              <PropertyRef Name="ScheduleID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1701,11 +1741,11 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AssessmentPaymentDate_Student_Section_ReAss">
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="0..1" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="0..1" />
           <End Role="AssessmentPaymentDate_ReAss" Type="Self.AssessmentPaymentDate_ReAss" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Student_Section_ReAss">
-              <PropertyRef Name="Student_Section_ReAssID" />
+            <Principal Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
             </Principal>
             <Dependent Role="AssessmentPaymentDate_ReAss">
               <PropertyRef Name="StudentSectionReAssID" />
@@ -1749,11 +1789,11 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_AssessmentSchedule_Student_Section_ReAss">
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="0..1" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="0..1" />
           <End Role="AssessmentSchedule_ReAss" Type="Self.AssessmentSchedule_ReAss" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Student_Section_ReAss">
-              <PropertyRef Name="Student_Section_ReAssID" />
+            <Principal Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
             </Principal>
             <Dependent Role="AssessmentSchedule_ReAss">
               <PropertyRef Name="StudentSection_ReAssID" />
@@ -2336,6 +2376,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OriginalStudentSchedule_Student_Section">
+          <End Role="Student_Section" Type="Self.Student_Section" Multiplicity="1" />
+          <End Role="OriginalStudentSchedule" Type="Self.OriginalStudentSchedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student_Section">
+              <PropertyRef Name="Student_SectionID" />
+            </Principal>
+            <Dependent Role="OriginalStudentSchedule">
+              <PropertyRef Name="StudentSectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Others_Section">
           <End Role="Section" Type="Self.Section" Multiplicity="0..1" />
           <End Role="Others" Type="Self.Others" Multiplicity="*" />
@@ -2792,6 +2844,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ReAssessment_Fee">
+          <End Role="Fee" Type="Self.Fee" Multiplicity="0..1" />
+          <End Role="ReAssessment" Type="Self.ReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fee">
+              <PropertyRef Name="FeeID" />
+            </Principal>
+            <Dependent Role="ReAssessment">
+              <PropertyRef Name="FeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ReAssessment_Student_Section">
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="0..1" />
+          <End Role="ReAssessment" Type="Self.ReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
+            </Principal>
+            <Dependent Role="ReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Schedule_Room">
           <End Role="Room" Type="Self.Room" Multiplicity="0..1" />
           <End Role="Schedule" Type="Self.Schedule" Multiplicity="*" />
@@ -2938,60 +3014,60 @@
         </Association>
         <Association Name="FK_Student_Section_ReAss_Curriculum">
           <End Role="Curriculum" Type="Self.Curriculum" Multiplicity="0..1" />
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="*" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Curriculum">
               <PropertyRef Name="CurriculumID" />
             </Principal>
-            <Dependent Role="Student_Section_ReAss">
+            <Dependent Role="StudentSectionReAssessment">
               <PropertyRef Name="CurriculumID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Student_Section_ReAss_Paymode">
           <End Role="Paymode" Type="Self.Paymode" Multiplicity="0..1" />
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="*" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Paymode">
               <PropertyRef Name="PaymodeID" />
             </Principal>
-            <Dependent Role="Student_Section_ReAss">
+            <Dependent Role="StudentSectionReAssessment">
               <PropertyRef Name="PaymodeID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Student_Section_ReAss_SC">
           <End Role="Student_Section" Type="Self.Student_Section" Multiplicity="1" />
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="*" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Student_Section">
               <PropertyRef Name="Student_SectionID" />
             </Principal>
-            <Dependent Role="Student_Section_ReAss">
+            <Dependent Role="StudentSectionReAssessment">
               <PropertyRef Name="Student_SectionID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Student_Section_ReAss_Section">
           <End Role="Section" Type="Self.Section" Multiplicity="1" />
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="*" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Section">
               <PropertyRef Name="SectionID" />
             </Principal>
-            <Dependent Role="Student_Section_ReAss">
+            <Dependent Role="StudentSectionReAssessment">
               <PropertyRef Name="SectionID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Student_Section_ReAss_StudentStatus">
           <End Role="StudentStatus" Type="Self.StudentStatus" Multiplicity="0..1" />
-          <End Role="Student_Section_ReAss" Type="Self.Student_Section_ReAss" Multiplicity="*" />
+          <End Role="StudentSectionReAssessment" Type="Self.StudentSectionReAssessment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StudentStatus">
               <PropertyRef Name="StudentStatusID" />
             </Principal>
-            <Dependent Role="Student_Section_ReAss">
+            <Dependent Role="StudentSectionReAssessment">
               <PropertyRef Name="StudentStatus" />
             </Dependent>
           </ReferentialConstraint>
@@ -3512,13 +3588,16 @@
           <EntitySet Name="EnrollmentTransactionLog" EntityType="Self.EnrollmentTransactionLog" Schema="AR" store:Type="Tables" />
           <EntitySet Name="GradeLevel" EntityType="Self.GradeLevel" Schema="AR" store:Type="Tables" />
           <EntitySet Name="JournalEntryType" EntityType="Self.JournalEntryType" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="OriginalStudentSchedule" EntityType="Self.OriginalStudentSchedule" Schema="AR" store:Type="Tables" />
           <EntitySet Name="PaymentDefaultPeriod" EntityType="Self.PaymentDefaultPeriod" Schema="AR" store:Type="Tables" />
           <EntitySet Name="PostedQneJournal" EntityType="Self.PostedQneJournal" Schema="AR" store:Type="Tables" />
           <EntitySet Name="PostedQneJournalDetail" EntityType="Self.PostedQneJournalDetail" Schema="AR" store:Type="Tables" />
           <EntitySet Name="Project" EntityType="Self.Project" Schema="AR" store:Type="Tables" />
           <EntitySet Name="QNEGLAccount" EntityType="Self.QNEGLAccount" Schema="AR" store:Type="Tables" />
           <EntitySet Name="QnePostingLog" EntityType="Self.QnePostingLog" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="ReAssessment" EntityType="Self.ReAssessment" Schema="AR" store:Type="Tables" />
           <EntitySet Name="ReportName" EntityType="Self.ReportName" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="StudentSectionReAssessment" EntityType="Self.StudentSectionReAssessment" Schema="AR" store:Type="Tables" />
           <EntitySet Name="AcademicDepartment" EntityType="Self.AcademicDepartment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Adjustment" EntityType="Self.Adjustment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AdjustmentDetailFees" EntityType="Self.AdjustmentDetailFees" Schema="dbo" store:Type="Tables" />
@@ -3579,7 +3658,6 @@
           <EntitySet Name="Student" EntityType="Self.Student" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Student_Curriculum" EntityType="Self.Student_Curriculum" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Student_Section" EntityType="Self.Student_Section" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Student_Section_ReAss" EntityType="Self.Student_Section_ReAss" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StudentSchedule" EntityType="Self.StudentSchedule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StudentStatus" EntityType="Self.StudentStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubChartOfAccounts" EntityType="Self.SubChartOfAccounts" Schema="dbo" store:Type="Tables" />
@@ -3620,6 +3698,10 @@
           <AssociationSet Name="FK:Lab|Fee" Association="Self.FK:Lab|Fee">
             <End Role="Fee" EntitySet="Fee" />
             <End Role="Lab" EntitySet="Lab" />
+          </AssociationSet>
+          <AssociationSet Name="FK:OriginalStudentSchedule-Schedule" Association="Self.FK:OriginalStudentSchedule-Schedule">
+            <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="OriginalStudentSchedule" EntitySet="OriginalStudentSchedule" />
           </AssociationSet>
           <AssociationSet Name="FK:Others|Fee" Association="Self.FK:Others|Fee">
             <End Role="Fee" EntitySet="Fee" />
@@ -3734,7 +3816,7 @@
             <End Role="AssessmentPaymentDate" EntitySet="AssessmentPaymentDate" />
           </AssociationSet>
           <AssociationSet Name="FK_AssessmentPaymentDate_Student_Section_ReAss" Association="Self.FK_AssessmentPaymentDate_Student_Section_ReAss">
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
             <End Role="AssessmentPaymentDate_ReAss" EntitySet="AssessmentPaymentDate_ReAss" />
           </AssociationSet>
           <AssociationSet Name="FK_AssessmentSchedule_Schedule" Association="Self.FK_AssessmentSchedule_Schedule">
@@ -3750,7 +3832,7 @@
             <End Role="AssessmentSchedule" EntitySet="AssessmentSchedule" />
           </AssociationSet>
           <AssociationSet Name="FK_AssessmentSchedule_Student_Section_ReAss" Association="Self.FK_AssessmentSchedule_Student_Section_ReAss">
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
             <End Role="AssessmentSchedule_ReAss" EntitySet="AssessmentSchedule_ReAss" />
           </AssociationSet>
           <AssociationSet Name="FK_AssessmentSchedule_Subject" Association="Self.FK_AssessmentSchedule_Subject">
@@ -3945,6 +4027,10 @@
             <End Role="Fee" EntitySet="Fee" />
             <End Role="Miscellaneous" EntitySet="Miscellaneous" />
           </AssociationSet>
+          <AssociationSet Name="FK_OriginalStudentSchedule_Student_Section" Association="Self.FK_OriginalStudentSchedule_Student_Section">
+            <End Role="Student_Section" EntitySet="Student_Section" />
+            <End Role="OriginalStudentSchedule" EntitySet="OriginalStudentSchedule" />
+          </AssociationSet>
           <AssociationSet Name="FK_Others_Section" Association="Self.FK_Others_Section">
             <End Role="Section" EntitySet="Section" />
             <End Role="Others" EntitySet="Others" />
@@ -4097,6 +4183,14 @@
             <End Role="Student_Section" EntitySet="Student_Section" />
             <End Role="Promissory" EntitySet="Promissory" />
           </AssociationSet>
+          <AssociationSet Name="FK_ReAssessment_Fee" Association="Self.FK_ReAssessment_Fee">
+            <End Role="Fee" EntitySet="Fee" />
+            <End Role="ReAssessment" EntitySet="ReAssessment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ReAssessment_Student_Section" Association="Self.FK_ReAssessment_Student_Section">
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+            <End Role="ReAssessment" EntitySet="ReAssessment" />
+          </AssociationSet>
           <AssociationSet Name="FK_Schedule_Room" Association="Self.FK_Schedule_Room">
             <End Role="Room" EntitySet="Room" />
             <End Role="Schedule" EntitySet="Schedule" />
@@ -4147,23 +4241,23 @@
           </AssociationSet>
           <AssociationSet Name="FK_Student_Section_ReAss_Curriculum" Association="Self.FK_Student_Section_ReAss_Curriculum">
             <End Role="Curriculum" EntitySet="Curriculum" />
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
           </AssociationSet>
           <AssociationSet Name="FK_Student_Section_ReAss_Paymode" Association="Self.FK_Student_Section_ReAss_Paymode">
             <End Role="Paymode" EntitySet="Paymode" />
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
           </AssociationSet>
           <AssociationSet Name="FK_Student_Section_ReAss_SC" Association="Self.FK_Student_Section_ReAss_SC">
             <End Role="Student_Section" EntitySet="Student_Section" />
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
           </AssociationSet>
           <AssociationSet Name="FK_Student_Section_ReAss_Section" Association="Self.FK_Student_Section_ReAss_Section">
             <End Role="Section" EntitySet="Section" />
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
           </AssociationSet>
           <AssociationSet Name="FK_Student_Section_ReAss_StudentStatus" Association="Self.FK_Student_Section_ReAss_StudentStatus">
             <End Role="StudentStatus" EntitySet="StudentStatus" />
-            <End Role="Student_Section_ReAss" EntitySet="Student_Section_ReAss" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
           </AssociationSet>
           <AssociationSet Name="FK_Student_Section_Section" Association="Self.FK_Student_Section_Section">
             <End Role="Section" EntitySet="Section" />
@@ -4354,6 +4448,7 @@
           <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" />
           <NavigationProperty Name="Student_Section_ReAss" Relationship="Self.FK_AssessmentPaymentDate_Student_Section_ReAss" FromRole="AssessmentPaymentDate_ReAss" ToRole="Student_Section_ReAss" />
           <NavigationProperty Name="Paycode" Relationship="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_ReAss_Paycode" FromRole="AssessmentPaymentDate_ReAss" ToRole="Paycode" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Student_Section_ReAss1" FromRole="AssessmentPaymentDate_ReAss" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="AssessmentSchedule">
           <Key>
@@ -4390,6 +4485,7 @@
           <NavigationProperty Name="Schedule" Relationship="Self.FK_AssessmentSchedule_Schedule_ReAss" FromRole="AssessmentSchedule_ReAss" ToRole="Schedule" />
           <NavigationProperty Name="Student_Section_ReAss" Relationship="Self.FK_AssessmentSchedule_Student_Section_ReAss" FromRole="AssessmentSchedule_ReAss" ToRole="Student_Section_ReAss" />
           <NavigationProperty Name="Subject" Relationship="Self.FK_AssessmentSchedule_Subject_ReAss" FromRole="AssessmentSchedule_ReAss" ToRole="Subject" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_AssessmentSchedule_Student_Section_ReAss1" FromRole="AssessmentSchedule_ReAss" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="BackAccount">
           <Key>
@@ -4474,6 +4570,7 @@
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Student_Section_Curriculum" FromRole="Curriculum" ToRole="Student_Section" />
           <NavigationProperty Name="Student_Section_ReAss" Relationship="Self.FK_Student_Section_ReAss_Curriculum" FromRole="Curriculum" ToRole="Student_Section_ReAss" />
           <NavigationProperty Name="Tuition" Relationship="Self.FK_Tuition_Curriculum" FromRole="Curriculum" ToRole="Tuition" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Curriculum1" FromRole="Curriculum" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="Discount">
           <Key>
@@ -4924,6 +5021,7 @@
           <NavigationProperty Name="PaySchedule" Relationship="Self.FK_PaySchedule_Paymode" FromRole="Paymode" ToRole="PaySchedule" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Student_Section_Paymode" FromRole="Paymode" ToRole="Student_Section" />
           <NavigationProperty Name="Student_Section_ReAss" Relationship="Self.FK_Student_Section_ReAss_Paymode" FromRole="Paymode" ToRole="Student_Section_ReAss" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Paymode1" FromRole="Paymode" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="PaySchedule">
           <Key>
@@ -5110,6 +5208,7 @@
           <NavigationProperty Name="ScheduleStatus" Relationship="Self.FK_Schedule_ScheduleStatus" FromRole="Schedule" ToRole="ScheduleStatus" />
           <NavigationProperty Name="Section1" Relationship="Self.FK_Schedule_Section2" FromRole="Schedule" ToRole="Section" />
           <NavigationProperty Name="Faculty" Relationship="LetranIntegratedSystemModel.FK_Schedule_Faculty" FromRole="Schedule" ToRole="Faculty" />
+          <NavigationProperty Name="OriginalStudentSchedule" Relationship="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Schedule" FromRole="Schedule" ToRole="OriginalStudentSchedule" />
         </EntityType>
         <EntityType Name="ScheduleStatus">
           <Key>
@@ -5137,6 +5236,7 @@
           <NavigationProperty Name="Schedule1" Relationship="Self.FK_Schedule_Section2" FromRole="Section" ToRole="Schedule" />
           <NavigationProperty Name="Student_Section_ReAss" Relationship="Self.FK_Student_Section_ReAss_Section" FromRole="Section" ToRole="Student_Section_ReAss" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Student_Section_Section" FromRole="Section" ToRole="Student_Section" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Section1" FromRole="Section" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="Student_Curriculum">
           <Key>
@@ -5198,6 +5298,8 @@
           <NavigationProperty Name="StudentStatus1" Relationship="Self.FK_Student_Section_StudentStatus" FromRole="Student_Section" ToRole="StudentStatus" />
           <NavigationProperty Name="StudentSchedule" Relationship="Self.FK_StudentSchedule_Student_Section" FromRole="Student_Section" ToRole="StudentSchedule" />
           <NavigationProperty Name="Student" Relationship="LetranIntegratedSystemModel.FK_Student_Section_Student" FromRole="Student_Section" ToRole="Student" />
+          <NavigationProperty Name="OriginalStudentSchedule" Relationship="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Student_Section" FromRole="Student_Section" ToRole="OriginalStudentSchedule" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_SC1" FromRole="Student_Section" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="Student_Section_ReAss">
           <Key>
@@ -5251,6 +5353,7 @@
           <Property Name="StudentStatusDescription" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Student_Section_StudentStatus" FromRole="StudentStatus" ToRole="Student_Section" />
           <NavigationProperty Name="Student_Section_ReAss" Relationship="Self.FK_Student_Section_ReAss_StudentStatus" FromRole="StudentStatus" ToRole="Student_Section_ReAss" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_StudentStatus1" FromRole="StudentStatus" ToRole="StudentSectionReAssessment" />
         </EntityType>
         <EntityType Name="Subject">
           <Key>
@@ -7550,6 +7653,53 @@
             <End Role="Payment" EntitySet="Payment" />
             <End Role="Alpha4Payment" EntitySet="Alpha4Payment" />
           </AssociationSet>
+          <EntitySet Name="OriginalStudentSchedule" EntityType="LetranIntegratedSystemModel.OriginalStudentSchedule" />
+          <EntitySet Name="StudentSectionReAssessment" EntityType="LetranIntegratedSystemModel.StudentSectionReAssessment" />
+          <AssociationSet Name="FK_OriginalStudentSchedule_Schedule" Association="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Schedule">
+            <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="OriginalStudentSchedule" EntitySet="OriginalStudentSchedule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OriginalStudentSchedule_Student_Section" Association="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Student_Section">
+            <End Role="Student_Section" EntitySet="Student_Section" />
+            <End Role="OriginalStudentSchedule" EntitySet="OriginalStudentSchedule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AssessmentPaymentDate_Student_Section_ReAss1" Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Student_Section_ReAss1">
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+            <End Role="AssessmentPaymentDate_ReAss" EntitySet="AssessmentPaymentDate_ReAss" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AssessmentSchedule_Student_Section_ReAss1" Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Student_Section_ReAss1">
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+            <End Role="AssessmentSchedule_ReAss" EntitySet="AssessmentSchedule_ReAss" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Student_Section_ReAss_Curriculum1" Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Curriculum1">
+            <End Role="Curriculum" EntitySet="Curriculum" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Student_Section_ReAss_Paymode1" Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Paymode1">
+            <End Role="Paymode" EntitySet="Paymode" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Student_Section_ReAss_SC1" Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_SC1">
+            <End Role="Student_Section" EntitySet="Student_Section" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Student_Section_ReAss_Section1" Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Section1">
+            <End Role="Section" EntitySet="Section" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Student_Section_ReAss_StudentStatus1" Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_StudentStatus1">
+            <End Role="StudentStatus" EntitySet="StudentStatus" />
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+          </AssociationSet>
+          <EntitySet Name="ReAssessment" EntityType="LetranIntegratedSystemModel.ReAssessment" />
+          <AssociationSet Name="FK_ReAssessment_Fee" Association="LetranIntegratedSystemModel.FK_ReAssessment_Fee">
+            <End Role="Fee" EntitySet="Fee" />
+            <End Role="ReAssessment" EntitySet="ReAssessment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ReAssessment_Student_Section" Association="LetranIntegratedSystemModel.FK_ReAssessment_Student_Section">
+            <End Role="StudentSectionReAssessment" EntitySet="StudentSectionReAssessment" />
+            <End Role="ReAssessment" EntitySet="ReAssessment" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="SMSLog">
           <Key>
@@ -8276,6 +8426,7 @@
           <NavigationProperty Name="Miscellaneous" Relationship="LetranIntegratedSystemModel.FK_Miscellaneous_Fee" FromRole="Fee" ToRole="Miscellaneous" />
           <NavigationProperty Name="Supplemental" Relationship="LetranIntegratedSystemModel.FK_Supplemental_Fee" FromRole="Fee" ToRole="Supplemental" />
           <NavigationProperty Name="Tuition" Relationship="LetranIntegratedSystemModel.FK_Tuition_Fee" FromRole="Fee" ToRole="Tuition" />
+          <NavigationProperty Name="ReAssessment" Relationship="LetranIntegratedSystemModel.FK_ReAssessment_Fee" FromRole="Fee" ToRole="ReAssessment" />
         </EntityType>
         <Association Name="FK_Fee_QNEGLAccount">
           <End Type="LetranIntegratedSystemModel.QNEGLAccount" Role="QNEGLAccount" Multiplicity="0..1" />
@@ -9430,6 +9581,205 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="OriginalStudentSchedule">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScheduleID" Type="Int32" Nullable="false" />
+          <Property Name="StudentSectionID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Schedule" Relationship="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Schedule" FromRole="OriginalStudentSchedule" ToRole="Schedule" />
+          <NavigationProperty Name="Student_Section" Relationship="LetranIntegratedSystemModel.FK_OriginalStudentSchedule_Student_Section" FromRole="OriginalStudentSchedule" ToRole="Student_Section" />
+        </EntityType>
+        <EntityType Name="StudentSectionReAssessment">
+          <Key>
+            <PropertyRef Name="StudentSectionReAssessmentID" />
+          </Key>
+          <Property Name="StudentSectionReAssessmentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Student_SectionID" Type="Int32" Nullable="false" />
+          <Property Name="SectionID" Type="Int32" Nullable="false" />
+          <Property Name="PaymodeID" Type="Int32" />
+          <Property Name="NewStatus" Type="Boolean" Nullable="false" />
+          <Property Name="CurriculumID" Type="Int32" />
+          <Property Name="DatePrinted" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="TuitionFee" Type="Double" />
+          <Property Name="MiscFee" Type="Double" />
+          <Property Name="SuppFee" Type="Double" />
+          <Property Name="LabFee" Type="Double" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="Net" Type="Double" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="DownPayment" Type="Double" />
+          <Property Name="SecondPayment" Type="Double" />
+          <Property Name="Credit" Type="Double" />
+          <Property Name="AssessmentDate" Type="DateTime" Precision="0" />
+          <Property Name="AssessedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Locked" Type="Boolean" Nullable="false" />
+          <Property Name="StudentStatus" Type="Int32" />
+          <Property Name="SectionID2" Type="Int32" />
+          <NavigationProperty Name="AssessmentPaymentDate_ReAss" Relationship="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Student_Section_ReAss1" FromRole="StudentSectionReAssessment" ToRole="AssessmentPaymentDate_ReAss" />
+          <NavigationProperty Name="AssessmentSchedule_ReAss" Relationship="LetranIntegratedSystemModel.FK_AssessmentSchedule_Student_Section_ReAss1" FromRole="StudentSectionReAssessment" ToRole="AssessmentSchedule_ReAss" />
+          <NavigationProperty Name="Curriculum" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Curriculum1" FromRole="StudentSectionReAssessment" ToRole="Curriculum" />
+          <NavigationProperty Name="Paymode" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Paymode1" FromRole="StudentSectionReAssessment" ToRole="Paymode" />
+          <NavigationProperty Name="Student_Section" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_SC1" FromRole="StudentSectionReAssessment" ToRole="Student_Section" />
+          <NavigationProperty Name="Section" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Section1" FromRole="StudentSectionReAssessment" ToRole="Section" />
+          <NavigationProperty Name="StudentStatus1" Relationship="LetranIntegratedSystemModel.FK_Student_Section_ReAss_StudentStatus1" FromRole="StudentSectionReAssessment" ToRole="StudentStatus" />
+          <NavigationProperty Name="ReAssessment" Relationship="LetranIntegratedSystemModel.FK_ReAssessment_Student_Section" FromRole="StudentSectionReAssessment" ToRole="ReAssessment" />
+        </EntityType>
+        <Association Name="FK_OriginalStudentSchedule_Schedule">
+          <End Type="LetranIntegratedSystemModel.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.OriginalStudentSchedule" Role="OriginalStudentSchedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleID" />
+            </Principal>
+            <Dependent Role="OriginalStudentSchedule">
+              <PropertyRef Name="ScheduleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OriginalStudentSchedule_Student_Section">
+          <End Type="LetranIntegratedSystemModel.Student_Section" Role="Student_Section" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.OriginalStudentSchedule" Role="OriginalStudentSchedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student_Section">
+              <PropertyRef Name="Student_SectionID" />
+            </Principal>
+            <Dependent Role="OriginalStudentSchedule">
+              <PropertyRef Name="StudentSectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AssessmentPaymentDate_Student_Section_ReAss1">
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.AssessmentPaymentDate_ReAss" Role="AssessmentPaymentDate_ReAss" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
+            </Principal>
+            <Dependent Role="AssessmentPaymentDate_ReAss">
+              <PropertyRef Name="StudentSectionReAssID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AssessmentSchedule_Student_Section_ReAss1">
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.AssessmentSchedule_ReAss" Role="AssessmentSchedule_ReAss" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
+            </Principal>
+            <Dependent Role="AssessmentSchedule_ReAss">
+              <PropertyRef Name="StudentSection_ReAssID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Student_Section_ReAss_Curriculum1">
+          <End Type="LetranIntegratedSystemModel.Curriculum" Role="Curriculum" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curriculum">
+              <PropertyRef Name="CurriculumID" />
+            </Principal>
+            <Dependent Role="StudentSectionReAssessment">
+              <PropertyRef Name="CurriculumID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Student_Section_ReAss_Paymode1">
+          <End Type="LetranIntegratedSystemModel.Paymode" Role="Paymode" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Paymode">
+              <PropertyRef Name="PaymodeID" />
+            </Principal>
+            <Dependent Role="StudentSectionReAssessment">
+              <PropertyRef Name="PaymodeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Student_Section_ReAss_SC1">
+          <End Type="LetranIntegratedSystemModel.Student_Section" Role="Student_Section" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student_Section">
+              <PropertyRef Name="Student_SectionID" />
+            </Principal>
+            <Dependent Role="StudentSectionReAssessment">
+              <PropertyRef Name="Student_SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Student_Section_ReAss_Section1">
+          <End Type="LetranIntegratedSystemModel.Section" Role="Section" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Section">
+              <PropertyRef Name="SectionID" />
+            </Principal>
+            <Dependent Role="StudentSectionReAssessment">
+              <PropertyRef Name="SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Student_Section_ReAss_StudentStatus1">
+          <End Type="LetranIntegratedSystemModel.StudentStatus" Role="StudentStatus" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentStatus">
+              <PropertyRef Name="StudentStatusID" />
+            </Principal>
+            <Dependent Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ReAssessment">
+          <Key>
+            <PropertyRef Name="ReAssessmentID" />
+          </Key>
+          <Property Name="ReAssessmentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StudentSectionReAssessmentID" Type="Int32" />
+          <Property Name="FeeID" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FeeType" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Amount" Type="Double" />
+          <Property Name="Discount" Type="Double" />
+          <Property Name="Total" Type="Double" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="DiscountAmount" Type="Double" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Locked" Type="Boolean" Nullable="false" />
+          <Property Name="TuitionRate" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TuitionDiscountRate" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TotalUnits" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MaxUnit" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TuitionForDiscount" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="Fee" Relationship="LetranIntegratedSystemModel.FK_ReAssessment_Fee" FromRole="ReAssessment" ToRole="Fee" />
+          <NavigationProperty Name="StudentSectionReAssessment" Relationship="LetranIntegratedSystemModel.FK_ReAssessment_Student_Section" FromRole="ReAssessment" ToRole="StudentSectionReAssessment" />
+        </EntityType>
+        <Association Name="FK_ReAssessment_Fee">
+          <End Type="LetranIntegratedSystemModel.Fee" Role="Fee" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.ReAssessment" Role="ReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fee">
+              <PropertyRef Name="FeeID" />
+            </Principal>
+            <Dependent Role="ReAssessment">
+              <PropertyRef Name="FeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ReAssessment_Student_Section">
+          <End Type="LetranIntegratedSystemModel.StudentSectionReAssessment" Role="StudentSectionReAssessment" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.ReAssessment" Role="ReAssessment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentSectionReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
+            </Principal>
+            <Dependent Role="ReAssessment">
+              <PropertyRef Name="StudentSectionReAssessmentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -10236,34 +10586,6 @@
                 <ScalarProperty Name="OnlineDateEncoded" ColumnName="OnlineDateEncoded" />
                 <ScalarProperty Name="NoOfPayment" ColumnName="NoOfPayment" />
                 <ScalarProperty Name="WillAvailModule" ColumnName="WillAvailModule" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Student_Section_ReAss">
-            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Student_Section_ReAss">
-              <MappingFragment StoreEntitySet="Student_Section_ReAss">
-                <ScalarProperty Name="Student_Section_ReAssID" ColumnName="Student_Section_ReAssID" />
-                <ScalarProperty Name="Student_SectionID" ColumnName="Student_SectionID" />
-                <ScalarProperty Name="SectionID" ColumnName="SectionID" />
-                <ScalarProperty Name="PaymodeID" ColumnName="PaymodeID" />
-                <ScalarProperty Name="NewStatus" ColumnName="NewStatus" />
-                <ScalarProperty Name="CurriculumID" ColumnName="CurriculumID" />
-                <ScalarProperty Name="DatePrinted" ColumnName="DatePrinted" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="TuitionFee" ColumnName="TuitionFee" />
-                <ScalarProperty Name="MiscFee" ColumnName="MiscFee" />
-                <ScalarProperty Name="SuppFee" ColumnName="SuppFee" />
-                <ScalarProperty Name="LabFee" ColumnName="LabFee" />
-                <ScalarProperty Name="Discount" ColumnName="Discount" />
-                <ScalarProperty Name="Net" ColumnName="Net" />
-                <ScalarProperty Name="DownPayment" ColumnName="DownPayment" />
-                <ScalarProperty Name="SecondPayment" ColumnName="SecondPayment" />
-                <ScalarProperty Name="Credit" ColumnName="Credit" />
-                <ScalarProperty Name="AssessmentDate" ColumnName="AssessmentDate" />
-                <ScalarProperty Name="AssessedBy" ColumnName="AssessedBy" />
-                <ScalarProperty Name="Locked" ColumnName="Locked" />
-                <ScalarProperty Name="StudentStatus" ColumnName="StudentStatus" />
-                <ScalarProperty Name="SectionID2" ColumnName="SectionID2" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -11665,6 +11987,64 @@
                 <ScalarProperty Name="OrNo" ColumnName="OrNo" />
                 <ScalarProperty Name="Alpha4Id" ColumnName="Alpha4Id" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OriginalStudentSchedule">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.OriginalStudentSchedule">
+              <MappingFragment StoreEntitySet="OriginalStudentSchedule">
+                <ScalarProperty Name="StudentSectionID" ColumnName="StudentSectionID" />
+                <ScalarProperty Name="ScheduleID" ColumnName="ScheduleID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentSectionReAssessment">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.StudentSectionReAssessment">
+              <MappingFragment StoreEntitySet="StudentSectionReAssessment">
+                <ScalarProperty Name="SectionID2" ColumnName="SectionID2" />
+                <ScalarProperty Name="StudentStatus" ColumnName="StudentStatus" />
+                <ScalarProperty Name="Locked" ColumnName="Locked" />
+                <ScalarProperty Name="AssessedBy" ColumnName="AssessedBy" />
+                <ScalarProperty Name="AssessmentDate" ColumnName="AssessmentDate" />
+                <ScalarProperty Name="Credit" ColumnName="Credit" />
+                <ScalarProperty Name="SecondPayment" ColumnName="SecondPayment" />
+                <ScalarProperty Name="DownPayment" ColumnName="DownPayment" />
+                <ScalarProperty Name="Net" ColumnName="Net" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="LabFee" ColumnName="LabFee" />
+                <ScalarProperty Name="SuppFee" ColumnName="SuppFee" />
+                <ScalarProperty Name="MiscFee" ColumnName="MiscFee" />
+                <ScalarProperty Name="TuitionFee" ColumnName="TuitionFee" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DatePrinted" ColumnName="DatePrinted" />
+                <ScalarProperty Name="CurriculumID" ColumnName="CurriculumID" />
+                <ScalarProperty Name="NewStatus" ColumnName="NewStatus" />
+                <ScalarProperty Name="PaymodeID" ColumnName="PaymodeID" />
+                <ScalarProperty Name="SectionID" ColumnName="SectionID" />
+                <ScalarProperty Name="Student_SectionID" ColumnName="Student_SectionID" />
+                <ScalarProperty Name="StudentSectionReAssessmentID" ColumnName="StudentSectionReAssessmentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReAssessment">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.ReAssessment">
+              <MappingFragment StoreEntitySet="ReAssessment">
+                <ScalarProperty Name="TuitionForDiscount" ColumnName="TuitionForDiscount" />
+                <ScalarProperty Name="MaxUnit" ColumnName="MaxUnit" />
+                <ScalarProperty Name="TotalUnits" ColumnName="TotalUnits" />
+                <ScalarProperty Name="TuitionDiscountRate" ColumnName="TuitionDiscountRate" />
+                <ScalarProperty Name="TuitionRate" ColumnName="TuitionRate" />
+                <ScalarProperty Name="Locked" ColumnName="Locked" />
+                <ScalarProperty Name="DiscountAmount" ColumnName="DiscountAmount" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="FeeType" ColumnName="FeeType" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FeeID" ColumnName="FeeID" />
+                <ScalarProperty Name="StudentSectionReAssessmentID" ColumnName="StudentSectionReAssessmentID" />
+                <ScalarProperty Name="ReAssessmentID" ColumnName="ReAssessmentID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
