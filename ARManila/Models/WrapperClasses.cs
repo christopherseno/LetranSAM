@@ -8,6 +8,16 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public partial class ChartOfAccounts
+    {
+        public string FullName
+        {
+            get
+            {
+                return this.AcctNo + "-" + this.AcctName;
+            }
+        }
+    }
     public class Alpha4Query
     {
         public int Id { get; set; }
@@ -18,7 +28,7 @@ namespace ARManila.Models
         public decimal Credit { get; set; }
         public string Date { get; set; }
         public decimal Balance { get; set; }
-        public string Remarks { get; set; }        
+        public string Remarks { get; set; }
         public string DocNo { get; set; }
         public string Particular { get; set; }
 
@@ -40,7 +50,7 @@ namespace ARManila.Models
     }
     public partial class Alpha4
     {
-       
+
         public string Level
         {
             get
@@ -61,7 +71,7 @@ namespace ARManila.Models
             {
                 return this.Amount - this.Alpha4Payment.Sum(m => m.Amount);
             }
-        }  
+        }
         public string StudentNumber
         {
             get
@@ -144,16 +154,6 @@ namespace ARManila.Models
         public string QneGlAccount { get; set; }
         [Required(ErrorMessage = "Description is required")]
         public int? FeeNameId { get; set; }
-    }
-    public partial class ChartOfAccounts
-    {
-        public string FullName
-        {
-            get
-            {
-                return this.AcctNo + " - " + this.AcctName;
-            }
-        }
     }
     public partial class SubChartOfAccounts
     {

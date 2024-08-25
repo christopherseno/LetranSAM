@@ -21,4 +21,14 @@ namespace ARManila.Models
         public List<Student_Section> Students { get; set; }
 
     }
+    public class StudentForDmcm
+    {
+        public int StudentId { get; set; }
+        public string StudentNo { get; set; }
+        public string StudentName { get; set; }
+        public string ValidationDate { get; set; }
+        public string PaymentMode { get; set; }
+        public string Section { get; set; }
+        public int StudentSectionId { get; set; }
+    }
 }

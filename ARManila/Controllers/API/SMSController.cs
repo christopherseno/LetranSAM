@@ -5,11 +5,13 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Web.Http;
-
+using ARManila.Models;
 namespace ARManila.Controllers
 {
     public class SMSController : ApiController
     {
+
+        
         [HttpGet]
         public IHttpActionResult SendSMS(string id, string message)
         {

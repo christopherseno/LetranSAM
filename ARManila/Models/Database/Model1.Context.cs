@@ -79,7 +79,6 @@ namespace ARManila.Models
         public virtual DbSet<Section> Section { get; set; }
         public virtual DbSet<Student_Curriculum> Student_Curriculum { get; set; }
         public virtual DbSet<Student_Section> Student_Section { get; set; }
-        public virtual DbSet<Student_Section_ReAss> Student_Section_ReAss { get; set; }
         public virtual DbSet<StudentSchedule> StudentSchedule { get; set; }
         public virtual DbSet<StudentStatus> StudentStatus { get; set; }
         public virtual DbSet<Subject> Subject { get; set; }
@@ -91,7 +90,6 @@ namespace ARManila.Models
         public virtual DbSet<Paycode> Paycode { get; set; }
         public virtual DbSet<ReportName> ReportName { get; set; }
         public virtual DbSet<PaymentDefaultPeriod> PaymentDefaultPeriod { get; set; }
-        public virtual DbSet<GradeLevel> GradeLevel { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Faculty> Faculty { get; set; }
         public virtual DbSet<QNEGLAccount> QNEGLAccount { get; set; }
@@ -113,6 +111,8 @@ namespace ARManila.Models
         public virtual DbSet<Alpha4Payment> Alpha4Payment { get; set; }
         public virtual DbSet<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
         public virtual DbSet<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        public virtual DbSet<GradeLevel> GradeLevel { get; set; }
+        public virtual DbSet<DmcmTransactionLog> DmcmTransactionLog { get; set; }
         public virtual DbSet<ReAssessment> ReAssessment { get; set; }
     
         public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
@@ -1193,6 +1193,23 @@ namespace ARManila.Models
                 new ObjectParameter("periodid", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTotalBalance_Result>("GetTotalBalance", studentidParameter, periodidParameter);
+        }
+    
+        public virtual int InsertDmcmTransactionLog(string username, string remarks, string studentno)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var remarksParameter = remarks != null ?
+                new ObjectParameter("remarks", remarks) :
+                new ObjectParameter("remarks", typeof(string));
+    
+            var studentnoParameter = studentno != null ?
+                new ObjectParameter("studentno", studentno) :
+                new ObjectParameter("studentno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertDmcmTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
         }
     }
 }

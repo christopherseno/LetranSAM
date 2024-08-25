@@ -57,7 +57,6 @@
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Section" Width="1.5" PointX="18" PointY="107" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Student_Curriculum" Width="1.5" PointX="18" PointY="103.625" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Student_Section" Width="1.5" PointX="23.25" PointY="112.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="LetranIntegratedSystemModel.Student_Section_ReAss" Width="1.5" PointX="25.5" PointY="111.25" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.StudentSchedule" Width="1.5" PointX="25.5" PointY="119.5" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.StudentStatus" Width="1.5" PointX="21" PointY="109.625" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Subject" Width="1.5" PointX="9.75" PointY="131.75" IsExpanded="true" />
@@ -74,12 +73,10 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Assessment_Student_Section" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Paymode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Student_Section" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Student_Section_ReAss" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Schedule" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Student_Section" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Subject" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Schedule_ReAss" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Student_Section_ReAss" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentSchedule_Subject_ReAss" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_BackAccount_DMCM" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_BackAccount_Payment" ManuallyRouted="false" />
@@ -96,7 +93,6 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ProgamCurriculum_Curriculum" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Curriculum_Curriculum" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_Curriculum" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Curriculum" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Tuition_Curriculum" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Discount_DiscountType" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Discount_Period" ManuallyRouted="false" />
@@ -134,7 +130,6 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Tuition_Paymode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_PaySchedule_Paymode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_Paymode" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Paymode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_PaySchedule_Period" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Section_Period" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_Period" ManuallyRouted="false" />
@@ -154,12 +149,9 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_StudentSchedule_Schedule" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Schedule_ScheduleStatus" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Schedule_Section2" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Section" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_Section" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_SC" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_StudentStatus" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_StudentSchedule_Student_Section" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_StudentStatus" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Subject_Subject_Component" ManuallyRouted="false" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.SMSLog" Width="1.5" PointX="0.75" PointY="7.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Paycode" Width="1.5" PointX="7.5" PointY="95.75" />
@@ -173,7 +165,6 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_PaymentDefaultPeriod_EducationalLevel" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_PaymentDefaultPeriod_Period" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_PaymentDefaultPeriodReservation_Period" />
-        <EntityTypeShape EntityType="LetranIntegratedSystemModel.GradeLevel" Width="1.5" PointX="9.375" PointY="4.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.AspNetUsers" Width="1.5" PointX="5.375" PointY="7.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Faculty" Width="1.5" PointX="15" PointY="122" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Faculty_EducationalLevel" />
@@ -260,6 +251,8 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_SC1" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Section1" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_StudentStatus1" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.GradeLevel" Width="1.5" PointX="7.375" PointY="4.75" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.DmcmTransactionLog" Width="1.5" PointX="9.375" PointY="4.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.ReAssessment" Width="1.5" PointX="35.75" PointY="104.625" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Fee" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Student_Section" />

@@ -8,6 +8,10 @@
     <input type="button" class="btn btn-danger" id="studentfinderbutton" value="Student No Finder" />
     <form method="post" action="~/DMCM/Index">
         <input type="text" name="studentno" id="studentno" placeholder="Student No" />
+        <br/ />
+        <hr />
+        From <input type="date" name="startdate" id="startdate" /> To <input type="date" name="enddate" id="enddate" />
+        <br />
         <input type="submit" value="View DMCM" />
     </form>
     @if (Model != null && Model.Count() > 0 )
@@ -38,12 +42,13 @@
                     <td>Student Name</td>
                     <td>@i.TransactionDate.Value.ToShortDateString()</td>
                     <td>@i.DocNum</td>
+                    ViewBag.acctno
                     <td>@i.AccountName</td>
                     <td>@i.AccountNumber</td>
-                    <td>@(i.DC=="D" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
                     <td>@(i.DC=="C" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
+                    <td>@(i.DC=="D" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
                     <td>@i.Remarks</td>
-                    <td>@Html.ActionLink("View", "ViewReport", new { id=i.DocNum}, new{ @target ="_blank" })</td>
+                    <td>@Html.ActionLink("View", "ViewReport", new { id = i.DocNum }, new { @target = "_blank" })</td>
                     <td>@Html.ActionLink("Send Email", "EMailDMCM", new { id = i.DocNum })</td>
                 </tr>
                 }

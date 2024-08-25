@@ -1,0 +1,66 @@
+﻿@model ARManila.Models.BatchDmcm
+@{
+    ViewBag.Title = "ListDMCM";
+}
+
+@if (Model != null && Model.Students != null && Model.Students.Count() > 0)
+{
+    using (Html.BeginForm("PostBatchDmcm", "DMCM", FormMethod.Post))
+    {
+        <h3 class="col-md-12">@Html.EditorFor(m => m.IsDebit) Is debit?</h3>
+        <h3 class="col-md-12">Account Code: @Html.DropDownListFor(m => m.AccountId, (SelectList)ViewBag.accounts, "", null) </h3>
+        <h3 class="col-md-12">SubLedger Code @Html.DropDownListFor(m => m.SubaccountId, (SelectList)ViewBag.subaccounts, "", null) </h3>
+        <h3 class="col-md-12">Amount @Html.TextBoxFor(m => m.Amount, "", new { @type = "number", @class = "text-align: right" }) </h3>
+        <h3 class="col-md-12">Particulars: @Html.TextBoxFor(m => m.Particular, "")</h3>
+        <h3>Posting Date: @Html.TextBoxFor(m => m.PostingDate, "", new { @type = "Date" })</h3>
+        <h3><input type="submit" value="Post" /></h3>
+        <h3><input type="checkbox" id="IsSelectedAll" name="IsSelectedAll" /> Apply to all students</h3>
+        <table class="table table-bordered table-striped table-vcenter">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        Student No
+                    </th>
+                    <th>Student Name</th>
+                    <th>
+                        Validation Date
+                    </th>
+                    <th>
+                        Section
+                    </th>
+                    <th>
+                        Payment Mode
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Students.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.EditorFor(modelItem => Model.Students[i].IsSelected)
+                            @Html.HiddenFor(modelItem => Model.Students[i].StudentID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.Students[i].Student.StudentNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.Students[i].Student.FullName)
+                        </td>
+                        <td>
+                            @(Model.Students[i].ValidationDate.HasValue ? Model.Students[i].ValidationDate.Value.ToShortDateString():"")
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.Students[i].Section.SectionName)
+                            @Html.HiddenFor(modelItem => Model.Students[i].Section.Curriculum.AcaDeptID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => Model.Students[i].Paymode.Description)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

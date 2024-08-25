@@ -10,11 +10,12 @@ using System.Web.Http.Cors;
 
 namespace ARManila.Controllers
 {
-    [Authorize(Roles = "Finance, IT, Administrator, Registrar")]
+    [Authorize(Roles = "Finance, IT")]
     [RoutePrefix("")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class UtilityAPIController : ApiController
     {
+        
         [HttpGet, Route("StudentSchedule/{studentsectionid:int}")]
         public HttpResponseMessage StudentSchedule(int studentsectionid)
         {

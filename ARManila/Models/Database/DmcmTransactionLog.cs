@@ -12,15 +12,12 @@ namespace ARManila.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AssessmentPaymentDate_ReAss
+    public partial class DmcmTransactionLog
     {
-        public int AssessmentPaymentDate_ReAssID { get; set; }
-        public Nullable<int> StudentSectionReAssID { get; set; }
-        public Nullable<int> PaycodeID { get; set; }
-        public Nullable<System.DateTime> PaymentDate { get; set; }
-        public Nullable<decimal> Amount { get; set; }
-    
-        public virtual Paycode Paycode { get; set; }
-        public virtual StudentSectionReAssessment StudentSectionReAssessment { get; set; }
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public System.DateTime TransactionDate { get; set; }
+        public string Remarks { get; set; }
+        public string StudentNo { get; set; }
     }
 }

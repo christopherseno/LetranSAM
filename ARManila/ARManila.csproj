@@ -247,6 +247,7 @@
     <Compile Include="Controllers\API\AssessmentController.cs" />
     <Compile Include="Controllers\API\BackaccountAPIController.cs" />
     <Compile Include="Controllers\API\BankPaymentAPIController.cs" />
+    <Compile Include="Controllers\API\DmcmApiController.cs" />
     <Compile Include="Controllers\API\FinanceController.cs" />
     <Compile Include="Controllers\API\PeriodSelectorController.cs" />
     <Compile Include="Controllers\API\SMSController.cs" />
@@ -369,6 +370,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\DMCM.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Database\DmcmTransactionLog.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\EducationalLevel.cs">
@@ -708,9 +712,6 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\Student_Section.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Database\Student_Section_ReAss.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\SubChartOfAccounts.cs">
@@ -5092,7 +5093,7 @@
     <Content Include="Views\JournalEntryTypes\Index.cshtml" />
     <Content Include="Views\JournalEntry\MiscJournalEntryDcr.cshtml" />
     <Content Include="Views\JournalEntry\MiscJournalEntry.cshtml" />
-    <Content Include="Views\DMCM\ListDMCM.cshtml" />
+    <Content Include="Views\DMCM\_ListDMCM.cshtml" />
     <Content Include="Views\JournalEntry\ViewReceiptVoucher.cshtml" />
     <Content Include="Views\FinanceReports\EnrollmentStat.cshtml" />
     <Content Include="Views\FinanceReports\_EnrollmentStatPartial.cshtml" />
@@ -5118,6 +5119,7 @@
     <Content Include="Views\Alpha4\UnpostedAlpha4Payments.cshtml" />
     <Content Include="Views\Alpha4\Detail.cshtml" />
     <Content Include="Views\Alpha4\AddPayment.cshtml" />
+    <Content Include="Views\DMCM\StudentList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

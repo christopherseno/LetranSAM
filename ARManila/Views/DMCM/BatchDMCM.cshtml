@@ -5,133 +5,302 @@
 }
 
 <div class="p-3">
-    <h2>Batch DMCM</h2>
-    @using (Html.BeginForm("BatchDMCM", "DMCM", FormMethod.Post))
-    {
-        <div class="row mb-4">
-            <div class="col-4">
-                <label for="programid" class="form-label">Program:</label>
-                @Html.DropDownList("programid", (IEnumerable<SelectListItem>)ViewBag.programs, "", new { @class = "form-select" })
-            </div>
-            <div class="col-4">
-                <label for="sectionid" class="form-label">Section:</label>
-                @Html.DropDownList("sectionid", (IEnumerable<SelectListItem>)ViewBag.sections, "", new { @class = "form-select" })
-            </div>
-            <div class="col-4">
-                <label for="subjectid" class="form-label">Subject:</label>
-                <select id="subjectid" name="scheduleid" class="form-select"></select>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-4">
-                <input type="submit" value="Load Students" class="form-control btn btn-primary" />
-            </div>
-        </div>
-    }
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">DMCM Menu</span>
+        <span class="breadcrumb-item active">Bactch DMCM</span>
+    </nav>
+    <div class="block block-rounded">
+        <div class="block-content">
+            <h2>Batch DMCM</h2>
+            @using (Html.BeginForm())
+            {
+                <div class="row mb-4">
+                    <div class="col-sm-3 col-xs-6">
+                        <label for="programid" class="form-label">Program:</label>
+                        @Html.DropDownList("programid", (IEnumerable<SelectListItem>)ViewBag.programs, "", new { @class = "form-select" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <label for="programid" class="form-label">Grade/Year:</label>
+                        @Html.DropDownList("gradeyear", (IEnumerable<SelectListItem>)ViewBag.gradeyears, "", new { @class = "form-select" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <label for="sectionid" class="form-label">Section:</label>
+                        <select id="sectionid" name="sectionid" class="form-select"></select>
+                    </div>
+                    <div class="col-sm-3 col-xs-6">
+                        <label for="subjectid" class="form-label">Subject:</label>
+                        <select id="subjectid" name="scheduleid" class="form-select"></select>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-4">
+                        <input type="submit" value="Load Students" class="btn btn-primary" />
+                    </div>
+                </div>
 
-    @if (Model != null && Model.Students != null && Model.Students.Count() > 0)
-    {
-        using (Html.BeginForm("PostBatchDmcm", "DMCM", FormMethod.Post))
-        {
-            <h3 class="col-md-12">@Html.EditorFor(m => m.IsDebit) Is debit?</h3>
-            <h3 class="col-md-12">Account Code: @Html.DropDownListFor(m => m.AccountId, (SelectList)ViewBag.accounts, "", null) </h3>
-            <h3 class="col-md-12">SubLedger Code @Html.DropDownListFor(m => m.SubaccountId, (SelectList)ViewBag.subaccounts, "", null) </h3>
-            <h3 class="col-md-12">Amount @Html.TextBoxFor(m => m.Amount, "", new { @type = "number", @class = "text-align: right" }) </h3>
-            <h3 class="col-md-12">Particulars: @Html.TextBoxFor(m => m.Particular, "")</h3>
-            <h3>Posting Date: @Html.TextBoxFor(m => m.PostingDate, "", new { @type = "Date" })</h3>
-            <h3><input type="submit" value="Post" /></h3>
-            <h3><input type="checkbox" id="IsSelectedAll" name="IsSelectedAll" /> Apply to all students</h3>
-            <table class="table table-bordered table-striped table-vcenter">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>
-                            Student No
-                        </th>
-                        <th>Student Name</th>
-                        <th>
-                            Validation Date
-                        </th>
-                        <th>
-                            Section
-                        </th>
-                        <th>
-                            Payment Mode
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.Students.Count; i++)
-                    {
-                        <tr>
-                            <td>
-                                @Html.EditorFor(modelItem => Model.Students[i].IsSelected)
-                                @Html.HiddenFor(modelItem => Model.Students[i].StudentID)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => Model.Students[i].Student.StudentNo)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => Model.Students[i].Student.FullName)
-                            </td>
-                            <td>
-                                @(Model.Students[i].ValidationDate.HasValue ? Model.Students[i].ValidationDate.Value.ToShortDateString():"")
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => Model.Students[i].Section.SectionName)
-                                @Html.HiddenFor(modelItem => Model.Students[i].Section.Curriculum.AcaDeptID)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => Model.Students[i].Paymode.Description)
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    }
+            }
+        </div>
+    </div>
+    <div class="block block-rounded">
+        <div class="block-content">
+
+            @if (Model != null && Model.Students != null && Model.Students.Count() > 0)
+            {
+                using (Html.BeginForm("PostBatchDmcm", "DMCM", FormMethod.Post))
+                {
+                    <div class="row mb-4">
+                        <div class="col-lg-12 col-xl-12">
+                            <div class="row mb-4">
+                                <label class="col-sm-4 col-form-label" for="">Amount</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.Amount, "0.00", new { @class = "form-control", @type = "number", @step = "0.01", @style = "text-align: right" })
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <label class="col-sm-4 col-form-label" for="PostingDate">Posting Date</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.PostingDate, "", new { @type = "Date", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <label class="col-sm-4 col-form-label" for="Particular">Particular</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.Particular, "", new { @class = "form-control" })
+                                    
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <label class="col-sm-4 col-form-label" for="AccountId">GL Account Code</label>
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.AccountId, new { list = "AccountIdCode", @class = "form-control", @oninput = "onAccountSelected(this)" })
+                                    <datalist id="AccountIdCode">
+                                        @foreach (var item in (SelectList)ViewBag.accounts)
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    </datalist>
+                                    <span id="glcode" class="text-primary"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <label class="col-sm-4 col-form-label" for="SubaccountId">GL Sub-Account Code</label>                                
+                                <div class="col-sm-8">
+                                    @Html.TextBoxFor(m => m.SubaccountId, new { list = "SubaccountIdCode", @class = "form-control", @oninput = "onSubAccountSelected(this)" })
+                                    <datalist id="SubaccountIdCode">
+                                        @foreach (var item in (SelectList)(SelectList)ViewBag.subaccounts)
+                                        {
+                                            <option value="@item.Value" onclick="display(@item.Text)">@item.Text</option>
+                                        }
+                                    </datalist>  
+                                    <span id="subglcode"  class="text-primary"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4" >
+                                <div class="form-check col-sm-6">                                    
+                                    @Html.CheckBoxFor(m => m.IsDebit, new { @class = "form-check-input" })
+                                    <label class="form-check-label" for="IsDebit">
+                                        Is Debit?
+                                    </label>
+                                </div>
+                                <div class="form-check col-sm-6">
+                                    <input class="form-check-input" type="checkbox" id="IsSelectedAll" name="IsSelectedAll"  onclick="toggleCheckboxes(this)">
+                                    <label class="form-check-label" for="IsSelectedAll">
+                                        Apply to all students?
+                                    </label>
+                                </div>
+                            </div>
+                                <input type="submit" value="Post" class="btn btn-primary" />                            
+                        </div>
+                    </div>
+                    <table class="table table-bordered table-striped table-vcenter">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    Student No
+                                </th>
+                                <th>Student Name</th>
+                                <th>
+                                    Validation Date
+                                </th>
+                                <th>
+                                    Section
+                                </th>
+                                <th>
+                                    Payment Mode
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Students.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.EditorFor(modelItem => Model.Students[i].IsSelected)
+                                        @Html.HiddenFor(modelItem => Model.Students[i].StudentID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => Model.Students[i].Student.StudentNo)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => Model.Students[i].Student.FullName)
+                                    </td>
+                                    <td>
+                                        @(Model.Students[i].ValidationDate.HasValue ? Model.Students[i].ValidationDate.Value.ToShortDateString() : "")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => Model.Students[i].Section.SectionName)
+                                        @Html.HiddenFor(modelItem => Model.Students[i].Section.Curriculum.AcaDeptID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => Model.Students[i].Paymode.Description)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                }
+
+            }
+        </div>
+    </div>
 </div>
 @section scripts {
     <script type="text/javascript">
+        function toggleCheckboxes(selectAllCheckbox) {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"][id^="Students_"][id$="__IsSelected"]');
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        }
+        function onAccountSelected(inputElement) {
+            var selectedValue = inputElement.value;
+            var dataList = document.getElementById('AccountIdCode');
+            var selectedText = '';
+
+            // Loop through options to find the text associated with the selected value
+            for (var i = 0; i < dataList.options.length; i++) {
+                if (dataList.options[i].value === selectedValue) {
+                    selectedText = dataList.options[i].text;
+                    break;
+                }
+            }
+
+            console.log("Selected Account ID:", selectedValue);
+            console.log("Selected Account Text:", selectedText);
+            $("#glcode").html(selectedText);
+        }
+        function onSubAccountSelected(inputElement) {
+            var selectedValue = inputElement.value;
+            var dataList = document.getElementById('SubaccountIdCode');
+            var selectedText = '';
+
+            // Loop through options to find the text associated with the selected value
+            for (var i = 0; i < dataList.options.length; i++) {
+                if (dataList.options[i].value === selectedValue) {
+                    selectedText = dataList.options[i].text;
+                    break;
+                }
+            }
+
+            console.log("Selected Sub-Account ID:", selectedValue);
+            console.log("Selected Sub-Account Text:", selectedText);
+            $("#subglcode").html(selectedText);
+        }
         $(document).ready(function () {
-            $("#chkselectall").click(function () {
-
-            });
-
-            var subjectarray = @Html.Raw(Json.Encode(ViewBag.subjects));
-
+            var subjects = @Html.Raw(Json.Encode(ViewBag.subjects));
+            var sections =  @Html.Raw(Json.Encode(ViewBag.sections));
+            LoadSection();
             $("#sectionid").change(function () {
-                LoadSubject($("#sectionid").val());
+                LoadSubject();
             });
-            $("#subjectid").change(function () {
-                if ($("#sectionid").val() !== "") {                    
-                    var sectionsubjectarray = @Html.Raw(Json.Encode(ViewBag.sectionsubjects));
-                    for (var i = 0; i < sectionsubjectarray.length; i++) {
-                        if (sectionsubjectarray[i].subjectid == $("#subjectid").val()) {
-                            $("#particular").val(sectionsubjectarray[i].SubjectCode + '-' + sectionsubjectarray[i].Description);
+            $("#programid").change(function () {
+                LoadSection();
+            });
+            $("#gradeyear").change(function () {
+                LoadSection();
+            });
+            function LoadSection() {
+                var programid = $("#programid").val();
+                var gradeyear = $("#gradeyear").val();
+                $("#sectionid").empty();
+                var option = $("<option />");
+                option.attr("value", "").text("");
+                $("#sectionid").append(option);
+                for (var i = 0; i < sections.length; i++) {
+                    if (gradeyear !== "" && programid !== "") {
+                        if (sections[i].GradeLevel == gradeyear && sections[i].ProgramId == programid) {
+                            var option = $("<option />");
+                            option.attr("value", sections[i].SectionId).text(sections[i].SectionName);
+                            $("#sectionid").append(option);
+
+                        }
+                    }
+                    else if (gradeyear !== "") {
+                        if (sections[i].GradeLevel == gradeyear) {
+                            var option = $("<option />");
+                            option.attr("value", sections[i].SectionId).text(sections[i].SectionName);
+                            $("#sectionid").append(option);
+                        }
+                    }
+                    else if (programid !== "") {
+                        if (sections[i].ProgramId == programid) {
+                            var option = $("<option />");
+                            option.attr("value", sections[i].SectionId).text(sections[i].SectionName);
+                            $("#sectionid").append(option);
+                        }
+                    }
+                    else {
+                        if (sections[i].ProgramId == null) {
+                            var option = $("<option />");
+                            option.attr("value", sections[i].SectionId).text(sections[i].SectionName);
+                            $("#sectionid").append(option);
                         }
                     }
                 }
-                else {
-                    for (var i = 0; i < subjectarray.length; i++) {
-                        if (subjectarray[i].ScheduleId == $("#scheduleid").val()) {
-                            $("#particular").val(subjectarray[i].SubjectCode + '-' + subjectarray[i].Description);
+                LoadSubject()
+            }
+            function LoadSubject() {
+                var programid = $("#programid").val();
+                var gradeyear = $("#gradeyear").val();
+                var sectionid = $("#sectionid").val();
+                $("#subjectid").empty();
+                var option = $("<option />");
+                option.attr("value", "").text("");
+                $("#subjectid").append(option);
+                for (var i = 0; i < subjects.length; i++) {
+                    if (sectionid != "") {
+                        if (subjects[i].SectionId == sectionid) {
+                            var option = $("<option />");
+                            option.attr("value", subjects[i].ScheduleId).text(subjects[i].SubjectCode);
+                            $("#subjectid").append(option);
                         }
                     }
-                }
-
-
-            });
-
-            function LoadSubject(sectionid) {
-
-                $("#scheduleid").empty();
-                for (var i = 0; i < periodarray.length; i++) {
-                    if (periodarray[i].SectionId == sectionid) {
-                        var option = $("<option />");
-                        option.attr("value", periodarray[i].ScheduleId).text(periodarray[i].SubjectCode);
-                        $("#scheduleid").append(option);
-
+                    else {
+                        if (gradeyear !== "" && programid !== "") {
+                            if (subjects[i].GradeLevel == gradeyear && subjects[i].ProgramId == programid) {
+                                var option = $("<option />");
+                                option.attr("value", subjects[i].ScheduleId).text(subjects[i].SubjectCode);
+                                $("#subjectid").append(option);
+                            }
+                        }
+                        else if (gradeyear !== "") {
+                            if (subjects[i].GradeLevel == gradeyear) {
+                                var option = $("<option />");
+                                option.attr("value", subjects[i].ScheduleId).text(subjects[i].SubjectCode);
+                                $("#subjectid").append(option);
+                            }
+                        }
+                        else if (programid !== "") {
+                            if (subjects[i].ProgramId == programid) {
+                                var option = $("<option />");
+                                option.attr("value", subjects[i].ScheduleId).text(subjects[i].SubjectCode);
+                                $("#subjectid").append(option);
+                            }
+                        }
                     }
                 }
             }

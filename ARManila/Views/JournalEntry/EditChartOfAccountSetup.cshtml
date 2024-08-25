@@ -9,36 +9,42 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.AcctID)
 
-    <div class="form-group">
-        <label class="col-md-2">Account Code</label>
-        <span class="col-md-8">
-            @Model.AcctNo
-        </span>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2">Account Name</label>
-        <span class="col-md-8">
-            @Model.AcctName
-        </span>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2">QNE Code</label>
-        @Html.DropDownListFor(model => model.QNEAccountCode, (SelectList)ViewBag.qne, "", new { htmlAttributes = new { @class = "col-md-8" } })
-        @Html.ValidationMessageFor(model => model.QNEAccountCode, "", new { @class = "text-danger" })
-    </div>
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.AcctID)
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-primary" />
+        <div class="form-group">
+            <label class="col-md-2">Account Code</label>
+            <span class="col-md-8">
+                @Model.AcctNo
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">Account Name</label>
+            <span class="col-md-8">
+                @Model.AcctName
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2">QNE Code</label>            
+            @Html.TextBoxFor(m => m.QNEAccountCode, new { list = "qneAccountCode",  @class = "col-md-8" })
+            <datalist id="qneAccountCode">
+                @foreach (var item in (SelectList)ViewBag.qne)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </datalist>
+            @Html.ValidationMessageFor(model => model.QNEAccountCode, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
         </div>
     </div>
-</div>
 }
 
 <div>

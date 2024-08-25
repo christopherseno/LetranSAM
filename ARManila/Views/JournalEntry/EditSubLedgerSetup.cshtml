@@ -29,7 +29,13 @@
     </div>
     <div class="form-group">
         <label class="col-md-2">QNE Code</label>
-        @Html.DropDownListFor(model => model.QNEAccountCode, (SelectList)ViewBag.qne, "", new { htmlAttributes = new { @class = "col-md-8" } })
+        @Html.TextBoxFor(m => m.QNEAccountCode, new { list = "qneAccountCode", @class = "col-md-8" })
+        <datalist id="qneAccountCode">
+            @foreach (var item in (SelectList)ViewBag.qne)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </datalist>
         @Html.ValidationMessageFor(model => model.QNEAccountCode, "", new { @class = "text-danger" })
     </div>
 

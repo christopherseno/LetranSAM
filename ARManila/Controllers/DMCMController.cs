@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,15 +23,67 @@ namespace ARManila.Controllers
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
             var period = db.Period.Find(periodid);
             if (period == null) throw new Exception("Invalid period id.");
-            ViewBag.sections = new SelectList(db.Section.Where(m => m.PeriodID == periodid).OrderBy(m => m.SectionName), "SectionID", "SectionName");
-            ViewBag.sectionsubjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID, Description = m.Subject.Description, SubjectId= m.SubjectID });
-            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { SubjectCode = m.Subject.SubjectCode, Description = m.Subject.Description, SubjectId = m.SubjectID });
+            ViewBag.sections = db.Section.Where(m => m.PeriodID == periodid).Select(m => new { SectionId = m.SectionID, SectionName = m.SectionName, GradeLevel = m.GradeYear, ProgramId = m.Curriculum.ProgamCurriculum.FirstOrDefault().ProgramID }).OrderBy(m => m.SectionName);
+            ViewBag.gradeyears = new SelectList(db.GradeLevel.Where(m => m.EducationalLevelId == period.EducLevelID).OrderBy(m => m.SectionGradeYear), "SectionGradeYear", "GradeLevelName");
+            //ViewBag.sectionsubjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID, Description = m.Subject.Description, SubjectId= m.SubjectID });
+            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { ScheduleId = m.ScheduleID, SubjectCode = m.Subject.SubjectCode + "-" + m.Section.SectionName, Description = m.Subject.Description, SubjectId = m.SubjectID, ProgramId = m.Section.Curriculum.ProgamCurriculum.FirstOrDefault().ProgramID, GradeLevel = m.Section.GradeYear, SectionId = m.SectionID }).OrderBy(m => m.SubjectCode);
             var curriculumids = db.Section.Where(m => m.PeriodID == periodid).Select(m => m.CurriculumID).Distinct().ToList();
             var programids = db.ProgamCurriculum.Where(m => curriculumids.Contains(m.CurriculumID)).Select(m => m.ProgramID).ToList();
-            ViewBag.programs = new SelectList(db.Progam.Where(m => programids.Contains(m.ProgramID)).OrderBy(m => m.ProgramID), "ProgramID", "ProgramCode");
-            ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "AcctName");
-            ViewBag.subaccounts = db.SubChartOfAccounts.Select(m=> new { AcctID = m.AcctID, SubAcctID=m.SubAcctID, SubbAcctName = m.SubbAcctName}).OrderBy(m => m.SubbAcctName);
+            ViewBag.programs = new SelectList(db.Progam.Where(m => programids.Contains(m.ProgramID)).OrderBy(m => m.ProgramCode), "ProgramID", "ProgramCode");
+            ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "FullName");
+            ViewBag.subaccounts = db.SubChartOfAccounts.Select(m => new { AcctID = m.AcctID, SubAcctID = m.SubAcctID, SubbAcctName = m.SubbAcctName }).OrderBy(m => m.SubbAcctName);
             return View();
+        }
+        [HttpPost]
+        public ActionResult BatchDMCM(int? sectionid, int? scheduleid, int? programid, int? gradeyear)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            ViewBag.sections = db.Section.Where(m => m.PeriodID == periodid).Select(m => new { SectionId = m.SectionID, SectionName = m.SectionName, GradeLevel = m.GradeYear, ProgramId = m.Curriculum.ProgamCurriculum.FirstOrDefault().ProgramID }).OrderBy(m => m.SectionName);
+            ViewBag.gradeyears = new SelectList(db.GradeLevel.Where(m => m.EducationalLevelId == period.EducLevelID).OrderBy(m => m.SectionGradeYear), "SectionGradeYear", "GradeLevelName");
+            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { ScheduleId = m.ScheduleID, SubjectCode = m.Subject.SubjectCode + "-" + m.Section.SectionName, Description = m.Subject.Description, SubjectId = m.SubjectID, ProgramId = m.Section.Curriculum.ProgamCurriculum.FirstOrDefault().ProgramID, GradeLevel = m.Section.GradeYear, SectionId = m.SectionID }).OrderBy(m => m.SubjectCode);
+            var curriculumids = db.Section.Where(m => m.PeriodID == periodid).Select(m => m.CurriculumID).Distinct().ToList();
+            var programids = db.ProgamCurriculum.Where(m => curriculumids.Contains(m.CurriculumID)).Select(m => m.ProgramID).ToList();
+            ViewBag.programs = new SelectList(db.Progam.Where(m => programids.Contains(m.ProgramID)).OrderBy(m => m.ProgramCode), "ProgramID", "ProgramCode");
+
+            ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "FullName");
+            ViewBag.subaccounts = new SelectList(db.SubChartOfAccounts.OrderBy(m => m.SubbAcctName), "SubAcctID", "SubbAcctName");
+            BatchDmcm batch = new BatchDmcm();
+            if (scheduleid.HasValue)
+            {
+                var students = db.Student_Section.Where(m => m.ValidationDate.HasValue && m.StudentSchedule.Any(x => x.ScheduleID == scheduleid)).ToList();
+                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+            }
+            else if (sectionid.HasValue)
+            {
+                var students = db.Student_Section.Where(m => m.ValidationDate.HasValue && m.SectionID == sectionid).ToList();
+                batch.Students = students.OrderBy(m => m.Student.FullName).ToList(); ;
+            }
+            else
+            {
+                if (programid.HasValue && gradeyear.HasValue)
+                {
+                    var students = db.Student_Section.Where(m => m.Section.Curriculum.ProgamCurriculum.Any(x => x.ProgramID == programid) && m.Section.GradeYear == gradeyear && m.ValidationDate.HasValue && m.Section.PeriodID == periodid).ToList();
+                    batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+                }
+                else if (programid.HasValue)
+                {
+                    var students = db.Student_Section.Where(m => m.Section.Curriculum.ProgamCurriculum.Any(x => x.ProgramID == programid) && m.ValidationDate.HasValue && m.Section.PeriodID == periodid).ToList();
+                    batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+                }
+                else if (gradeyear.HasValue)
+                {
+                    var students = db.Student_Section.Where(m => m.Section.GradeYear == gradeyear && m.ValidationDate.HasValue && m.Section.PeriodID == periodid).ToList();
+                    batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+                }
+                else
+                {
+                    var students = db.Student_Section.Where(m => m.Section.PeriodID == periodid && m.ValidationDate.HasValue).ToList();
+                    batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
+                }
+            }
+            return View(batch);
         }
 
         public ActionResult ListDMCM(int start, int last)
@@ -39,71 +92,12 @@ namespace ARManila.Controllers
             var period = db.Period.Find(periodid);
             if (period == null) throw new Exception("Invalid period id.");
             var dmcms = db.DMCM.Where(m => m.DocNum >= start && m.DocNum <= last);
-            return View(dmcms);
+            return View("Index", dmcms);
         }
-        [HttpPost]
-        public ActionResult BatchDMCM(int? sectionid, int? scheduleid, int? programid)
-        {
-            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
-            var period = db.Period.Find(periodid);
-            if (period == null) throw new Exception("Invalid period id.");
-            ViewBag.sections = new SelectList(db.Section.Where(m => m.PeriodID == periodid).OrderBy(m => m.SectionName), "SectionID", "SectionName");
-            ViewBag.subjects = db.Schedule.Where(m => m.Section.PeriodID == periodid).Select(m => new { ScheduleId = m.ScheduleID, SubjectCode = m.Subject.SubjectCode, SectionId = m.SectionID });
-            ViewBag.programs = new SelectList(db.Progam.Where(m => m.EducationLevelId == period.EducLevelID).OrderBy(m => m.ProgramID), "ProgramID", "ProgramCode");
-            ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "AcctName");
-            ViewBag.subaccounts = new SelectList(db.SubChartOfAccounts.OrderBy(m => m.SubbAcctName), "SubAcctID", "SubbAcctName");
-            var curriculumids = db.ProgamCurriculum.Where(m => m.ProgramID == programid.Value).Select(m => m.CurriculumID).ToList();
-            var studentsectionids = db.StudentSchedule.Where(m => m.ScheduleID == scheduleid).Select(m => m.StudentSectionID).ToList();
-            var petitionsection = db.Section.Where(m => m.PeriodID == periodid && m.SectionName.Contains("CLAS-PC")).FirstOrDefault();
-            BatchDmcm batch = new BatchDmcm();
-            if (sectionid.HasValue && sectionid == petitionsection.SectionID)
-            {
-                //Get ScheduleID
-                var petitionschedule = db.Schedule.Where(m => m.ScheduleID == scheduleid).FirstOrDefault();
 
-                var studschedpetition = new List<StudentSchedule>();
-                //foreach (var Pschedule in petitionschedule)
-                //{
-                    var sched = db.StudentSchedule.Where(m => m.ScheduleID == petitionschedule.ScheduleID).ToList();
 
-                        foreach (var item in sched)
-                        {
-                            var testdata = db.StudentSchedule.Where(m => m.StudentSectionID == item.StudentSectionID).FirstOrDefault();
-                            studschedpetition.Add(db.StudentSchedule.Where(m => m.StudentSectionID == item.StudentSectionID).FirstOrDefault());
-                        }
-     
-                //}
-                var studsecpetition = new List<Student_Section>();
-                foreach (var Psection in studschedpetition)
-                {
-                    studsecpetition.Add(db.Student_Section.Where(m => m.Student_SectionID == Psection.StudentSectionID).FirstOrDefault());
-                }
-                batch.Students = studsecpetition.OrderBy(m => m.Student.FullName).ToList();
-            }
-            else if (programid.HasValue)
-            {
-                var students = db.Student_Section.Where(m => curriculumids.Contains(m.CurriculumID) && m.ValidationDate.HasValue && m.Section.PeriodID == periodid).OrderBy(m => m.Student.LastName).ToList();
-                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
-            }
-            else if (scheduleid.HasValue)
-            {
-                var students = db.Student_Section.Where(m => studentsectionids.Contains(m.Student_SectionID) && m.ValidationDate.HasValue).OrderBy(m => m.Student.LastName.Trim()).ThenBy(m => m.Student.FirstName.Trim()).ToList();
-                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
-            }
-            else if (sectionid.HasValue)
-            {
-                var students = db.Student_Section.Where(m => m.SectionID == sectionid && m.ValidationDate.HasValue).ToList();
-                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
-            }
-            else
-            {
-                var students = db.Student_Section.Where(m => m.Section.PeriodID == periodid && m.ValidationDate.HasValue).OrderBy(m => m.Student.FullName).ToList();
-                batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
-            }
-            return View(batch);
-        }
         [HttpPost]
-        public ActionResult PostBatchDMCM(BatchDmcm model, string IsSelectedAll)
+        public ActionResult PostBatchDMCM(BatchDmcm model)
         {
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
             var period = db.Period.Find(periodid);
@@ -118,41 +112,25 @@ namespace ARManila.Controllers
             {
                 foreach (var i in model.Students)
                 {
-                    if (IsSelectedAll != null && IsSelectedAll.Equals("on"))
+                    if (i.IsSelected)
                     {
                         docnumlast = PostDebitMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
                         EMailPostedDMCM(docnumlast);
                     }
-                    else
-                    {
-                        if (i.IsSelected)
-                        {
-                            docnumlast = PostDebitMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
-                            EMailPostedDMCM(docnumlast);
-                        }
-                    }
                 }
-                return RedirectToAction("ListDMCM", new { start = start+1, last = docnumlast });
+                return RedirectToAction("ListDMCM", new { start = start + 1, last = docnumlast });
             }
             else
             {
                 foreach (var i in model.Students)
                 {
-                    if (IsSelectedAll != null && IsSelectedAll.Equals("on"))
-                    {                        
+                    if (i.IsSelected)
+                    {
                         docnumlast = PostCreditMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
                         EMailPostedDMCM(docnumlast);
                     }
-                    else
-                    {
-                        if (i.IsSelected)
-                        {
-                            docnumlast = PostCreditMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
-                            EMailPostedDMCM(docnumlast);
-                        }
-                    }
                 }
-                return RedirectToAction("ListDMCM", new { start = start+1, last = docnumlast });
+                return RedirectToAction("ListDMCM", new { start = start + 1, last = docnumlast });
             }
 
         }
@@ -199,6 +177,8 @@ namespace ARManila.Controllers
             db.DMCM.Add(debit);
             db.DMCM.Add(credit);
             db.SaveChanges();
+            var student = db.Student.Find(debit.StudentID);
+            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - CM - " + credit.AccountNumber + " - " + credit.Amount + " - " + credit.Remarks, student.StudentNo);            
             return docnumlast;
         }
 
@@ -244,6 +224,8 @@ namespace ARManila.Controllers
             db.DMCM.Add(debit);
             db.DMCM.Add(credit);
             db.SaveChanges();
+            var student = db.Student.Find(debit.StudentID);
+            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - DM - " + debit.AccountNumber + " - " + debit.Amount + " - " + debit.Remarks, student.StudentNo);
             return docnumlast;
         }
 
@@ -252,10 +234,23 @@ namespace ARManila.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Index(string studentno)
+        public ActionResult Index(string? studentno, DateTime? startdate, DateTime? enddate)
         {
-            IQueryable<DMCM> dmcms = GetStudentDMCM(studentno);
-            return View(dmcms);
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            ViewBag.acctno = period.SchoolYear.ChartOfAccountId.HasValue ? period.SchoolYear.ChartOfAccounts.FirstOrDefault().AcctNo : "N/A";
+            ViewBag.acctname = period.SchoolYear.ChartOfAccountId.HasValue ? period.SchoolYear.ChartOfAccounts.FirstOrDefault().AcctName : "N/A";
+            if (studentno != null && studentno.Length > 0)
+            {
+                IQueryable<DMCM> dmcms = GetStudentDMCM(studentno);
+                return View(dmcms);
+            }
+            else
+            {
+                DateTime sdate = startdate.HasValue ? startdate.Value : DateTime.Today;
+                IQueryable<DMCM> dmcms = GetDMCMList(sdate, enddate);
+                return View(dmcms);
+            }            
         }
 
         private IQueryable<DMCM> GetStudentDMCM(string studentno)
@@ -265,7 +260,16 @@ namespace ARManila.Controllers
             if (period == null) throw new Exception("Invalid period id.");
             var student = db.Student.Where(m => m.StudentNo == studentno).FirstOrDefault();
             if (student == null) throw new Exception("Invalid student number.");
-            var dmcms = db.DMCM.Where(m => m.StudentID == student.StudentID && m.ChargeToStudentAr == true && m.PeriodID == period.PeriodID);
+            var dmcms = db.DMCM.Where(m => m.StudentID == student.StudentID && m.ChargeToStudentAr == false && m.PeriodID == period.PeriodID);
+            return dmcms;
+        }
+        private IQueryable<DMCM> GetDMCMList(DateTime startdate, DateTime? enddate)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            DateTime edate = enddate.HasValue ? enddate.Value : startdate.AddDays(1);
+            var dmcms = db.DMCM.Where(m => m.ChargeToStudentAr == false && m.PeriodID == period.PeriodID && m.TransactionDate < edate && m.TransactionDate>= startdate);
             return dmcms;
         }
 
@@ -398,6 +402,6 @@ namespace ARManila.Controllers
             {
                 throw ex;
             }
-        }               
+        }
     }
 }

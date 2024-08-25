@@ -204,7 +204,8 @@ namespace ARManila.Controllers
                .Select(m => new
                {
                    id = m.AccountCode,
-                   Description = m.AccountCode + " - " + m.Description
+                   //Description = m.AccountCode + " - " + m.Description
+                    Description = m.Description
                })
                .ToList();
             ViewBag.qne = new SelectList(options, "id", "Description");
@@ -219,6 +220,8 @@ namespace ARManila.Controllers
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
             var period = db.Period.Find(periodid);
             if (period == null) throw new Exception("Invalid period id.");
+            var qne = db.QNEGLAccount.FirstOrDefault(m => m.AccountCode.Equals(model.QNEAccountCode));
+            if (qne == null) throw new Exception("QNE Code not found. Try SYNCing first.");
             ViewBag.qne = new SelectList(db.Project.OrderBy(m => m.ProjectCode), "ProjectCode", "Description");
             var chartofaccount = db.ChartOfAccounts.Find(model.AcctID);
             chartofaccount.QNEAccountCode = model.QNEAccountCode;
@@ -249,7 +252,8 @@ namespace ARManila.Controllers
                 .Select(m => new
                 {
                     id = m.AccountCode,
-                    Description = m.AccountCode + " - " + m.Description
+                    Description = m.Description
+                    //Description = m.AccountCode + " - " + m.Description
                 })
                 .ToList();
             ViewBag.qne = new SelectList(options, "id", "Description");

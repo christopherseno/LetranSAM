@@ -17,5 +17,6 @@ namespace ARManila.Models
         public int GradeLevelId { get; set; }
         public string GradeLevelName { get; set; }
         public Nullable<int> EducationalLevelId { get; set; }
+        public Nullable<int> SectionGradeYear { get; set; }
     }
 }
