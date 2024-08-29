@@ -13,12 +13,22 @@ namespace ARManila.Controllers
     public class Alpha4Controller : BaseController
     {
         LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
-        public ActionResult Index()
+        public ActionResult Index(bool? viewall)
         {
             var periodid = HttpContext.Request.Cookies["PeriodId"].Value.ToString();
             var period = db.Period.Find(Convert.ToInt32(periodid));
-            var alpha4 = db.Alpha4.Where(m => m.EducLevelId == period.EducLevelID);
-            return View(alpha4);
+            if (!viewall.HasValue || viewall.Value)
+            {
+                var alpha4 = db.Alpha4.Where(m => m.EducLevelId == period.EducLevelID);
+                ViewBag.viewall = false;
+                return View(alpha4);
+            }
+            else
+            {
+                var alpha4 = db.Alpha4.Where(m => m.EducLevelId == period.EducLevelID && !m.Alpha4Payment.Any());
+                ViewBag.viewall = true;
+                return View(alpha4);
+            }
         }
         public ActionResult Detail(int? id)
         {
@@ -65,6 +75,23 @@ namespace ARManila.Controllers
             int alphaid = alphapayment.Alpha4Id;
             if (alphapayment.IsMigrated) throw new Exception("Cannot delete migrated data.");
             db.Alpha4Payment.Remove(alphapayment);
+            db.SaveChanges();
+            return RedirectToAction("Detail", new { id = alphaid });
+        }
+        
+        public ActionResult Link(int alphaid, int paymentid)
+        {
+            var payment = db.PaymentDetails.Where(m => m.PaycodeID == 221 && m.PaymentID == paymentid).FirstOrDefault();
+            db.Alpha4Payment.Add(new Alpha4Payment
+            {
+                Alpha4Id = alphaid,
+                Amount = (decimal)payment.Amount.Value,
+                IsMigrated = false,
+                PaymentDate = payment.Payment.DateReceived,
+                PaymentId = paymentid,
+                OrNo = payment.Payment.ORNo,
+                Remarks = payment.Payment.Remarks
+            });
             db.SaveChanges();
             return RedirectToAction("Detail", new { id = alphaid });
         }
@@ -119,12 +146,12 @@ namespace ARManila.Controllers
             }
         }
 
-        public ActionResult PrintList(int id)
+        public ActionResult PrintList(int id, bool? all)
         {
             var reportdata = new List<Alpha4Dto>();
             var periodid = HttpContext.Request.Cookies["PeriodId"].Value.ToString();
             var period = db.Period.Find(Convert.ToInt32(periodid));
-            var alpha4 = db.Alpha4.Where(m => m.EducLevelId == period.EducLevelID);
+            var alpha4 = all.HasValue && all.Value==false ? db.Alpha4.Where(m => m.EducLevelId == period.EducLevelID) : db.Alpha4.Where(m => m.EducLevelId == period.EducLevelID && !m.Alpha4Payment.Any());
             foreach (var item in alpha4)
             {
                 if (item.Alpha4Payment.Count() > 0)

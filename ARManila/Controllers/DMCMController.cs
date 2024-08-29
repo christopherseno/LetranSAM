@@ -90,11 +90,16 @@ namespace ARManila.Controllers
         {
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
             var period = db.Period.Find(periodid);
-            if (period == null) throw new Exception("Invalid period id.");
-            var dmcms = db.DMCM.Where(m => m.DocNum >= start && m.DocNum <= last);
+            if (period == null) throw new Exception("Invalid period id.");            
+            var dmcms = db.DMCM.Where(m => m.DocNum >= start && m.DocNum <= last && m.ChargeToStudentAr == false );            
             return View("Index", dmcms);
         }
 
+        public ActionResult TransactionLog()
+        {
+            var transactions = db.DmcmTransactionLog.OrderByDescending(m => m.TransactionDate);
+            return View(transactions);
+        }
 
         [HttpPost]
         public ActionResult PostBatchDMCM(BatchDmcm model)
@@ -178,7 +183,7 @@ namespace ARManila.Controllers
             db.DMCM.Add(credit);
             db.SaveChanges();
             var student = db.Student.Find(debit.StudentID);
-            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - CM - " + credit.AccountNumber + " - " + credit.Amount + " - " + credit.Remarks, student.StudentNo);            
+            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - CM - " + debit.AccountNumber + " - " + credit.Amount + " - " + credit.Remarks, student.StudentNo);            
             return docnumlast;
         }
 
@@ -225,7 +230,7 @@ namespace ARManila.Controllers
             db.DMCM.Add(credit);
             db.SaveChanges();
             var student = db.Student.Find(debit.StudentID);
-            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - DM - " + debit.AccountNumber + " - " + debit.Amount + " - " + debit.Remarks, student.StudentNo);
+            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - DM - " + credit.AccountNumber + " - " + debit.Amount + " - " + debit.Remarks, student.StudentNo);
             return docnumlast;
         }
 

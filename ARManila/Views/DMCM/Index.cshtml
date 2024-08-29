@@ -38,11 +38,10 @@
                 @foreach(var i in Model)
                 {
                 <tr>
-                    <td>Student No</td>
-                    <td>Student Name</td>
+                    <td>@i.Student.StudentNo</td>
+                    <td>@i.Student.FullName</td>
                     <td>@i.TransactionDate.Value.ToShortDateString()</td>
                     <td>@i.DocNum</td>
-                    ViewBag.acctno
                     <td>@i.AccountName</td>
                     <td>@i.AccountNumber</td>
                     <td>@(i.DC=="C" ? i.Amount.Value.ToString("#,##0.00"):"")</td>

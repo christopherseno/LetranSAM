@@ -27,7 +27,8 @@
                                 <th>Date</th>
                                 <th>
                                     Amount
-                                </th>                                
+                                </th>
+                                <th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,7 +36,8 @@
                             {
                                 <tr>
                                     <td>@item.Payment.Student.StudentNo</td>
-                                    <td>@item.Payment.Student.FullName
+                                    <td>
+                                        @item.Payment.Student.FullName
                                     </td>
                                     <td>
                                         @item.Payment.ORNo
@@ -43,6 +45,14 @@
                                     <td>@item.Payment.DateReceived.ToShortDateString()</td>
                                     <td>
                                         @item.Amount.Value.ToString("#,##0.00")
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (item.Payment.Student.Alpha4.Any())
+                                            {
+                                                <span>@Html.ActionLink("Link", "Link", new { alphaid = item.Payment.Student.Alpha4.FirstOrDefault().Id, paymentid = item.PaymentID })</span>
+                                            }
+                                        }
                                     </td>
                                 </tr>
                             }

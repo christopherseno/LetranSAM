@@ -5120,6 +5120,7 @@
     <Content Include="Views\Alpha4\Detail.cshtml" />
     <Content Include="Views\Alpha4\AddPayment.cshtml" />
     <Content Include="Views\DMCM\StudentList.cshtml" />
+    <Content Include="Views\DMCM\TransactionLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

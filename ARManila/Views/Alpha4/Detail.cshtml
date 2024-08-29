@@ -50,7 +50,7 @@
                                         <td>&nbsp;</td>
                                         <td align="right">@item.Amount.ToString("#,##0.00")</td>
                                         <td>@item.OrNo</td>
-                                        <td>@item.PaymentDate</td>
+                                        <td>@(item.PaymentDate.HasValue ? item.PaymentDate.Value.ToShortDateString() : "")</td>
                                         <td>@item.Remarks</td>
                                         <td>
                                             @if (!item.IsMigrated)
