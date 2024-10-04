@@ -14,16 +14,7 @@ namespace ARManila.Models
     
     public partial class PermitType
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PermitType()
-        {
-            this.Permit = new HashSet<Permit>();
-        }
-    
         public int PermitTypeID { get; set; }
         public string PermitName { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Permit> Permit { get; set; }
     }
 }

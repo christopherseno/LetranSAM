@@ -31,9 +31,9 @@ namespace ARManila.Models
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
     
-        public virtual EducationalLevel EducationalLevel { get; set; }
         public virtual Student Student { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Alpha4Payment> Alpha4Payment { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

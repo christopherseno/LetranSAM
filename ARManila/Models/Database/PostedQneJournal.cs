@@ -30,8 +30,8 @@ namespace ARManila.Models
         public decimal TotalDebit { get; set; }
         public decimal TotalCredit { get; set; }
     
+        public virtual JournalEntryType JournalEntryType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PostedQneJournalDetail> PostedQneJournalDetail { get; set; }
-        public virtual JournalEntryType JournalEntryType { get; set; }
     }
 }

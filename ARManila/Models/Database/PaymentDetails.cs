@@ -21,8 +21,8 @@ namespace ARManila.Models
         public int PaymentID { get; set; }
         public Nullable<int> COL3 { get; set; }
     
+        public virtual Paycode Paycode { get; set; }
         public virtual Payment Payment { get; set; }
         public virtual Student_Section Student_Section { get; set; }
-        public virtual Paycode Paycode { get; set; }
     }
 }

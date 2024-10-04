@@ -32,8 +32,8 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Payment> Payment { get; set; }
         public virtual Period Period { get; set; }
+        public virtual Student Student { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IssuedSOADetail> IssuedSOADetail { get; set; }
-        public virtual Student Student { get; set; }
     }
 }

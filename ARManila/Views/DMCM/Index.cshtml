@@ -3,7 +3,10 @@
     ViewBag.Title = "AR Query Page";
 }
 
-
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item">DMCM Menu</span>
+    <span class="breadcrumb-item active">DMCM Query</span>
+</nav>
 <div class="p-4 content">
     <input type="button" class="btn btn-danger" id="studentfinderbutton" value="Student No Finder" />
     <form method="post" action="~/DMCM/Index">
@@ -30,8 +33,7 @@
                     <th>Debit</th>
                     <th>Credit</th>
                     <th>Remarks</th>
-                    <th></th>
-                    <th></th>
+                    <th colspan="3"></th>                    
                 </tr>
             </thead>
             <tbody>
@@ -47,8 +49,9 @@
                     <td>@(i.DC=="C" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
                     <td>@(i.DC=="D" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
                     <td>@i.Remarks</td>
-                    <td>@Html.ActionLink("View", "ViewReport", new { id = i.DocNum }, new { @target = "_blank" })</td>
-                    <td>@Html.ActionLink("Send Email", "EMailDMCM", new { id = i.DocNum })</td>
+                    <td>@Html.ActionLink("View", "ViewReport", new { id = i.DocNum }, new { @target = "_blank", @class="btn btn-primary" })</td>
+                    <td>@Html.ActionLink("Send Email", "EMailDMCM", new { id = i.DocNum }, new { @class="btn btn-primary" } )</td>
+                    <td><a href="#" onclick="deletedmcm(@i.DocNum)" class="btn btn-primary">Delete</a></td>
                 </tr>
                 }
             </tbody>
@@ -103,7 +106,31 @@
         </div>
     </div>
 </div>
-
+<div class="modal" id="confirmdeletedmcm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Delete DMCM</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this DMCM?
+                </div>
+                <div class="block-content block-content-full block-content-sm text-end border-top">
+                    <button type="button" class="btn btn-alt-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <a href="#" id="deletedmcm" class="btn btn-success success">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts
 {
 
@@ -127,6 +154,14 @@
 
             });
         });
+        var docnum;
+        function deletedmcm(id) {
+            docnum = id;
+            $("#confirmdeletedmcm").modal('show');
+        }
+        $('#deletedmcm').click(function () {
+            window.location.href = '@Url.Action("DeleteDMCM", "DMCM")/' + docnum;
+        });
         function getStudentNo(sn) {
             $("#studentno").val(sn);
             $("#searchstudentmodal").modal('hide');
@@ -134,7 +169,7 @@
         function getStudents(searchtext) {
             $.ajax({
                 type: "GET",
-                url: "/SearchStudent/" + searchtext,                
+                url: "/SearchStudent/" + searchtext,
                 beforeSend: function (data) {
                     $("#searchstudentloading").css("display", "inline");
                 },
@@ -153,7 +188,7 @@
                     });
                 },
                 error: function (data) {
-                    
+
                 }
             });
         }

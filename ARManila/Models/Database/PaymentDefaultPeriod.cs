@@ -18,8 +18,8 @@ namespace ARManila.Models
         public Nullable<int> PeriodId { get; set; }
         public Nullable<int> ReservationPeriodId { get; set; }
     
-        public virtual EducationalLevel EducationalLevel { get; set; }
         public virtual Period Period { get; set; }
         public virtual Period Period1 { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

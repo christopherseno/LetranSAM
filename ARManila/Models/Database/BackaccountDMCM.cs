@@ -15,8 +15,8 @@ namespace ARManila.Models
     public partial class BackaccountDMCM
     {
         public int BackAccountDMCMID { get; set; }
-        public Nullable<int> BackaccountID { get; set; }
-        public Nullable<int> DMCMID { get; set; }
+        public int BackaccountID { get; set; }
+        public int DMCMID { get; set; }
     
         public virtual BackAccount BackAccount { get; set; }
         public virtual DMCM DMCM { get; set; }

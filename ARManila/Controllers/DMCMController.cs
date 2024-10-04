@@ -18,6 +18,19 @@ namespace ARManila.Controllers
     {
         LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
 
+        public ActionResult DeleteDMCM(int id)
+        {
+            var start = id - 3;
+            var last = id + 3;
+            var dmcms = db.DMCM.Where(m => m.DocNum == id).ToList();
+            foreach (var item in dmcms)
+            {
+                db.InsertDmcmTransactionLog(User.Identity.Name, "Delete DMCM - " + item.DC + " " + item.AccountNumber + " - " + item.Amount + " - " + item.Remarks, item.Student.StudentNo);
+            }
+            db.DMCM.RemoveRange(db.DMCM.Where(m => m.DocNum == id));
+            db.SaveChanges();
+            return RedirectToAction("ListDMCM", new { start = start, last = last });
+        }
         public ActionResult BatchDMCM()
         {
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
@@ -90,8 +103,8 @@ namespace ARManila.Controllers
         {
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
             var period = db.Period.Find(periodid);
-            if (period == null) throw new Exception("Invalid period id.");            
-            var dmcms = db.DMCM.Where(m => m.DocNum >= start && m.DocNum <= last && m.ChargeToStudentAr == false );            
+            if (period == null) throw new Exception("Invalid period id.");
+            var dmcms = db.DMCM.Where(m => m.DocNum >= start && m.DocNum <= last && m.ChargeToStudentAr == false);
             return View("Index", dmcms);
         }
 
@@ -109,7 +122,20 @@ namespace ARManila.Controllers
             if (period == null) throw new Exception("Invalid period id.");
             var account = model.AccountId == 0 ? null : db.ChartOfAccounts.Find(model.AccountId);
             var subaccount = model.SubaccountId == 0 ? null : db.SubChartOfAccounts.Find(model.SubaccountId);
-            var araccount = db.ChartOfAccounts.Where(m => m.SYID == period.SchoolYearID).FirstOrDefault();
+            int syaccountid = period.SchoolYear.ChartOfAccountId ?? 0;
+            if (syaccountid == 0)
+            {
+                var schoolyearCOA = db.ChartOfAccounts.Where(m => m.SYID == period.SchoolYearID).FirstOrDefault();
+                if (schoolyearCOA == null)
+                {
+                    throw new Exception("School Year has no chart of account.");
+                }
+                else
+                {
+                    syaccountid = schoolyearCOA.AcctID;
+                }
+            }
+            var araccount = db.ChartOfAccounts.Find(syaccountid);
             var docnumlast = db.DMCM.OrderByDescending(m => m.DocNum).FirstOrDefault().DocNum.Value;
             var start = docnumlast;
 
@@ -119,7 +145,8 @@ namespace ARManila.Controllers
                 {
                     if (i.IsSelected)
                     {
-                        docnumlast = PostDebitMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                        //docnumlast = PostDebitMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                        docnumlast = DmcmTransaction.PostDebitMemo(User.Identity.Name, docnumlast, (double)model.Amount, model.Particular, model.PostingDate, periodid, i.StudentID, i.Section.Curriculum.AcaDeptID.Value, account, subaccount, araccount);
                         EMailPostedDMCM(docnumlast);
                     }
                 }
@@ -131,7 +158,8 @@ namespace ARManila.Controllers
                 {
                     if (i.IsSelected)
                     {
-                        docnumlast = PostCreditMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                        //docnumlast = PostCreditMemo(model, periodid, account, subaccount, araccount, docnumlast, i);
+                        docnumlast = DmcmTransaction.PostCreditMemo(User.Identity.Name, docnumlast, (double)model.Amount, model.Particular, model.PostingDate, periodid, i.StudentID, i.Section.Curriculum.AcaDeptID.Value, account, subaccount, araccount);
                         EMailPostedDMCM(docnumlast);
                     }
                 }
@@ -140,99 +168,6 @@ namespace ARManila.Controllers
 
         }
 
-        private int PostCreditMemo(BatchDmcm model, int periodid, ChartOfAccounts account, SubChartOfAccounts subaccount, ChartOfAccounts araccount, int docnumlast, Student_Section i)
-        {
-            docnumlast++;
-            DMCM debit = new DMCM();
-            DMCM credit = new DMCM();
-            credit.DocNum = docnumlast;
-            debit.DocNum = docnumlast;
-            credit.Amount = (double)model.Amount;
-            debit.Amount = (double)model.Amount;
-            credit.ChargeToStudentAr = true;
-            debit.ChargeToStudentAr = false;
-            credit.DC = "C";
-            debit.DC = "D";
-            credit.PeriodID = periodid;
-            debit.PeriodID = periodid;
-            credit.Remarks = model.Particular;
-            credit.StudentID = i.StudentID;
-            credit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
-            credit.TransactionDate = model.PostingDate;
-            debit.Remarks = model.Particular;
-            debit.StudentID = i.StudentID;
-            debit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
-            debit.TransactionDate = model.PostingDate;
-            if (subaccount != null)
-            {
-                debit.AcctID = subaccount.AcctID;
-                debit.SubAcctID = subaccount.SubAcctID;
-                debit.AccountName = subaccount.SubbAcctName;
-                debit.AccountNumber = subaccount.SubAcctNo;
-            }
-            else
-            {
-                debit.AcctID = account.AcctID;
-                debit.AccountName = account.AcctName;
-                debit.AcctID = account.AcctID;
-            }
-            credit.AcctID = araccount.AcctID;
-            credit.AccountName = araccount.AcctName;
-            credit.AccountNumber = araccount.AcctNo;
-            db.DMCM.Add(debit);
-            db.DMCM.Add(credit);
-            db.SaveChanges();
-            var student = db.Student.Find(debit.StudentID);
-            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - CM - " + debit.AccountNumber + " - " + credit.Amount + " - " + credit.Remarks, student.StudentNo);            
-            return docnumlast;
-        }
-
-        private int PostDebitMemo(BatchDmcm model, int periodid, ChartOfAccounts account, SubChartOfAccounts subaccount, ChartOfAccounts araccount, int docnumlast, Student_Section i)
-        {
-            docnumlast++;
-            DMCM debit = new DMCM();
-            DMCM credit = new DMCM();
-            debit.DocNum = docnumlast;
-            credit.DocNum = docnumlast;
-            debit.Amount = (double)model.Amount;
-            credit.Amount = (double)model.Amount;
-            debit.ChargeToStudentAr = true;
-            credit.ChargeToStudentAr = false;
-            debit.DC = "D";
-            credit.DC = "C";
-            debit.PeriodID = periodid;
-            credit.PeriodID = periodid;
-            debit.Remarks = model.Particular;
-            debit.StudentID = i.StudentID;
-            debit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
-            debit.TransactionDate = model.PostingDate;
-            credit.Remarks = model.Particular;
-            credit.StudentID = i.StudentID;
-            credit.AcaDeptID = i.Section.Curriculum.AcaDeptID;
-            credit.TransactionDate = model.PostingDate;
-            if (subaccount != null)
-            {
-                credit.AcctID = subaccount.AcctID;
-                credit.SubAcctID = subaccount.SubAcctID;
-                credit.AccountName = subaccount.SubbAcctName;
-                credit.AccountNumber = subaccount.SubAcctNo;
-            }
-            else
-            {
-                credit.AcctID = account.AcctID;
-                credit.AccountName = account.AcctName;
-                credit.AccountNumber = account.AcctNo;
-            }
-            debit.AcctID = araccount.AcctID;
-            debit.AccountName = araccount.AcctName;
-            debit.AccountNumber = araccount.AcctNo;
-            db.DMCM.Add(debit);
-            db.DMCM.Add(credit);
-            db.SaveChanges();
-            var student = db.Student.Find(debit.StudentID);
-            db.InsertDmcmTransactionLog(User.Identity.Name, "Batch DMCM - DM - " + credit.AccountNumber + " - " + debit.Amount + " - " + debit.Remarks, student.StudentNo);
-            return docnumlast;
-        }
 
         public ActionResult Index()
         {
@@ -255,7 +190,7 @@ namespace ARManila.Controllers
                 DateTime sdate = startdate.HasValue ? startdate.Value : DateTime.Today;
                 IQueryable<DMCM> dmcms = GetDMCMList(sdate, enddate);
                 return View(dmcms);
-            }            
+            }
         }
 
         private IQueryable<DMCM> GetStudentDMCM(string studentno)
@@ -274,7 +209,7 @@ namespace ARManila.Controllers
             var period = db.Period.Find(periodid);
             if (period == null) throw new Exception("Invalid period id.");
             DateTime edate = enddate.HasValue ? enddate.Value : startdate.AddDays(1);
-            var dmcms = db.DMCM.Where(m => m.ChargeToStudentAr == false && m.PeriodID == period.PeriodID && m.TransactionDate < edate && m.TransactionDate>= startdate);
+            var dmcms = db.DMCM.Where(m => m.ChargeToStudentAr == false && m.PeriodID == period.PeriodID && m.TransactionDate < edate && m.TransactionDate >= startdate);
             return dmcms;
         }
 
@@ -319,51 +254,6 @@ namespace ARManila.Controllers
             return reportdata;
         }
 
-        public ActionResult EMailDMCM(int id)
-        {
-            try
-            {
-                using (ReportDocument document = new DMCMReport())
-                {
-                    var user = db.AspNetUsers.Where(m => m.UserName == User.Identity.Name).FirstOrDefault();
-                    var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;
-                    var fullname = userWithClaims.Claims.First(c => c.Type == "Fullname");
-                    var dmcm = db.DMCM.Where(m => m.DocNum == id).FirstOrDefault();
-                    var studentemail = db.AspNetUsers.Where(m => m.UserName == dmcm.Student.StudentNo).FirstOrDefault();
-                    MailMessage mail = new MailMessage();
-                    SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-                    var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
-                    const string fromPassword = "Boo18!<3";
-                    mail.From = fromAddress;
-                    mail.CC.Add(new MailAddress(user.Email));
-
-                    mail.To.Add(studentemail.Email);
-                    //mail.To.Add("phea.regala@letran.edu.ph");
-                    //mail.To.Add("christopher.seno@letran.edu.ph");
-                    mail.Body = "Please see the attached debit or credit memo.";
-                    mail.Subject = "Debit/Credit Memo";
-                    mail.IsBodyHtml = true;
-
-                    List<DMCMReportDTO> reportdata = GenerateDMCMReport(id, fullname);
-                    document.SetDataSource(reportdata);
-                    mail.Attachments.Add(new Attachment(document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "SOA.pdf"));
-
-                    mail.IsBodyHtml = true;
-                    SmtpServer.Port = 587;
-                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
-                    SmtpServer.EnableSsl = true;
-                    SmtpServer.Send(mail);
-                    IQueryable<DMCM> dmcms = GetStudentDMCM(dmcm.Student.StudentNo);
-                    return View("Index", dmcms);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public int EMailPostedDMCM(int id)
         {
             try
@@ -382,8 +272,15 @@ namespace ARManila.Controllers
                     const string fromPassword = "Boo18!<3";
                     mail.From = fromAddress;
                     mail.CC.Add(new MailAddress(user.Email));
-
-                    mail.To.Add(studentemail.Email);
+                    if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
+                    {
+                        mail.To.Add("christopher.seno@letran.edu.ph");
+                    }
+                    else
+                    {
+                        mail.To.Add(studentemail.Email);
+                    }
+                    mail.CC.Add("arletran@letran.edu.ph");
                     //mail.To.Add("christopher.seno@letran.edu.ph");
                     mail.Body = "Please see the attached debit or credit memo.";
                     mail.Subject = "Debit/Credit Memo";
@@ -391,7 +288,7 @@ namespace ARManila.Controllers
 
                     List<DMCMReportDTO> reportdata = GenerateDMCMReport(id, fullname);
                     document.SetDataSource(reportdata);
-                    mail.Attachments.Add(new Attachment(document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "SOA.pdf"));
+                    mail.Attachments.Add(new Attachment(document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "Dmcm.pdf"));
 
                     mail.IsBodyHtml = true;
                     SmtpServer.Port = 587;

@@ -1,0 +1,53 @@
+﻿@model List<ARManila.Models.AssessmentDetailDTO>
+@{
+    ViewBag.Title = "Reassess";
+}
+
+<h2>Reassessment Details</h2>
+@using (Html.BeginForm())
+{
+    <table id="table" class="table table-responsive">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>GL Code</th>
+                <th>Sub GL Code</th>
+                <th>Old Amount</th>
+                <th>New Amount</th>
+                <th>Old Discount</th>
+                <th>New Discount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.CheckBoxFor(m => Model[i].IsSelected)
+                        @Html.HiddenFor(m => Model[i].ReassessmentStudentSectionId)
+                        @Html.HiddenFor(m => Model[i].OriginalAmount)
+                        @Html.HiddenFor(m => Model[i].NewAmount)
+                        @Html.HiddenFor(m => Model[i].OriginalDiscountAmount)
+                        @Html.HiddenFor(m => Model[i].NewDiscountAmount)
+                        @Html.HiddenFor(m => Model[i].OriginalAmountDiff)
+                        @Html.HiddenFor(m => Model[i].DiscountAmountDiff)
+                        @Html.HiddenFor(m => Model[i].AccountCode)
+                        @Html.HiddenFor(m => Model[i].SubaccountCode)
+                    </td>
+                    <td>@Model[i].FeeType</td>
+                    <td>@Model[i].FeeDescription</td>
+                    <td>@Model[i].AccountCode</td>
+                    <td>@Model[i].SubaccountCode</td>
+                    <td>@Model[i].OriginalAmount</td>
+                    <td>@Model[i].NewAmount</td>
+                    <td>@Model[i].OriginalDiscountAmount</td>
+                    <td>@Model[i].NewDiscountAmount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="submit" name="btnAmount" value="Generate DMCM for Amount" class="btn btn-alt-primary" />
+    <input type="submit" name="btnDiscount" value="Generate DMCM for Discount" class="btn btn-alt-primary" />
+}

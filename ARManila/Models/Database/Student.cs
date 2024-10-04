@@ -17,6 +17,9 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Student()
         {
+            this.Alpha4 = new HashSet<Alpha4>();
+            this.ARSMSLog = new HashSet<ARSMSLog>();
+            this.StudentFeeAttachment = new HashSet<StudentFeeAttachment>();
             this.BackAccount = new HashSet<BackAccount>();
             this.Discount = new HashSet<Discount>();
             this.DMCM = new HashSet<DMCM>();
@@ -25,7 +28,8 @@ namespace ARManila.Models
             this.Promissory = new HashSet<Promissory>();
             this.Student_Curriculum = new HashSet<Student_Curriculum>();
             this.Student_Section = new HashSet<Student_Section>();
-            this.Alpha4 = new HashSet<Alpha4>();
+            this.StudentClearance = new HashSet<StudentClearance>();
+            this.StudentMaxUnit = new HashSet<StudentMaxUnit>();
         }
     
         public int StudentID { get; set; }
@@ -139,6 +143,12 @@ namespace ARManila.Models
         public string LRN256 { get; set; }
         public string Adddress256 { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Alpha4> Alpha4 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ARSMSLog> ARSMSLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentFeeAttachment> StudentFeeAttachment { get; set; }
         public virtual ARMessage ARMessage { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccount> BackAccount { get; set; }
@@ -157,6 +167,8 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student_Section> Student_Section { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Alpha4> Alpha4 { get; set; }
+        public virtual ICollection<StudentClearance> StudentClearance { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentMaxUnit> StudentMaxUnit { get; set; }
     }
 }

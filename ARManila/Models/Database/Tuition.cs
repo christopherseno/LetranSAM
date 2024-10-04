@@ -23,8 +23,8 @@ namespace ARManila.Models
         public Nullable<double> Downpayment { get; set; }
     
         public virtual Curriculum Curriculum { get; set; }
+        public virtual Fee Fee { get; set; }
         public virtual Paymode Paymode { get; set; }
         public virtual Progam Progam { get; set; }
-        public virtual Fee Fee { get; set; }
     }
 }

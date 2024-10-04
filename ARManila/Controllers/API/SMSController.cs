@@ -15,6 +15,11 @@ namespace ARManila.Controllers
         [HttpGet]
         public IHttpActionResult SendSMS(string id, string message)
         {
+            var db = new ARManila.Models.LetranIntegratedSystemEntities();            
+            if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
+            {
+                id = "09494923258";
+            }
             using (HttpClient client = new HttpClient())
             {
                 var sms = new SMS
@@ -39,10 +44,15 @@ namespace ARManila.Controllers
         }
         [HttpGet]
         [Route("Email")]
-        public IHttpActionResult SendEmail(string recipient, string sender, string subject, string message)
+        public IHttpActionResult SendEmail(string recipient, string? sender, string subject, string message)
         {
             try
             {
+                var db = new ARManila.Models.LetranIntegratedSystemEntities();                
+                if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
+                {
+                    recipient = "christopher.seno@letran.edu.ph";
+                }
                 var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
                 const string fromPassword = "Boo18!<3";
 
@@ -59,8 +69,9 @@ namespace ARManila.Controllers
                 mail.IsBodyHtml = true;
                 mail.From = fromAddress;                
                 mail.To.Add(recipient);
-                mail.CC.Add(sender);
-                
+                if(sender != null && sender.Length > 0)
+                    mail.CC.Add(sender);
+                mail.CC.Add("arletran@letran.edu.ph");
                 mail.Subject = subject;
                 mail.Body = message;
                 smtp.Send(mail);

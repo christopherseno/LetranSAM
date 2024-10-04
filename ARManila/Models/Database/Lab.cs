@@ -20,7 +20,7 @@ namespace ARManila.Models
         public double Amount { get; set; }
         public Nullable<int> SubjectID { get; set; }
     
-        public virtual Subject Subject { get; set; }
         public virtual Fee Fee { get; set; }
+        public virtual Subject Subject { get; set; }
     }
 }

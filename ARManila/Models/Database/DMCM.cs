@@ -17,6 +17,8 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public DMCM()
         {
+            this.DmcmDiscountDetail = new HashSet<DmcmDiscountDetail>();
+            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
             this.BackAccount = new HashSet<BackAccount>();
             this.BackaccountDMCM = new HashSet<BackaccountDMCM>();
         }
@@ -38,13 +40,17 @@ namespace ARManila.Models
         public Nullable<int> SubAcctID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DmcmDiscountDetail> DmcmDiscountDetail { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        public virtual AcademicDepartment AcademicDepartment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccount> BackAccount { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackaccountDMCM> BackaccountDMCM { get; set; }
-        public virtual Period Period { get; set; }
         public virtual ChartOfAccounts ChartOfAccounts { get; set; }
-        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
-        public virtual AcademicDepartment AcademicDepartment { get; set; }
+        public virtual Period Period { get; set; }
         public virtual Student Student { get; set; }
+        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
     }
 }

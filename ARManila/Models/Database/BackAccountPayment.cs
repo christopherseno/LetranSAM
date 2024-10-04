@@ -15,8 +15,8 @@ namespace ARManila.Models
     public partial class BackAccountPayment
     {
         public int BackAccountPaymentID { get; set; }
-        public Nullable<int> BackAccountID { get; set; }
-        public Nullable<int> PaymentID { get; set; }
+        public int BackAccountID { get; set; }
+        public int PaymentID { get; set; }
     
         public virtual BackAccount BackAccount { get; set; }
         public virtual Payment Payment { get; set; }

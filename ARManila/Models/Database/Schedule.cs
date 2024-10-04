@@ -17,11 +17,10 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Schedule()
         {
+            this.OriginalStudentSchedule = new HashSet<OriginalStudentSchedule>();
             this.AdjustmentDetails = new HashSet<AdjustmentDetails>();
             this.AssessmentSchedule = new HashSet<AssessmentSchedule>();
-            this.AssessmentSchedule_ReAss = new HashSet<AssessmentSchedule_ReAss>();
             this.StudentSchedule = new HashSet<StudentSchedule>();
-            this.OriginalStudentSchedule = new HashSet<OriginalStudentSchedule>();
         }
     
         public int ScheduleID { get; set; }
@@ -41,11 +40,11 @@ namespace ARManila.Models
         public string EnrollmentCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdjustmentDetails> AdjustmentDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AssessmentSchedule> AssessmentSchedule { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssessmentSchedule_ReAss> AssessmentSchedule_ReAss { get; set; }
         public virtual Room Room { get; set; }
         public virtual Section Section { get; set; }
         public virtual Subject Subject { get; set; }
@@ -54,7 +53,5 @@ namespace ARManila.Models
         public virtual ScheduleStatus ScheduleStatus { get; set; }
         public virtual Section Section1 { get; set; }
         public virtual Faculty Faculty { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
     }
 }

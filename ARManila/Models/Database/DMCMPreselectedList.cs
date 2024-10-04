@@ -12,14 +12,9 @@ namespace ARManila.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ORSeries
+    public partial class DMCMPreselectedList
     {
-        public int orseriesID { get; set; }
-        public int userid { get; set; }
-        public int NextORNo { get; set; }
-        public int BSeries { get; set; }
-        public int ESeries { get; set; }
-        public System.DateTime DateIssued { get; set; }
-        public bool Active { get; set; }
+        public string StudentNo { get; set; }
+        public int StudentID { get; set; }
     }
 }

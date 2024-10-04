@@ -21,7 +21,7 @@ namespace ARManila.Models
         public Nullable<int> YearLevel { get; set; }
         public Nullable<int> ProgramID { get; set; }
     
-        public virtual Progam Progam { get; set; }
         public virtual Fee Fee { get; set; }
+        public virtual Progam Progam { get; set; }
     }
 }

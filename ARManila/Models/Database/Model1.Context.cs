@@ -27,48 +27,66 @@ namespace ARManila.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Alpha4> Alpha4 { get; set; }
+        public virtual DbSet<Alpha4Payment> Alpha4Payment { get; set; }
+        public virtual DbSet<ARSMSLog> ARSMSLog { get; set; }
+        public virtual DbSet<BackaccountTransactionLog> BackaccountTransactionLog { get; set; }
+        public virtual DbSet<DmcmDiscountDetail> DmcmDiscountDetail { get; set; }
+        public virtual DbSet<DMCMPreselectedList> DMCMPreselectedList { get; set; }
+        public virtual DbSet<DmcmTransactionLog> DmcmTransactionLog { get; set; }
+        public virtual DbSet<Downpayment> Downpayment { get; set; }
+        public virtual DbSet<DownpaymentPercent> DownpaymentPercent { get; set; }
+        public virtual DbSet<EducationalLevelDepartment> EducationalLevelDepartment { get; set; }
+        public virtual DbSet<EnrollmentTransactionLog> EnrollmentTransactionLog { get; set; }
+        public virtual DbSet<GradeLevel> GradeLevel { get; set; }
+        public virtual DbSet<JournalEntryType> JournalEntryType { get; set; }
+        public virtual DbSet<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
+        public virtual DbSet<PaymentDefaultPeriod> PaymentDefaultPeriod { get; set; }
+        public virtual DbSet<PostedQneJournal> PostedQneJournal { get; set; }
+        public virtual DbSet<PostedQneJournalDetail> PostedQneJournalDetail { get; set; }
+        public virtual DbSet<Project> Project { get; set; }
+        public virtual DbSet<QNEGLAccount> QNEGLAccount { get; set; }
+        public virtual DbSet<QnePostingLog> QnePostingLog { get; set; }
+        public virtual DbSet<ReAssessment> ReAssessment { get; set; }
+        public virtual DbSet<SpecificFee> SpecificFee { get; set; }
+        public virtual DbSet<StudentFeeAttachment> StudentFeeAttachment { get; set; }
+        public virtual DbSet<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        public virtual DbSet<AcademicDepartment> AcademicDepartment { get; set; }
         public virtual DbSet<Adjustment> Adjustment { get; set; }
         public virtual DbSet<AdjustmentDetailFees> AdjustmentDetailFees { get; set; }
         public virtual DbSet<AdjustmentDetails> AdjustmentDetails { get; set; }
         public virtual DbSet<Aircon> Aircon { get; set; }
         public virtual DbSet<ARMessage> ARMessage { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<Assessment> Assessment { get; set; }
         public virtual DbSet<AssessmentPaymentDate> AssessmentPaymentDate { get; set; }
-        public virtual DbSet<AssessmentPaymentDate_ReAss> AssessmentPaymentDate_ReAss { get; set; }
         public virtual DbSet<AssessmentSchedule> AssessmentSchedule { get; set; }
-        public virtual DbSet<AssessmentSchedule_ReAss> AssessmentSchedule_ReAss { get; set; }
         public virtual DbSet<BackAccount> BackAccount { get; set; }
         public virtual DbSet<BackaccountDMCM> BackaccountDMCM { get; set; }
         public virtual DbSet<BackAccountPayment> BackAccountPayment { get; set; }
-        public virtual DbSet<Bank> Bank { get; set; }
-        public virtual DbSet<CancelledOR> CancelledOR { get; set; }
+        public virtual DbSet<ChartOfAccounts> ChartOfAccounts { get; set; }
         public virtual DbSet<Curriculum> Curriculum { get; set; }
         public virtual DbSet<Discount> Discount { get; set; }
         public virtual DbSet<DiscountCategory> DiscountCategory { get; set; }
         public virtual DbSet<DiscountType> DiscountType { get; set; }
         public virtual DbSet<DiscountTypeDetail> DiscountTypeDetail { get; set; }
         public virtual DbSet<DMCM> DMCM { get; set; }
-        public virtual DbSet<EducationalLevel> EducationalLevel { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
+        public virtual DbSet<Fee> Fee { get; set; }
         public virtual DbSet<FeeExemption> FeeExemption { get; set; }
         public virtual DbSet<FeeInclusion> FeeInclusion { get; set; }
         public virtual DbSet<FeeName> FeeName { get; set; }
-        public virtual DbSet<Holiday> Holiday { get; set; }
         public virtual DbSet<IssuedSOA> IssuedSOA { get; set; }
         public virtual DbSet<IssuedSOADetail> IssuedSOADetail { get; set; }
         public virtual DbSet<Lab> Lab { get; set; }
-        public virtual DbSet<Logs> Logs { get; set; }
-        public virtual DbSet<Miscellaneous> Miscellaneous { get; set; }
-        public virtual DbSet<ORSeries> ORSeries { get; set; }
-        public virtual DbSet<Others> Others { get; set; }
+        public virtual DbSet<Paycode> Paycode { get; set; }
         public virtual DbSet<Payment> Payment { get; set; }
         public virtual DbSet<PaymentDetails> PaymentDetails { get; set; }
         public virtual DbSet<Paymode> Paymode { get; set; }
         public virtual DbSet<PaySchedule> PaySchedule { get; set; }
         public virtual DbSet<Period> Period { get; set; }
-        public virtual DbSet<Permit> Permit { get; set; }
-        public virtual DbSet<PermitParameter> PermitParameter { get; set; }
-        public virtual DbSet<PermitType> PermitType { get; set; }
         public virtual DbSet<Progam> Progam { get; set; }
         public virtual DbSet<ProgamCurriculum> ProgamCurriculum { get; set; }
         public virtual DbSet<ProjectedStat> ProjectedStat { get; set; }
@@ -76,107 +94,216 @@ namespace ARManila.Models
         public virtual DbSet<Room> Room { get; set; }
         public virtual DbSet<Schedule> Schedule { get; set; }
         public virtual DbSet<ScheduleStatus> ScheduleStatus { get; set; }
+        public virtual DbSet<SchoolYear> SchoolYear { get; set; }
         public virtual DbSet<Section> Section { get; set; }
+        public virtual DbSet<Student> Student { get; set; }
         public virtual DbSet<Student_Curriculum> Student_Curriculum { get; set; }
         public virtual DbSet<Student_Section> Student_Section { get; set; }
+        public virtual DbSet<StudentClearance> StudentClearance { get; set; }
+        public virtual DbSet<StudentMaxUnit> StudentMaxUnit { get; set; }
         public virtual DbSet<StudentSchedule> StudentSchedule { get; set; }
         public virtual DbSet<StudentStatus> StudentStatus { get; set; }
+        public virtual DbSet<SubChartOfAccounts> SubChartOfAccounts { get; set; }
         public virtual DbSet<Subject> Subject { get; set; }
         public virtual DbSet<Supplemental> Supplemental { get; set; }
-        public virtual DbSet<SystemParameters> SystemParameters { get; set; }
         public virtual DbSet<Tuition> Tuition { get; set; }
         public virtual DbSet<Various> Various { get; set; }
-        public virtual DbSet<SMSLog> SMSLog { get; set; }
-        public virtual DbSet<Paycode> Paycode { get; set; }
+        public virtual DbSet<EducationalLevel> EducationalLevel { get; set; }
         public virtual DbSet<ReportName> ReportName { get; set; }
-        public virtual DbSet<PaymentDefaultPeriod> PaymentDefaultPeriod { get; set; }
-        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<SMSLog> SMSLog { get; set; }
+        public virtual DbSet<Miscellaneous> Miscellaneous { get; set; }
+        public virtual DbSet<Bank> Bank { get; set; }
+        public virtual DbSet<CancelledOR> CancelledOR { get; set; }
         public virtual DbSet<Faculty> Faculty { get; set; }
-        public virtual DbSet<QNEGLAccount> QNEGLAccount { get; set; }
-        public virtual DbSet<ChartOfAccounts> ChartOfAccounts { get; set; }
-        public virtual DbSet<SubChartOfAccounts> SubChartOfAccounts { get; set; }
-        public virtual DbSet<SchoolYear> SchoolYear { get; set; }
-        public virtual DbSet<AcademicDepartment> AcademicDepartment { get; set; }
-        public virtual DbSet<Project> Project { get; set; }
-        public virtual DbSet<Fee> Fee { get; set; }
-        public virtual DbSet<PostedQneJournalDetail> PostedQneJournalDetail { get; set; }
-        public virtual DbSet<PostedQneJournal> PostedQneJournal { get; set; }
-        public virtual DbSet<Student> Student { get; set; }
-        public virtual DbSet<EducationalLevelDepartment> EducationalLevelDepartment { get; set; }
-        public virtual DbSet<QnePostingLog> QnePostingLog { get; set; }
-        public virtual DbSet<JournalEntryType> JournalEntryType { get; set; }
-        public virtual DbSet<BackaccountTransactionLog> BackaccountTransactionLog { get; set; }
-        public virtual DbSet<EnrollmentTransactionLog> EnrollmentTransactionLog { get; set; }
-        public virtual DbSet<Alpha4> Alpha4 { get; set; }
-        public virtual DbSet<Alpha4Payment> Alpha4Payment { get; set; }
-        public virtual DbSet<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
-        public virtual DbSet<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
-        public virtual DbSet<GradeLevel> GradeLevel { get; set; }
-        public virtual DbSet<DmcmTransactionLog> DmcmTransactionLog { get; set; }
-        public virtual DbSet<ReAssessment> ReAssessment { get; set; }
+        public virtual DbSet<PermitType> PermitType { get; set; }
     
-        public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
-        {
-            var sTUDENT_IDParameter = sTUDENT_ID.HasValue ?
-                new ObjectParameter("STUDENT_ID", sTUDENT_ID) :
-                new ObjectParameter("STUDENT_ID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<CheckStudentBackAccount_Result>("CheckStudentBackAccount", sTUDENT_IDParameter);
-        }
-    
-        public virtual ObjectResult<GetAdjustmentAssessmentTotal_Result> GetAdjustmentAssessmentTotal(Nullable<int> aDJUSTMENT_ID, Nullable<int> pERIOD_ID)
-        {
-            var aDJUSTMENT_IDParameter = aDJUSTMENT_ID.HasValue ?
-                new ObjectParameter("ADJUSTMENT_ID", aDJUSTMENT_ID) :
-                new ObjectParameter("ADJUSTMENT_ID", typeof(int));
-    
-            var pERIOD_IDParameter = pERIOD_ID.HasValue ?
-                new ObjectParameter("PERIOD_ID", pERIOD_ID) :
-                new ObjectParameter("PERIOD_ID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAdjustmentAssessmentTotal_Result>("GetAdjustmentAssessmentTotal", aDJUSTMENT_IDParameter, pERIOD_IDParameter);
-        }
-    
-        public virtual ObjectResult<GetAdjustmentDetailsFees_Result> GetAdjustmentDetailsFees(Nullable<int> aDJUSTMENT_ID, Nullable<int> pERIOD_ID)
-        {
-            var aDJUSTMENT_IDParameter = aDJUSTMENT_ID.HasValue ?
-                new ObjectParameter("ADJUSTMENT_ID", aDJUSTMENT_ID) :
-                new ObjectParameter("ADJUSTMENT_ID", typeof(int));
-    
-            var pERIOD_IDParameter = pERIOD_ID.HasValue ?
-                new ObjectParameter("PERIOD_ID", pERIOD_ID) :
-                new ObjectParameter("PERIOD_ID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAdjustmentDetailsFees_Result>("GetAdjustmentDetailsFees", aDJUSTMENT_IDParameter, pERIOD_IDParameter);
-        }
-    
-        public virtual ObjectResult<GetEnrollmentComparativeSHS_Result> GetEnrollmentComparativeSHS(Nullable<int> periodID, Nullable<System.DateTime> date)
-        {
-            var periodIDParameter = periodID.HasValue ?
-                new ObjectParameter("PeriodID", periodID) :
-                new ObjectParameter("PeriodID", typeof(int));
-    
-            var dateParameter = date.HasValue ?
-                new ObjectParameter("Date", date) :
-                new ObjectParameter("Date", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEnrollmentComparativeSHS_Result>("GetEnrollmentComparativeSHS", periodIDParameter, dateParameter);
-        }
-    
-        public virtual ObjectResult<GetEnrollmentStat2_Result> GetEnrollmentStat2(Nullable<int> periodid, Nullable<System.DateTime> sdate)
+        public virtual ObjectResult<ArTrail2024_Result> ArTrail2024(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
         {
             var periodidParameter = periodid.HasValue ?
                 new ObjectParameter("periodid", periodid) :
                 new ObjectParameter("periodid", typeof(int));
     
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrail2024_Result>("ArTrail2024", periodidParameter, asofdateParameter);
+        }
+    
+        public virtual ObjectResult<ArTrailByStudent_Result> ArTrailByStudent(Nullable<int> periodid, Nullable<System.DateTime> asofdate, Nullable<int> studentid)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            var studentidParameter = studentid.HasValue ?
+                new ObjectParameter("studentid", studentid) :
+                new ObjectParameter("studentid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrailByStudent_Result>("ArTrailByStudent", periodidParameter, asofdateParameter, studentidParameter);
+        }
+    
+        public virtual ObjectResult<GetARQueryByPeriod_Result> GetARQueryByPeriod(Nullable<int> studentid, Nullable<int> periodid)
+        {
+            var studentidParameter = studentid.HasValue ?
+                new ObjectParameter("studentid", studentid) :
+                new ObjectParameter("studentid", typeof(int));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetARQueryByPeriod_Result>("GetARQueryByPeriod", studentidParameter, periodidParameter);
+        }
+    
+        public virtual ObjectResult<GetARSummaryAllPeriod_Result> GetARSummaryAllPeriod(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetARSummaryAllPeriod_Result>("GetARSummaryAllPeriod", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetAssessmentPreview_Result> GetAssessmentPreview(Nullable<int> studentsectionid, Nullable<int> paymode)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            var paymodeParameter = paymode.HasValue ?
+                new ObjectParameter("paymode", paymode) :
+                new ObjectParameter("paymode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAssessmentPreview_Result>("GetAssessmentPreview", studentsectionidParameter, paymodeParameter);
+        }
+    
+        public virtual ObjectResult<GetAssessmentSHSSummer_Result> GetAssessmentSHSSummer(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAssessmentSHSSummer_Result>("GetAssessmentSHSSummer", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<double>> GetCollectionSummary(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetCollectionSummary", periodidParameter, asofdateParameter);
+        }
+    
+        public virtual ObjectResult<GetComparativeEndTermARBalance_Result> GetComparativeEndTermARBalance(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComparativeEndTermARBalance_Result>("GetComparativeEndTermARBalance", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetComparativeEndTermARBalanceForwarded_Result> GetComparativeEndTermARBalanceForwarded(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComparativeEndTermARBalanceForwarded_Result>("GetComparativeEndTermARBalanceForwarded", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetComparativeEndTermARBalanceV2_Result> GetComparativeEndTermARBalanceV2(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComparativeEndTermARBalanceV2_Result>("GetComparativeEndTermARBalanceV2", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetComparativeEndTermARBalanceWithPaymentDetails_Result> GetComparativeEndTermARBalanceWithPaymentDetails(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComparativeEndTermARBalanceWithPaymentDetails_Result>("GetComparativeEndTermARBalanceWithPaymentDetails", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetComparativeEndTermARBalanceWithPaymentDetailsV2_Result> GetComparativeEndTermARBalanceWithPaymentDetailsV2(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComparativeEndTermARBalanceWithPaymentDetailsV2_Result>("GetComparativeEndTermARBalanceWithPaymentDetailsV2", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetConsolidatedDiscountDetails_Result> GetConsolidatedDiscountDetails(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> semid)
+        {
             var sdateParameter = sdate.HasValue ?
                 new ObjectParameter("sdate", sdate) :
                 new ObjectParameter("sdate", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEnrollmentStat2_Result>("GetEnrollmentStat2", periodidParameter, sdateParameter);
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var semidParameter = semid.HasValue ?
+                new ObjectParameter("semid", semid) :
+                new ObjectParameter("semid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetConsolidatedDiscountDetails_Result>("GetConsolidatedDiscountDetails", sdateParameter, edateParameter, semidParameter);
         }
     
-        public virtual ObjectResult<GetBankDeposit_Result> GetBankDeposit(Nullable<System.DateTime> dSTART_KEY, Nullable<System.DateTime> dEND_KEY, Nullable<int> employeeId)
+        public virtual ObjectResult<GetCurriculumDetails_Result> GetCurriculumDetails(Nullable<int> curriculumid)
+        {
+            var curriculumidParameter = curriculumid.HasValue ?
+                new ObjectParameter("curriculumid", curriculumid) :
+                new ObjectParameter("curriculumid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetCurriculumDetails_Result>("GetCurriculumDetails", curriculumidParameter);
+        }
+    
+        public virtual ObjectResult<GetEndTermARBalance_Result> GetEndTermARBalance(Nullable<int> educlevelid)
+        {
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEndTermARBalance_Result>("GetEndTermARBalance", educlevelidParameter);
+        }
+    
+        public virtual ObjectResult<GetExistingAssessment_Result> GetExistingAssessment(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetExistingAssessment_Result>("GetExistingAssessment", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<GetFloatingDMCM_Result> GetFloatingDMCM()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingDMCM_Result>("GetFloatingDMCM");
+        }
+    
+        public virtual ObjectResult<GetFloatingPayment_Result> GetFloatingPayment()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingPayment_Result>("GetFloatingPayment");
+        }
+    
+        public virtual ObjectResult<GetOnlinePayment_Result> GetOnlinePayment(Nullable<System.DateTime> dSTART_KEY, Nullable<System.DateTime> dEND_KEY)
         {
             var dSTART_KEYParameter = dSTART_KEY.HasValue ?
                 new ObjectParameter("DSTART_KEY", dSTART_KEY) :
@@ -186,20 +313,177 @@ namespace ARManila.Models
                 new ObjectParameter("DEND_KEY", dEND_KEY) :
                 new ObjectParameter("DEND_KEY", typeof(System.DateTime));
     
-            var employeeIdParameter = employeeId.HasValue ?
-                new ObjectParameter("EmployeeId", employeeId) :
-                new ObjectParameter("EmployeeId", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBankDeposit_Result>("GetBankDeposit", dSTART_KEYParameter, dEND_KEYParameter, employeeIdParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetOnlinePayment_Result>("GetOnlinePayment", dSTART_KEYParameter, dEND_KEYParameter);
         }
     
-        public virtual ObjectResult<GetDMCMByNo_Result> GetDMCMByNo(Nullable<int> docnum)
+        public virtual ObjectResult<GetOnlinePaymentPosted_Result> GetOnlinePaymentPosted(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> bankid, Nullable<int> periodid)
         {
-            var docnumParameter = docnum.HasValue ?
-                new ObjectParameter("docnum", docnum) :
-                new ObjectParameter("docnum", typeof(int));
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDMCMByNo_Result>("GetDMCMByNo", docnumParameter);
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var bankidParameter = bankid.HasValue ?
+                new ObjectParameter("bankid", bankid) :
+                new ObjectParameter("bankid", typeof(int));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetOnlinePaymentPosted_Result>("GetOnlinePaymentPosted", sdateParameter, edateParameter, bankidParameter, periodidParameter);
+        }
+    
+        public virtual ObjectResult<GetReAssessment_Result> GetReAssessment(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetReAssessment_Result>("GetReAssessment", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<GetReassessmentOld_Result> GetReassessmentOld(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetReassessmentOld_Result>("GetReassessmentOld", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<GetStudentARSummary_Result> GetStudentARSummary(Nullable<int> snid)
+        {
+            var snidParameter = snid.HasValue ?
+                new ObjectParameter("snid", snid) :
+                new ObjectParameter("snid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentARSummary_Result>("GetStudentARSummary", snidParameter);
+        }
+    
+        public virtual ObjectResult<GetStudentARSummary2_Result> GetStudentARSummary2(Nullable<int> snid)
+        {
+            var snidParameter = snid.HasValue ?
+                new ObjectParameter("snid", snid) :
+                new ObjectParameter("snid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentARSummary2_Result>("GetStudentARSummary2", snidParameter);
+        }
+    
+        public virtual ObjectResult<GetStudentARSummaryOld_Result> GetStudentARSummaryOld(Nullable<int> snid)
+        {
+            var snidParameter = snid.HasValue ?
+                new ObjectParameter("snid", snid) :
+                new ObjectParameter("snid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentARSummaryOld_Result>("GetStudentARSummaryOld", snidParameter);
+        }
+    
+        public virtual ObjectResult<GetStudentSectionDetail_Result> GetStudentSectionDetail(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentSectionDetail_Result>("GetStudentSectionDetail", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<GetSubjectSectionEfficiency_Result> GetSubjectSectionEfficiency(Nullable<int> periodid)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSubjectSectionEfficiency_Result>("GetSubjectSectionEfficiency", periodidParameter);
+        }
+    
+        public virtual ObjectResult<GetSummaryOfFees_Result> GetSummaryOfFees(Nullable<int> typeid, Nullable<System.DateTime> asofdatevalue, Nullable<int> periodidvalue)
+        {
+            var typeidParameter = typeid.HasValue ?
+                new ObjectParameter("typeid", typeid) :
+                new ObjectParameter("typeid", typeof(int));
+    
+            var asofdatevalueParameter = asofdatevalue.HasValue ?
+                new ObjectParameter("asofdatevalue", asofdatevalue) :
+                new ObjectParameter("asofdatevalue", typeof(System.DateTime));
+    
+            var periodidvalueParameter = periodidvalue.HasValue ?
+                new ObjectParameter("periodidvalue", periodidvalue) :
+                new ObjectParameter("periodidvalue", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSummaryOfFees_Result>("GetSummaryOfFees", typeidParameter, asofdatevalueParameter, periodidvalueParameter);
+        }
+    
+        public virtual ObjectResult<GetSummaryOfFeesCollege_Result> GetSummaryOfFeesCollege(Nullable<int> typeid, Nullable<System.DateTime> asofdatevalue, Nullable<int> periodidvalue)
+        {
+            var typeidParameter = typeid.HasValue ?
+                new ObjectParameter("typeid", typeid) :
+                new ObjectParameter("typeid", typeof(int));
+    
+            var asofdatevalueParameter = asofdatevalue.HasValue ?
+                new ObjectParameter("asofdatevalue", asofdatevalue) :
+                new ObjectParameter("asofdatevalue", typeof(System.DateTime));
+    
+            var periodidvalueParameter = periodidvalue.HasValue ?
+                new ObjectParameter("periodidvalue", periodidvalue) :
+                new ObjectParameter("periodidvalue", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSummaryOfFeesCollege_Result>("GetSummaryOfFeesCollege", typeidParameter, asofdatevalueParameter, periodidvalueParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<double>> GetSumOfAdjustment(Nullable<int> periodidkey, Nullable<System.DateTime> edatekey)
+        {
+            var periodidkeyParameter = periodidkey.HasValue ?
+                new ObjectParameter("periodidkey", periodidkey) :
+                new ObjectParameter("periodidkey", typeof(int));
+    
+            var edatekeyParameter = edatekey.HasValue ?
+                new ObjectParameter("edatekey", edatekey) :
+                new ObjectParameter("edatekey", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetSumOfAdjustment", periodidkeyParameter, edatekeyParameter);
+        }
+    
+        public virtual ObjectResult<GetSumOfBeginningBalance_Result> GetSumOfBeginningBalance(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSumOfBeginningBalance_Result>("GetSumOfBeginningBalance", periodidParameter, asofdateParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<double>> GetSumOfDiscount(Nullable<int> periodidkey, Nullable<System.DateTime> edatekey)
+        {
+            var periodidkeyParameter = periodidkey.HasValue ?
+                new ObjectParameter("periodidkey", periodidkey) :
+                new ObjectParameter("periodidkey", typeof(int));
+    
+            var edatekeyParameter = edatekey.HasValue ?
+                new ObjectParameter("edatekey", edatekey) :
+                new ObjectParameter("edatekey", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetSumOfDiscount", periodidkeyParameter, edatekeyParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<double>> GetSumOfVoucher(Nullable<int> periodidkey, Nullable<System.DateTime> edatekey)
+        {
+            var periodidkeyParameter = periodidkey.HasValue ?
+                new ObjectParameter("periodidkey", periodidkey) :
+                new ObjectParameter("periodidkey", typeof(int));
+    
+            var edatekeyParameter = edatekey.HasValue ?
+                new ObjectParameter("edatekey", edatekey) :
+                new ObjectParameter("edatekey", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetSumOfVoucher", periodidkeyParameter, edatekeyParameter);
         }
     
         public virtual ObjectResult<GetTotalBalanceByDueDate_Result> GetTotalBalanceByDueDate(Nullable<int> sectionid, Nullable<int> periodid, Nullable<System.DateTime> duedate)
@@ -219,12 +503,131 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTotalBalanceByDueDate_Result>("GetTotalBalanceByDueDate", sectionidParameter, periodidParameter, duedateParameter);
         }
     
-        public virtual ObjectResult<MakeARJournalEntryMisc_Result> MakeARJournalEntryMisc(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        public virtual ObjectResult<GetTotalBalanceByDueDateBySchedule_Result> GetTotalBalanceByDueDateBySchedule(Nullable<int> scheduleid, Nullable<int> periodid, Nullable<System.DateTime> duedate)
         {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
+            var scheduleidParameter = scheduleid.HasValue ?
+                new ObjectParameter("scheduleid", scheduleid) :
+                new ObjectParameter("scheduleid", typeof(int));
     
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var duedateParameter = duedate.HasValue ?
+                new ObjectParameter("duedate", duedate) :
+                new ObjectParameter("duedate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTotalBalanceByDueDateBySchedule_Result>("GetTotalBalanceByDueDateBySchedule", scheduleidParameter, periodidParameter, duedateParameter);
+        }
+    
+        public virtual ObjectResult<GetTotalBalanceByDueDateByStudent_Result> GetTotalBalanceByDueDateByStudent(Nullable<int> studentid, Nullable<int> periodid, Nullable<System.DateTime> duedate)
+        {
+            var studentidParameter = studentid.HasValue ?
+                new ObjectParameter("studentid", studentid) :
+                new ObjectParameter("studentid", typeof(int));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var duedateParameter = duedate.HasValue ?
+                new ObjectParameter("duedate", duedate) :
+                new ObjectParameter("duedate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTotalBalanceByDueDateByStudent_Result>("GetTotalBalanceByDueDateByStudent", studentidParameter, periodidParameter, duedateParameter);
+        }
+    
+        public virtual ObjectResult<GetUserInfo_Result> GetUserInfo(Nullable<int> employeeid, string employeeno)
+        {
+            var employeeidParameter = employeeid.HasValue ?
+                new ObjectParameter("employeeid", employeeid) :
+                new ObjectParameter("employeeid", typeof(int));
+    
+            var employeenoParameter = employeeno != null ?
+                new ObjectParameter("employeeno", employeeno) :
+                new ObjectParameter("employeeno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUserInfo_Result>("GetUserInfo", employeeidParameter, employeenoParameter);
+        }
+    
+        public virtual int InsertARSMSLog(Nullable<int> employeeID, Nullable<int> studentID, string mobileNo, string message, Nullable<System.DateTime> dateSent)
+        {
+            var employeeIDParameter = employeeID.HasValue ?
+                new ObjectParameter("EmployeeID", employeeID) :
+                new ObjectParameter("EmployeeID", typeof(int));
+    
+            var studentIDParameter = studentID.HasValue ?
+                new ObjectParameter("StudentID", studentID) :
+                new ObjectParameter("StudentID", typeof(int));
+    
+            var mobileNoParameter = mobileNo != null ?
+                new ObjectParameter("MobileNo", mobileNo) :
+                new ObjectParameter("MobileNo", typeof(string));
+    
+            var messageParameter = message != null ?
+                new ObjectParameter("Message", message) :
+                new ObjectParameter("Message", typeof(string));
+    
+            var dateSentParameter = dateSent.HasValue ?
+                new ObjectParameter("DateSent", dateSent) :
+                new ObjectParameter("DateSent", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertARSMSLog", employeeIDParameter, studentIDParameter, mobileNoParameter, messageParameter, dateSentParameter);
+        }
+    
+        public virtual int InsertBackaccountTransactionLog(string username, string remarks, string studentno)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var remarksParameter = remarks != null ?
+                new ObjectParameter("remarks", remarks) :
+                new ObjectParameter("remarks", typeof(string));
+    
+            var studentnoParameter = studentno != null ?
+                new ObjectParameter("studentno", studentno) :
+                new ObjectParameter("studentno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertBackaccountTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        }
+    
+        public virtual int InsertDmcmTransactionLog(string username, string remarks, string studentno)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var remarksParameter = remarks != null ?
+                new ObjectParameter("remarks", remarks) :
+                new ObjectParameter("remarks", typeof(string));
+    
+            var studentnoParameter = studentno != null ?
+                new ObjectParameter("studentno", studentno) :
+                new ObjectParameter("studentno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertDmcmTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        }
+    
+        public virtual int InsertEnrollmentTransactionLog(string username, string remarks, string studentno)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("username", username) :
+                new ObjectParameter("username", typeof(string));
+    
+            var remarksParameter = remarks != null ?
+                new ObjectParameter("remarks", remarks) :
+                new ObjectParameter("remarks", typeof(string));
+    
+            var studentnoParameter = studentno != null ?
+                new ObjectParameter("studentno", studentno) :
+                new ObjectParameter("studentno", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertEnrollmentTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        }
+    
+        public virtual ObjectResult<ListOfDeletedEnlistment_Result> ListOfDeletedEnlistment(Nullable<System.DateTime> edate, Nullable<int> periodid)
+        {
             var edateParameter = edate.HasValue ?
                 new ObjectParameter("edate", edate) :
                 new ObjectParameter("edate", typeof(System.DateTime));
@@ -233,192 +636,7 @@ namespace ARManila.Models
                 new ObjectParameter("periodid", periodid) :
                 new ObjectParameter("periodid", typeof(int));
     
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryMisc_Result>("MakeARJournalEntryMisc", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntryMiscQNE_Result> MakeARJournalEntryMiscQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryMiscQNE_Result>("MakeARJournalEntryMiscQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntrySupplemental_Result> MakeARJournalEntrySupplemental(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntrySupplemental_Result>("MakeARJournalEntrySupplemental", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntrySupplementalQNE_Result> MakeARJournalEntrySupplementalQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntrySupplementalQNE_Result>("MakeARJournalEntrySupplementalQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntryTAL_Result> MakeARJournalEntryTAL(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryTAL_Result>("MakeARJournalEntryTAL", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntryTALQNE_Result> MakeARJournalEntryTALQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryTALQNE_Result>("MakeARJournalEntryTALQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntryVarious_Result> MakeARJournalEntryVarious(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryVarious_Result>("MakeARJournalEntryVarious", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeARJournalEntryVariousQNE_Result> MakeARJournalEntryVariousQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryVariousQNE_Result>("MakeARJournalEntryVariousQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeOnlinePaymentJournalEntry_Result> MakeOnlinePaymentJournalEntry(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeOnlinePaymentJournalEntry_Result>("MakeOnlinePaymentJournalEntry", sdateParameter, edateParameter, deptidParameter);
-        }
-    
-        public virtual ObjectResult<MakeBankDepositJournalEntry_Result> MakeBankDepositJournalEntry(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> deptid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var deptidParameter = deptid.HasValue ?
-                new ObjectParameter("deptid", deptid) :
-                new ObjectParameter("deptid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeBankDepositJournalEntry_Result>("MakeBankDepositJournalEntry", sdateParameter, edateParameter, deptidParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ListOfDeletedEnlistment_Result>("ListOfDeletedEnlistment", edateParameter, periodidParameter);
         }
     
         public virtual ObjectResult<MakeARJournalEntryCreditForm_Result> MakeARJournalEntryCreditForm(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
@@ -799,6 +1017,27 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryDiscountQNE_Result>("MakeARJournalEntryDiscountQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
         }
     
+        public virtual ObjectResult<MakeARJournalEntryMisc_Result> MakeARJournalEntryMisc(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryMisc_Result>("MakeARJournalEntryMisc", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
         public virtual ObjectResult<MakeARJournalEntryMiscIncome_Result> MakeARJournalEntryMiscIncome(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
         {
             var sdateParameter = sdate.HasValue ?
@@ -839,6 +1078,153 @@ namespace ARManila.Models
                 new ObjectParameter("deptid", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryMiscIncomeQNE_Result>("MakeARJournalEntryMiscIncomeQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntryMiscQNE_Result> MakeARJournalEntryMiscQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryMiscQNE_Result>("MakeARJournalEntryMiscQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntrySupplemental_Result> MakeARJournalEntrySupplemental(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntrySupplemental_Result>("MakeARJournalEntrySupplemental", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntrySupplementalQNE_Result> MakeARJournalEntrySupplementalQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntrySupplementalQNE_Result>("MakeARJournalEntrySupplementalQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntryTAL_Result> MakeARJournalEntryTAL(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryTAL_Result>("MakeARJournalEntryTAL", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntryTALQNE_Result> MakeARJournalEntryTALQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryTALQNE_Result>("MakeARJournalEntryTALQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntryVarious_Result> MakeARJournalEntryVarious(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryVarious_Result>("MakeARJournalEntryVarious", sdateParameter, edateParameter, periodidParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<MakeARJournalEntryVariousQNE_Result> MakeARJournalEntryVariousQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryVariousQNE_Result>("MakeARJournalEntryVariousQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
         }
     
         public virtual ObjectResult<MakeARJournalEntryVoucher_Result> MakeARJournalEntryVoucher(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
@@ -883,7 +1269,7 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARJournalEntryVoucherQNE_Result>("MakeARJournalEntryVoucherQNE", sdateParameter, edateParameter, periodidParameter, deptidParameter);
         }
     
-        public virtual ObjectResult<MakeCashReceiptJournalEntryQNE_Result> MakeCashReceiptJournalEntryQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
+        public virtual ObjectResult<MakeARReconV2_Result> MakeARReconV2(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> periodid, Nullable<int> deptid)
         {
             var sdateParameter = sdate.HasValue ?
                 new ObjectParameter("sdate", sdate) :
@@ -893,7 +1279,15 @@ namespace ARManila.Models
                 new ObjectParameter("edate", edate) :
                 new ObjectParameter("edate", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCashReceiptJournalEntryQNE_Result>("MakeCashReceiptJournalEntryQNE", sdateParameter, edateParameter);
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeARReconV2_Result>("MakeARReconV2", sdateParameter, edateParameter, periodidParameter, deptidParameter);
         }
     
         public virtual ObjectResult<MakeCashReceiptJournalEntry_Result> MakeCashReceiptJournalEntry(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
@@ -909,6 +1303,19 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCashReceiptJournalEntry_Result>("MakeCashReceiptJournalEntry", sdateParameter, edateParameter);
         }
     
+        public virtual ObjectResult<MakeCashReceiptJournalEntryQNE_Result> MakeCashReceiptJournalEntryQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCashReceiptJournalEntryQNE_Result>("MakeCashReceiptJournalEntryQNE", sdateParameter, edateParameter);
+        }
+    
         public virtual ObjectResult<MakeCRJournalEntry_Result> MakeCRJournalEntry(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
         {
             var sdateParameter = sdate.HasValue ?
@@ -920,45 +1327,6 @@ namespace ARManila.Models
                 new ObjectParameter("edate", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntry_Result>("MakeCRJournalEntry", sdateParameter, edateParameter);
-        }
-    
-        public virtual ObjectResult<MakeCRJournalEntryQNE_Result> MakeCRJournalEntryQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryQNE_Result>("MakeCRJournalEntryQNE", sdateParameter, edateParameter);
-        }
-    
-        public virtual ObjectResult<MakeCRJournalEntryFb_Result> MakeCRJournalEntryFb(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryFb_Result>("MakeCRJournalEntryFb", sdateParameter, edateParameter);
-        }
-    
-        public virtual ObjectResult<MakeCRJournalEntryFbQNE_Result> MakeCRJournalEntryFbQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryFbQNE_Result>("MakeCRJournalEntryFbQNE", sdateParameter, edateParameter);
         }
     
         public virtual ObjectResult<MakeCRJournalEntryCashier_Result> MakeCRJournalEntryCashier(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
@@ -987,177 +1355,73 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryCashierQNE_Result>("MakeCRJournalEntryCashierQNE", sdateParameter, edateParameter);
         }
     
-        public virtual ObjectResult<GetSummaryOfFees_Result> GetSummaryOfFees(Nullable<int> typeid, Nullable<System.DateTime> asofdatevalue, Nullable<int> periodidvalue)
+        public virtual ObjectResult<MakeCRJournalEntryFb_Result> MakeCRJournalEntryFb(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
         {
-            var typeidParameter = typeid.HasValue ?
-                new ObjectParameter("typeid", typeid) :
-                new ObjectParameter("typeid", typeof(int));
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
     
-            var asofdatevalueParameter = asofdatevalue.HasValue ?
-                new ObjectParameter("asofdatevalue", asofdatevalue) :
-                new ObjectParameter("asofdatevalue", typeof(System.DateTime));
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
     
-            var periodidvalueParameter = periodidvalue.HasValue ?
-                new ObjectParameter("periodidvalue", periodidvalue) :
-                new ObjectParameter("periodidvalue", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSummaryOfFees_Result>("GetSummaryOfFees", typeidParameter, asofdatevalueParameter, periodidvalueParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryFb_Result>("MakeCRJournalEntryFb", sdateParameter, edateParameter);
         }
     
-        public virtual ObjectResult<Nullable<double>> GetCollectionSummary(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
+        public virtual ObjectResult<MakeCRJournalEntryFbQNE_Result> MakeCRJournalEntryFbQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
         {
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
     
-            var asofdateParameter = asofdate.HasValue ?
-                new ObjectParameter("asofdate", asofdate) :
-                new ObjectParameter("asofdate", typeof(System.DateTime));
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetCollectionSummary", periodidParameter, asofdateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryFbQNE_Result>("MakeCRJournalEntryFbQNE", sdateParameter, edateParameter);
         }
     
-        public virtual ObjectResult<GetSumOfBeginningBalance_Result> GetSumOfBeginningBalance(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
+        public virtual ObjectResult<MakeCRJournalEntryQNE_Result> MakeCRJournalEntryQNE(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
         {
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
     
-            var asofdateParameter = asofdate.HasValue ?
-                new ObjectParameter("asofdate", asofdate) :
-                new ObjectParameter("asofdate", typeof(System.DateTime));
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSumOfBeginningBalance_Result>("GetSumOfBeginningBalance", periodidParameter, asofdateParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeCRJournalEntryQNE_Result>("MakeCRJournalEntryQNE", sdateParameter, edateParameter);
         }
     
-        public virtual ObjectResult<GetSummaryOfFeesCollege_Result> GetSummaryOfFeesCollege(Nullable<int> typeid, Nullable<System.DateTime> asofdatevalue, Nullable<int> periodidvalue)
+        public virtual ObjectResult<MakeOnlinePaymentJournalEntry_Result> MakeOnlinePaymentJournalEntry(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> deptid)
         {
-            var typeidParameter = typeid.HasValue ?
-                new ObjectParameter("typeid", typeid) :
-                new ObjectParameter("typeid", typeof(int));
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
     
-            var asofdatevalueParameter = asofdatevalue.HasValue ?
-                new ObjectParameter("asofdatevalue", asofdatevalue) :
-                new ObjectParameter("asofdatevalue", typeof(System.DateTime));
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
     
-            var periodidvalueParameter = periodidvalue.HasValue ?
-                new ObjectParameter("periodidvalue", periodidvalue) :
-                new ObjectParameter("periodidvalue", typeof(int));
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetSummaryOfFeesCollege_Result>("GetSummaryOfFeesCollege", typeidParameter, asofdatevalueParameter, periodidvalueParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeOnlinePaymentJournalEntry_Result>("MakeOnlinePaymentJournalEntry", sdateParameter, edateParameter, deptidParameter);
         }
     
-        public virtual ObjectResult<Nullable<double>> GetSumOfAdjustment(Nullable<int> periodidkey, Nullable<System.DateTime> edatekey)
+        public virtual int UpdateBackAccount(Nullable<int> backaccountid, Nullable<int> studentsectionid)
         {
-            var periodidkeyParameter = periodidkey.HasValue ?
-                new ObjectParameter("periodidkey", periodidkey) :
-                new ObjectParameter("periodidkey", typeof(int));
+            var backaccountidParameter = backaccountid.HasValue ?
+                new ObjectParameter("backaccountid", backaccountid) :
+                new ObjectParameter("backaccountid", typeof(int));
     
-            var edatekeyParameter = edatekey.HasValue ?
-                new ObjectParameter("edatekey", edatekey) :
-                new ObjectParameter("edatekey", typeof(System.DateTime));
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetSumOfAdjustment", periodidkeyParameter, edatekeyParameter);
-        }
-    
-        public virtual ObjectResult<Nullable<double>> GetSumOfDiscount(Nullable<int> periodidkey, Nullable<System.DateTime> edatekey)
-        {
-            var periodidkeyParameter = periodidkey.HasValue ?
-                new ObjectParameter("periodidkey", periodidkey) :
-                new ObjectParameter("periodidkey", typeof(int));
-    
-            var edatekeyParameter = edatekey.HasValue ?
-                new ObjectParameter("edatekey", edatekey) :
-                new ObjectParameter("edatekey", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetSumOfDiscount", periodidkeyParameter, edatekeyParameter);
-        }
-    
-        public virtual ObjectResult<Nullable<double>> GetSumOfVoucher(Nullable<int> periodidkey, Nullable<System.DateTime> edatekey)
-        {
-            var periodidkeyParameter = periodidkey.HasValue ?
-                new ObjectParameter("periodidkey", periodidkey) :
-                new ObjectParameter("periodidkey", typeof(int));
-    
-            var edatekeyParameter = edatekey.HasValue ?
-                new ObjectParameter("edatekey", edatekey) :
-                new ObjectParameter("edatekey", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<double>>("GetSumOfVoucher", periodidkeyParameter, edatekeyParameter);
-        }
-    
-        public virtual ObjectResult<ArTrail2024_Result> ArTrail2024(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
-        {
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var asofdateParameter = asofdate.HasValue ?
-                new ObjectParameter("asofdate", asofdate) :
-                new ObjectParameter("asofdate", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrail2024_Result>("ArTrail2024", periodidParameter, asofdateParameter);
-        }
-    
-        public virtual ObjectResult<ArTrailByStudent_Result> ArTrailByStudent(Nullable<int> periodid, Nullable<System.DateTime> asofdate, Nullable<int> studentid)
-        {
-            var periodidParameter = periodid.HasValue ?
-                new ObjectParameter("periodid", periodid) :
-                new ObjectParameter("periodid", typeof(int));
-    
-            var asofdateParameter = asofdate.HasValue ?
-                new ObjectParameter("asofdate", asofdate) :
-                new ObjectParameter("asofdate", typeof(System.DateTime));
-    
-            var studentidParameter = studentid.HasValue ?
-                new ObjectParameter("studentid", studentid) :
-                new ObjectParameter("studentid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ArTrailByStudent_Result>("ArTrailByStudent", periodidParameter, asofdateParameter, studentidParameter);
-        }
-    
-        public virtual int InsertBackaccountTransactionLog(string username, string remarks, string studentno)
-        {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var remarksParameter = remarks != null ?
-                new ObjectParameter("remarks", remarks) :
-                new ObjectParameter("remarks", typeof(string));
-    
-            var studentnoParameter = studentno != null ?
-                new ObjectParameter("studentno", studentno) :
-                new ObjectParameter("studentno", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertBackaccountTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
-        }
-    
-        public virtual int InsertEnrollmentTransactionLog(string username, string remarks, string studentno)
-        {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var remarksParameter = remarks != null ?
-                new ObjectParameter("remarks", remarks) :
-                new ObjectParameter("remarks", typeof(string));
-    
-            var studentnoParameter = studentno != null ?
-                new ObjectParameter("studentno", studentno) :
-                new ObjectParameter("studentno", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertEnrollmentTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
-        }
-    
-        public virtual ObjectResult<GetFloatingDMCM_Result> GetFloatingDMCM()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingDMCM_Result>("GetFloatingDMCM");
-        }
-    
-        public virtual ObjectResult<GetFloatingPayment_Result> GetFloatingPayment()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetFloatingPayment_Result>("GetFloatingPayment");
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UpdateBackAccount", backaccountidParameter, studentsectionidParameter);
         }
     
         public virtual ObjectResult<GetAssessment_Result> GetAssessment(Nullable<int> studentsectionid)
@@ -1182,6 +1446,63 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentSchedules_Result>("GetStudentSchedules", sTUDENT_IDParameter, pERIOD_IDParameter);
         }
     
+        public virtual ObjectResult<GetEnrollmentStat2_Result> GetEnrollmentStat2(Nullable<int> periodid, Nullable<System.DateTime> sdate)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEnrollmentStat2_Result>("GetEnrollmentStat2", periodidParameter, sdateParameter);
+        }
+    
+        public virtual ObjectResult<CheckStudentBackAccount_Result> CheckStudentBackAccount(Nullable<int> sTUDENT_ID)
+        {
+            var sTUDENT_IDParameter = sTUDENT_ID.HasValue ?
+                new ObjectParameter("STUDENT_ID", sTUDENT_ID) :
+                new ObjectParameter("STUDENT_ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<CheckStudentBackAccount_Result>("CheckStudentBackAccount", sTUDENT_IDParameter);
+        }
+    
+        public virtual ObjectResult<GetAdjustmentDetailsFees_Result> GetAdjustmentDetailsFees(Nullable<int> aDJUSTMENT_ID, Nullable<int> pERIOD_ID)
+        {
+            var aDJUSTMENT_IDParameter = aDJUSTMENT_ID.HasValue ?
+                new ObjectParameter("ADJUSTMENT_ID", aDJUSTMENT_ID) :
+                new ObjectParameter("ADJUSTMENT_ID", typeof(int));
+    
+            var pERIOD_IDParameter = pERIOD_ID.HasValue ?
+                new ObjectParameter("PERIOD_ID", pERIOD_ID) :
+                new ObjectParameter("PERIOD_ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAdjustmentDetailsFees_Result>("GetAdjustmentDetailsFees", aDJUSTMENT_IDParameter, pERIOD_IDParameter);
+        }
+    
+        public virtual ObjectResult<GetDMCMByNo_Result> GetDMCMByNo(Nullable<int> docnum)
+        {
+            var docnumParameter = docnum.HasValue ?
+                new ObjectParameter("docnum", docnum) :
+                new ObjectParameter("docnum", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetDMCMByNo_Result>("GetDMCMByNo", docnumParameter);
+        }
+    
+        public virtual ObjectResult<GetEnrollmentComparativeSHS_Result> GetEnrollmentComparativeSHS(Nullable<int> periodID, Nullable<System.DateTime> date)
+        {
+            var periodIDParameter = periodID.HasValue ?
+                new ObjectParameter("PeriodID", periodID) :
+                new ObjectParameter("PeriodID", typeof(int));
+    
+            var dateParameter = date.HasValue ?
+                new ObjectParameter("Date", date) :
+                new ObjectParameter("Date", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEnrollmentComparativeSHS_Result>("GetEnrollmentComparativeSHS", periodIDParameter, dateParameter);
+        }
+    
         public virtual ObjectResult<GetTotalBalance_Result> GetTotalBalance(Nullable<int> studentid, Nullable<int> periodid)
         {
             var studentidParameter = studentid.HasValue ?
@@ -1195,21 +1516,51 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTotalBalance_Result>("GetTotalBalance", studentidParameter, periodidParameter);
         }
     
-        public virtual int InsertDmcmTransactionLog(string username, string remarks, string studentno)
+        public virtual ObjectResult<GetAdjustmentAssessmentTotal_Result> GetAdjustmentAssessmentTotal(Nullable<int> aDJUSTMENT_ID, Nullable<int> pERIOD_ID)
         {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
+            var aDJUSTMENT_IDParameter = aDJUSTMENT_ID.HasValue ?
+                new ObjectParameter("ADJUSTMENT_ID", aDJUSTMENT_ID) :
+                new ObjectParameter("ADJUSTMENT_ID", typeof(int));
     
-            var remarksParameter = remarks != null ?
-                new ObjectParameter("remarks", remarks) :
-                new ObjectParameter("remarks", typeof(string));
+            var pERIOD_IDParameter = pERIOD_ID.HasValue ?
+                new ObjectParameter("PERIOD_ID", pERIOD_ID) :
+                new ObjectParameter("PERIOD_ID", typeof(int));
     
-            var studentnoParameter = studentno != null ?
-                new ObjectParameter("studentno", studentno) :
-                new ObjectParameter("studentno", typeof(string));
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetAdjustmentAssessmentTotal_Result>("GetAdjustmentAssessmentTotal", aDJUSTMENT_IDParameter, pERIOD_IDParameter);
+        }
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertDmcmTransactionLog", usernameParameter, remarksParameter, studentnoParameter);
+        public virtual ObjectResult<GetBankDeposit_Result> GetBankDeposit(Nullable<System.DateTime> dSTART_KEY, Nullable<System.DateTime> dEND_KEY, Nullable<int> employeeId)
+        {
+            var dSTART_KEYParameter = dSTART_KEY.HasValue ?
+                new ObjectParameter("DSTART_KEY", dSTART_KEY) :
+                new ObjectParameter("DSTART_KEY", typeof(System.DateTime));
+    
+            var dEND_KEYParameter = dEND_KEY.HasValue ?
+                new ObjectParameter("DEND_KEY", dEND_KEY) :
+                new ObjectParameter("DEND_KEY", typeof(System.DateTime));
+    
+            var employeeIdParameter = employeeId.HasValue ?
+                new ObjectParameter("EmployeeId", employeeId) :
+                new ObjectParameter("EmployeeId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBankDeposit_Result>("GetBankDeposit", dSTART_KEYParameter, dEND_KEYParameter, employeeIdParameter);
+        }
+    
+        public virtual ObjectResult<MakeBankDepositJournalEntry_Result> MakeBankDepositJournalEntry(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> deptid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var deptidParameter = deptid.HasValue ?
+                new ObjectParameter("deptid", deptid) :
+                new ObjectParameter("deptid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeBankDepositJournalEntry_Result>("MakeBankDepositJournalEntry", sdateParameter, edateParameter, deptidParameter);
         }
     }
 }

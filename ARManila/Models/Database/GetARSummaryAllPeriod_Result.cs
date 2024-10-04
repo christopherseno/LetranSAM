@@ -10,12 +10,11 @@
 namespace ARManila.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Holiday
+    public partial class GetARSummaryAllPeriod_Result
     {
-        public int HolidayID { get; set; }
-        public string HolidayName { get; set; }
-        public Nullable<System.DateTime> HolidayDate { get; set; }
+        public int PeriodID { get; set; }
+        public Nullable<int> TotalEnrolled { get; set; }
+        public Nullable<double> Setup { get; set; }
     }
 }

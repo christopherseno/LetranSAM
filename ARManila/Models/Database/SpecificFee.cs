@@ -12,15 +12,11 @@ namespace ARManila.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AssessmentPaymentDate_ReAss
+    public partial class SpecificFee
     {
-        public int AssessmentPaymentDate_ReAssID { get; set; }
-        public Nullable<int> StudentSectionReAssID { get; set; }
-        public Nullable<int> PaycodeID { get; set; }
-        public Nullable<System.DateTime> PaymentDate { get; set; }
-        public Nullable<decimal> Amount { get; set; }
+        public int SpecificFeeId { get; set; }
+        public Nullable<int> FeeId { get; set; }
     
-        public virtual Paycode Paycode { get; set; }
-        public virtual StudentSectionReAssessment StudentSectionReAssessment { get; set; }
+        public virtual Fee Fee { get; set; }
     }
 }

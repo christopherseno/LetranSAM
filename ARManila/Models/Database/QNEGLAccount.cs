@@ -18,9 +18,9 @@ namespace ARManila.Models
         public QNEGLAccount()
         {
             this.ChartOfAccounts = new HashSet<ChartOfAccounts>();
-            this.SubChartOfAccounts = new HashSet<SubChartOfAccounts>();
-            this.SchoolYear = new HashSet<SchoolYear>();
             this.Fee = new HashSet<Fee>();
+            this.SchoolYear = new HashSet<SchoolYear>();
+            this.SubChartOfAccounts = new HashSet<SubChartOfAccounts>();
         }
     
         public string AccountCode { get; set; }
@@ -31,10 +31,10 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChartOfAccounts> ChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SubChartOfAccounts> SubChartOfAccounts { get; set; }
+        public virtual ICollection<Fee> Fee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SchoolYear> SchoolYear { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Fee> Fee { get; set; }
+        public virtual ICollection<SubChartOfAccounts> SubChartOfAccounts { get; set; }
     }
 }

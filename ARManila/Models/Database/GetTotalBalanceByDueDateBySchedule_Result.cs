@@ -10,17 +10,16 @@
 namespace ARManila.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Logs
+    public partial class GetTotalBalanceByDueDateBySchedule_Result
     {
-        public int LogID { get; set; }
-        public Nullable<int> UserID { get; set; }
-        public string IPAddress { get; set; }
-        public string ComputerName { get; set; }
-        public string Details { get; set; }
-        public Nullable<System.DateTime> LogDate { get; set; }
-        public byte[] LogTimestamp { get; set; }
-        public Nullable<int> PeriodID { get; set; }
+        public Nullable<double> AmountDue { get; set; }
+        public Nullable<int> Paycodeid { get; set; }
+        public int StudentID { get; set; }
+        public string StudentNo { get; set; }
+        public string StudentName { get; set; }
+        public string StudentCP { get; set; }
+        public string GuardianCP { get; set; }
+        public string Email { get; set; }
     }
 }

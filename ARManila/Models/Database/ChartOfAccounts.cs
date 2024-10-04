@@ -21,10 +21,10 @@ namespace ARManila.Models
             this.DiscountType = new HashSet<DiscountType>();
             this.DiscountType1 = new HashSet<DiscountType>();
             this.DMCM = new HashSet<DMCM>();
-            this.EducationalLevel = new HashSet<EducationalLevel>();
+            this.Fee = new HashSet<Fee>();
             this.Paycode = new HashSet<Paycode>();
             this.SubChartOfAccounts = new HashSet<SubChartOfAccounts>();
-            this.Fee = new HashSet<Fee>();
+            this.EducationalLevel = new HashSet<EducationalLevel>();
         }
     
         public int AcctID { get; set; }
@@ -38,6 +38,7 @@ namespace ARManila.Models
         public string QNEAccountCode { get; set; }
     
         public virtual QNEGLAccount QNEGLAccount { get; set; }
+        public virtual SchoolYear SchoolYear { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DiscountCategory> DiscountCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -47,13 +48,12 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DMCM> DMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EducationalLevel> EducationalLevel { get; set; }
+        public virtual ICollection<Fee> Fee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Paycode> Paycode { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubChartOfAccounts> SubChartOfAccounts { get; set; }
-        public virtual SchoolYear SchoolYear { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Fee> Fee { get; set; }
+        public virtual ICollection<EducationalLevel> EducationalLevel { get; set; }
     }
 }

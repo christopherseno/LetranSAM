@@ -17,10 +17,10 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public AcademicDepartment()
         {
+            this.EducationalLevelDepartment = new HashSet<EducationalLevelDepartment>();
             this.DiscountCategory = new HashSet<DiscountCategory>();
             this.DMCM = new HashSet<DMCM>();
             this.Employee = new HashSet<Employee>();
-            this.EducationalLevelDepartment = new HashSet<EducationalLevelDepartment>();
         }
     
         public int AcaDeptID { get; set; }
@@ -30,20 +30,20 @@ namespace ARManila.Models
         public string GLCode { get; set; }
         public Nullable<int> EmployeeDivisionID { get; set; }
         public string TempPYDeptMigration { get; set; }
-        public string QNEProjectCode { get; set; }
         public string MainDeptID { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public string QNEProjectCode { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EducationalLevelDepartment> EducationalLevelDepartment { get; set; }
+        public virtual Project Project { get; set; }
+        public virtual AcademicDepartment AcademicDepartment1 { get; set; }
+        public virtual AcademicDepartment AcademicDepartment2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DiscountCategory> DiscountCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DMCM> DMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Employee> Employee { get; set; }
-        public virtual Project Project { get; set; }
-        public virtual AcademicDepartment AcademicDepartment1 { get; set; }
-        public virtual AcademicDepartment AcademicDepartment2 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EducationalLevelDepartment> EducationalLevelDepartment { get; set; }
     }
 }

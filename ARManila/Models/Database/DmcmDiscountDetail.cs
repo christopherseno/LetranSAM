@@ -12,15 +12,16 @@ namespace ARManila.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Permit
+    public partial class DmcmDiscountDetail
     {
-        public int PermitID { get; set; }
-        public Nullable<int> PermitTypeID { get; set; }
-        public Nullable<int> StudentID { get; set; }
-        public Nullable<System.DateTime> DateIssued { get; set; }
-        public Nullable<int> PeriodID { get; set; }
+        public int Id { get; set; }
+        public int DmcmId { get; set; }
+        public int FeeId { get; set; }
+        public decimal Amount { get; set; }
+        public Nullable<int> DiscountId { get; set; }
     
-        public virtual Period Period { get; set; }
-        public virtual PermitType PermitType { get; set; }
+        public virtual Discount Discount { get; set; }
+        public virtual DMCM DMCM { get; set; }
+        public virtual Fee Fee { get; set; }
     }
 }

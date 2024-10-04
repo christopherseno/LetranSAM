@@ -18,7 +18,7 @@ namespace ARManila.Models
         public string Message { get; set; }
         public int StudentID { get; set; }
     
-        public virtual Student_Section Student_Section { get; set; }
         public virtual Student Student { get; set; }
+        public virtual Student_Section Student_Section { get; set; }
     }
 }

@@ -17,16 +17,16 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public StudentStatus()
         {
-            this.Student_Section = new HashSet<Student_Section>();
             this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
+            this.Student_Section = new HashSet<Student_Section>();
         }
     
         public int StudentStatusID { get; set; }
         public string StudentStatusDescription { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Student_Section> Student_Section { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Student_Section> Student_Section { get; set; }
     }
 }

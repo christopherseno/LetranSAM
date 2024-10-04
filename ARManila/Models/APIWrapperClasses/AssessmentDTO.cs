@@ -13,6 +13,38 @@ namespace ARManila.Models
         public string Level { get; set; }
         public string BADate { get; set; }
     }
+    public class AssessmentDetailDTO
+    {
+        public int ReassessmentStudentSectionId { get; set; }
+        public int StudentSectionId { get; set; }
+        public bool IsSelected { get; set; }
+        public int FeeId { get; set; }
+        public string FeeType { get; set; }
+        public int? AccountId { get; set; }
+        public string AccountCode { get; set; }
+        public int? SubaccountId { get; set; }
+        public string SubaccountCode { get; set; }
+        public string FeeDescription { get; set; }
+        public decimal OriginalAmount { get; set; }
+        public decimal NewAmount { get; set; }
+        public decimal OriginalDiscountAmount { get; set; }
+        public decimal NewDiscountAmount { get; set; }
+        public decimal OriginalAmountDiff
+        {
+            get
+            {
+                return OriginalAmount - NewAmount;
+            }
+        }
+        public decimal DiscountAmountDiff
+        {
+            get
+            {
+                return OriginalDiscountAmount - NewDiscountAmount;
+            }
+        }
+
+    }
     public class AssessmentDTO
     {
         public int PeriodID { get; set; }

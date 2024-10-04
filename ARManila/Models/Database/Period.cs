@@ -17,23 +17,22 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Period()
         {
+            this.ARSMSLog = new HashSet<ARSMSLog>();
+            this.PaymentDefaultPeriod = new HashSet<PaymentDefaultPeriod>();
+            this.PaymentDefaultPeriod1 = new HashSet<PaymentDefaultPeriod>();
             this.BackAccount = new HashSet<BackAccount>();
             this.BackAccount1 = new HashSet<BackAccount>();
             this.Discount = new HashSet<Discount>();
             this.DMCM = new HashSet<DMCM>();
-            this.EducationalLevel = new HashSet<EducationalLevel>();
+            this.Fee = new HashSet<Fee>();
             this.IssuedSOA = new HashSet<IssuedSOA>();
             this.Payment = new HashSet<Payment>();
             this.PaySchedule = new HashSet<PaySchedule>();
             this.Section = new HashSet<Section>();
-            this.Permit = new HashSet<Permit>();
-            this.PermitParameter = new HashSet<PermitParameter>();
             this.ProjectedStat = new HashSet<ProjectedStat>();
             this.Promissory = new HashSet<Promissory>();
-            this.SystemParameters = new HashSet<SystemParameters>();
-            this.PaymentDefaultPeriod = new HashSet<PaymentDefaultPeriod>();
-            this.PaymentDefaultPeriod1 = new HashSet<PaymentDefaultPeriod>();
-            this.Fee = new HashSet<Fee>();
+            this.StudentMaxUnit = new HashSet<StudentMaxUnit>();
+            this.EducationalLevel = new HashSet<EducationalLevel>();
         }
     
         public int PeriodID { get; set; }
@@ -43,6 +42,12 @@ namespace ARManila.Models
         public Nullable<int> SequenceNo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ARSMSLog> ARSMSLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentDefaultPeriod> PaymentDefaultPeriod { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaymentDefaultPeriod> PaymentDefaultPeriod1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccount> BackAccount { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccount> BackAccount1 { get; set; }
@@ -51,8 +56,7 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DMCM> DMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EducationalLevel> EducationalLevel { get; set; }
-        public virtual EducationalLevel EducationalLevel1 { get; set; }
+        public virtual ICollection<Fee> Fee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IssuedSOA> IssuedSOA { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -61,22 +65,15 @@ namespace ARManila.Models
         public virtual ICollection<PaySchedule> PaySchedule { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Section> Section { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Permit> Permit { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PermitParameter> PermitParameter { get; set; }
+        public virtual SchoolYear SchoolYear { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectedStat> ProjectedStat { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Promissory> Promissory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SystemParameters> SystemParameters { get; set; }
+        public virtual ICollection<StudentMaxUnit> StudentMaxUnit { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PaymentDefaultPeriod> PaymentDefaultPeriod { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PaymentDefaultPeriod> PaymentDefaultPeriod1 { get; set; }
-        public virtual SchoolYear SchoolYear { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Fee> Fee { get; set; }
+        public virtual ICollection<EducationalLevel> EducationalLevel { get; set; }
+        public virtual EducationalLevel EducationalLevel1 { get; set; }
     }
 }

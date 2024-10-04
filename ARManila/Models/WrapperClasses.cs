@@ -269,6 +269,8 @@ namespace ARManila.Models
         public string Day { get; set; }
         public string Faculty { get; set; }
         public string GClassroomCode { get; set; }
+        public string Description { get; set; }
+        public double? TotalHours { get; set; }
     }
     public class EnrollmentWrapper
     {

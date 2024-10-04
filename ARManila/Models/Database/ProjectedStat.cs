@@ -21,8 +21,8 @@ namespace ARManila.Models
         public int CurriculumID { get; set; }
         public int YearLevel { get; set; }
     
-        public virtual EducationalLevel EducationalLevel { get; set; }
         public virtual Period Period { get; set; }
         public virtual Progam Progam { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

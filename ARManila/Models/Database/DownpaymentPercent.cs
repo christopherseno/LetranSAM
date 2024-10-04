@@ -12,15 +12,15 @@ namespace ARManila.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class PermitParameter
+    public partial class DownpaymentPercent
     {
-        public int PermitParameterID { get; set; }
-        public Nullable<System.DateTime> PermitDate { get; set; }
-        public Nullable<int> PeriodID { get; set; }
-        public Nullable<int> EducLevelID { get; set; }
-        public Nullable<byte> SemID { get; set; }
+        public int EducationalLevelId { get; set; }
+        public int PaymodeId { get; set; }
+        public Nullable<decimal> Downpayment { get; set; }
+        public bool ForTotal { get; set; }
+        public int NoOfPayments { get; set; }
     
+        public virtual Paymode Paymode { get; set; }
         public virtual EducationalLevel EducationalLevel { get; set; }
-        public virtual Period Period { get; set; }
     }
 }

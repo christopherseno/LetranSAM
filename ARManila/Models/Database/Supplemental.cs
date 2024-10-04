@@ -24,7 +24,7 @@ namespace ARManila.Models
         public Nullable<int> ExceptCurrID { get; set; }
         public Nullable<int> OnlyCurrID { get; set; }
     
-        public virtual EducationalLevel EducationalLevel1 { get; set; }
         public virtual Fee Fee { get; set; }
+        public virtual EducationalLevel EducationalLevel1 { get; set; }
     }
 }

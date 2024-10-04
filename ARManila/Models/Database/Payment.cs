@@ -17,11 +17,11 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Payment()
         {
+            this.Alpha4Payment = new HashSet<Alpha4Payment>();
             this.Adjustment = new HashSet<Adjustment>();
             this.BackAccount = new HashSet<BackAccount>();
             this.BackAccountPayment = new HashSet<BackAccountPayment>();
             this.PaymentDetails = new HashSet<PaymentDetails>();
-            this.Alpha4Payment = new HashSet<Alpha4Payment>();
         }
     
         public int PaymentID { get; set; }
@@ -50,22 +50,22 @@ namespace ARManila.Models
         public Nullable<int> DPTransactionID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Alpha4Payment> Alpha4Payment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Adjustment> Adjustment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccount> BackAccount { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccountPayment> BackAccountPayment { get; set; }
         public virtual Curriculum Curriculum { get; set; }
-        public virtual EducationalLevel EducationalLevel { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual Employee Employee1 { get; set; }
         public virtual Employee Employee2 { get; set; }
         public virtual IssuedSOA IssuedSOA { get; set; }
         public virtual Period Period { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PaymentDetails> PaymentDetails { get; set; }
         public virtual Student Student { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Alpha4Payment> Alpha4Payment { get; set; }
+        public virtual ICollection<PaymentDetails> PaymentDetails { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

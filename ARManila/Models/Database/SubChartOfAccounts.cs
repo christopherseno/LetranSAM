@@ -20,9 +20,9 @@ namespace ARManila.Models
             this.DiscountCategory = new HashSet<DiscountCategory>();
             this.DiscountType = new HashSet<DiscountType>();
             this.DMCM = new HashSet<DMCM>();
-            this.EducationalLevel = new HashSet<EducationalLevel>();
-            this.Paycode = new HashSet<Paycode>();
             this.Fee = new HashSet<Fee>();
+            this.Paycode = new HashSet<Paycode>();
+            this.EducationalLevel = new HashSet<EducationalLevel>();
         }
     
         public int SubAcctID { get; set; }
@@ -43,10 +43,10 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DMCM> DMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EducationalLevel> EducationalLevel { get; set; }
+        public virtual ICollection<Fee> Fee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Paycode> Paycode { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Fee> Fee { get; set; }
+        public virtual ICollection<EducationalLevel> EducationalLevel { get; set; }
     }
 }

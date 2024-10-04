@@ -54,7 +54,7 @@ namespace ARManila.Controllers
                 using (var db = new LetranIntegratedSystemEntities())
                 {
                     SqlConnection con = new SqlConnection(db.Database.Connection.ConnectionString);
-                    SqlCommand cmd = new SqlCommand("select studentid, studentno, [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', LastName) as lastname, [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', FirstName) as firstname, mobileno, [dbo].[DecryptText](StudentNo+'1T3@mWoRk0',EmailAddress) as Email from student where studentno like '" + searchtext + "%' or [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', LastName) like '%" + searchtext + "%' or [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', FirstName) like '%" + searchtext + "%'", con);
+                    SqlCommand cmd = new SqlCommand("select studentid, studentno, [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', LastName) as lastname, [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', FirstName) as firstname, mobileno, [dbo].[DecryptText](StudentNo+'1T3@mWoRk0',EmailAddress) as Email from student where studentno not like '9%' and studentno not like '1%' and (studentno like '" + searchtext + "%' or [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', LastName) like '%" + searchtext + "%' or [dbo].[DecryptText](StudentNo+'1T3@mWoRk0', FirstName) like '%" + searchtext + "%')", con);
                     con.Open();
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())

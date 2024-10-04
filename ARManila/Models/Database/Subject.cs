@@ -18,9 +18,7 @@ namespace ARManila.Models
         public Subject()
         {
             this.AssessmentSchedule = new HashSet<AssessmentSchedule>();
-            this.AssessmentSchedule_ReAss = new HashSet<AssessmentSchedule_ReAss>();
             this.Lab = new HashSet<Lab>();
-            this.Others = new HashSet<Others>();
             this.Schedule = new HashSet<Schedule>();
             this.Subject1 = new HashSet<Subject>();
         }
@@ -47,16 +45,12 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AssessmentSchedule> AssessmentSchedule { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssessmentSchedule_ReAss> AssessmentSchedule_ReAss { get; set; }
-        public virtual EducationalLevel EducationalLevel { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Lab> Lab { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Others> Others { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Schedule> Schedule { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subject> Subject1 { get; set; }
         public virtual Subject Subject2 { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

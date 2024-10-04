@@ -28,14 +28,14 @@ namespace ARManila.Models
         public Nullable<int> AcctID { get; set; }
         public Nullable<int> SubAcctID { get; set; }
     
+        public virtual AcademicDepartment AcademicDepartment { get; set; }
+        public virtual ChartOfAccounts ChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Discount> Discount { get; set; }
+        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DiscountType> DiscountType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DiscountType> DiscountType1 { get; set; }
-        public virtual ChartOfAccounts ChartOfAccounts { get; set; }
-        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
-        public virtual AcademicDepartment AcademicDepartment { get; set; }
     }
 }

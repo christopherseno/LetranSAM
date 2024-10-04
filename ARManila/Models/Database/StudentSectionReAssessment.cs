@@ -17,8 +17,6 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public StudentSectionReAssessment()
         {
-            this.AssessmentPaymentDate_ReAss = new HashSet<AssessmentPaymentDate_ReAss>();
-            this.AssessmentSchedule_ReAss = new HashSet<AssessmentSchedule_ReAss>();
             this.ReAssessment = new HashSet<ReAssessment>();
         }
     
@@ -44,17 +42,15 @@ namespace ARManila.Models
         public bool Locked { get; set; }
         public Nullable<int> StudentStatus { get; set; }
         public Nullable<int> SectionID2 { get; set; }
+        public Nullable<int> DmcmId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssessmentPaymentDate_ReAss> AssessmentPaymentDate_ReAss { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssessmentSchedule_ReAss> AssessmentSchedule_ReAss { get; set; }
+        public virtual ICollection<ReAssessment> ReAssessment { get; set; }
         public virtual Curriculum Curriculum { get; set; }
         public virtual Paymode Paymode { get; set; }
         public virtual Student_Section Student_Section { get; set; }
         public virtual Section Section { get; set; }
         public virtual StudentStatus StudentStatus1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ReAssessment> ReAssessment { get; set; }
+        public virtual DMCM DMCM { get; set; }
     }
 }

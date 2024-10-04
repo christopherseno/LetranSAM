@@ -1,0 +1,55 @@
+﻿@model ARManila.Models.DmcmDto
+@{
+    ViewBag.Title = "DmcmReassessment";
+}
+
+<div class="p-3">
+    <h3>Post Reassessment DMCM</h3>
+    @using (Html.BeginForm("PostDMCM", "Reassessment", FormMethod.Post))
+    {
+        <h3>@Model.StudentNo</h3>
+        <h3>@Model.StudentName</h3>
+        @Html.HiddenFor(m => m.StudentId)
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>Account Code</th>
+                    <td>Account Name</td>
+                    <td>Debit</td>
+                    <td>Credit</td>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.DetailDtos.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.HiddenFor(m => Model.DetailDtos[i].AccountId)
+                            @Html.HiddenFor(m => Model.DetailDtos[i].AccountCode)
+                            @Html.HiddenFor(m => Model.DetailDtos[i].AccountName)
+                            @Html.HiddenFor(m => Model.DetailDtos[i].SubaccountId)
+                            @Html.HiddenFor(m => Model.DetailDtos[i].Amount)
+                            @Html.HiddenFor(m => Model.DetailDtos[i].ChargeToStudentAr)
+                            @Html.HiddenFor(m => Model.DetailDtos[i].IsDebit)
+                            @Model.DetailDtos[i].AccountCode
+                        </td>
+                        <td>@Model.DetailDtos[i].AccountName</td>
+                        <td>@(Model.DetailDtos[i].IsDebit ? Model.DetailDtos[i].Amount.ToString("#,##0.00") : "0.00")</td>
+                        <td>@(!Model.DetailDtos[i].IsDebit ? Model.DetailDtos[i].Amount.ToString("#,##0.00") : "0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label>Posting Date:</label>
+            @Html.TextBoxFor(m => m.PostingDate, "", new { @class = "form-control", @type = "date" })
+        </div>
+        <div class="form-group">
+            <label>Remarks:</label>
+            @Html.TextBoxFor(m => m.Remarks, "", new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Post" class="btn btn-primary" />
+        </div>
+    }
+</div>

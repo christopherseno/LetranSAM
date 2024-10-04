@@ -17,11 +17,13 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Paymode()
         {
+            this.Downpayment = new HashSet<Downpayment>();
+            this.DownpaymentPercent = new HashSet<DownpaymentPercent>();
+            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
             this.AssessmentPaymentDate = new HashSet<AssessmentPaymentDate>();
             this.Tuition = new HashSet<Tuition>();
             this.PaySchedule = new HashSet<PaySchedule>();
             this.Student_Section = new HashSet<Student_Section>();
-            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
         }
     
         public int PaymodeID { get; set; }
@@ -34,6 +36,12 @@ namespace ARManila.Models
         public Nullable<bool> Doctoral { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Downpayment> Downpayment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DownpaymentPercent> DownpaymentPercent { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AssessmentPaymentDate> AssessmentPaymentDate { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tuition> Tuition { get; set; }
@@ -41,7 +49,5 @@ namespace ARManila.Models
         public virtual ICollection<PaySchedule> PaySchedule { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student_Section> Student_Section { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
     }
 }

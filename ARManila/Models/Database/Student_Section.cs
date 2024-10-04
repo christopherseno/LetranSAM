@@ -17,6 +17,8 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Student_Section()
         {
+            this.OriginalStudentSchedule = new HashSet<OriginalStudentSchedule>();
+            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
             this.Adjustment = new HashSet<Adjustment>();
             this.ARMessage = new HashSet<ARMessage>();
             this.Assessment = new HashSet<Assessment>();
@@ -26,8 +28,6 @@ namespace ARManila.Models
             this.PaymentDetails = new HashSet<PaymentDetails>();
             this.Promissory = new HashSet<Promissory>();
             this.StudentSchedule = new HashSet<StudentSchedule>();
-            this.OriginalStudentSchedule = new HashSet<OriginalStudentSchedule>();
-            this.StudentSectionReAssessment = new HashSet<StudentSectionReAssessment>();
         }
     
         public int Student_SectionID { get; set; }
@@ -61,6 +61,10 @@ namespace ARManila.Models
         public Nullable<bool> WillAvailModule { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Adjustment> Adjustment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ARMessage> ARMessage { get; set; }
@@ -79,13 +83,9 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Promissory> Promissory { get; set; }
         public virtual Section Section { get; set; }
+        public virtual Student Student { get; set; }
         public virtual StudentStatus StudentStatus1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StudentSchedule> StudentSchedule { get; set; }
-        public virtual Student Student { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentSectionReAssessment> StudentSectionReAssessment { get; set; }
     }
 }

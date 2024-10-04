@@ -15,8 +15,8 @@ namespace ARManila.Models
     {
         public string AcctName { get; set; }
         public string AcctNo { get; set; }
-        public Nullable<double> Debit { get; set; }
         public Nullable<double> Credit { get; set; }
+        public Nullable<double> Debit { get; set; }
         public string AcaAcronym { get; set; }
         public Nullable<int> AcaDeptID { get; set; }
         public string GLCode { get; set; }

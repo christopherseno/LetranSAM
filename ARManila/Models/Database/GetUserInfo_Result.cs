@@ -10,18 +10,13 @@
 namespace ARManila.Models
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Others
+    public partial class GetUserInfo_Result
     {
-        public int FeeID { get; set; }
-        public string Description { get; set; }
-        public double Amount { get; set; }
-        public int SubjectID { get; set; }
-        public Nullable<int> SectionID { get; set; }
-    
-        public virtual Section Section { get; set; }
-        public virtual Subject Subject { get; set; }
-        public virtual Fee Fee { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string FLastName { get; set; }
+        public int EmployeeID { get; set; }
+        public string EmployeeNo { get; set; }
     }
 }

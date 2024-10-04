@@ -36,15 +36,15 @@ namespace ARManila.Models
         public Nullable<int> SLAID { get; set; }
         public Nullable<bool> IsEnable { get; set; }
     
+        public virtual ChartOfAccounts ChartOfAccounts { get; set; }
+        public virtual ChartOfAccounts ChartOfAccounts1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Discount> Discount { get; set; }
         public virtual DiscountCategory DiscountCategory { get; set; }
         public virtual DiscountCategory DiscountCategory1 { get; set; }
-        public virtual EducationalLevel EducationalLevel { get; set; }
+        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DiscountTypeDetail> DiscountTypeDetail { get; set; }
-        public virtual ChartOfAccounts ChartOfAccounts { get; set; }
-        public virtual ChartOfAccounts ChartOfAccounts1 { get; set; }
-        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

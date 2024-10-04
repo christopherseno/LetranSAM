@@ -47,6 +47,54 @@ namespace ARManila.Controllers
         }
 
         #region ARSetupSummary
+
+        public ActionResult DiscountSummaryConsolidated()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult DiscountSummaryConsolidated(DateTime startdate, DateTime enddate, int viewas)
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            Period = db.Period.Find(periodid);
+            enddate = enddate.AddDays(1);
+            var studentswithdiscount = db.GetConsolidatedDiscountDetails(startdate, enddate, periodid);
+            List<DiscountSummaryDTO> summaries = new List<DiscountSummaryDTO>();
+            foreach (var item in studentswithdiscount)
+            {
+                if (item.Total > 0)
+                {
+                    var student = db.Student.Find(item.StudentID);
+                    var summary = new DiscountSummaryDTO();
+                    summary.AcademicDepartment = item.AcaAcronym;
+                    summary.AccountName = item.AcctName;
+                    summary.AccountNo = item.AcctNo;
+                    summary.Category = item.Category;
+                    summary.EducationalLevel = item.EducLevelName;
+                    summary.DiscountPercentNonTuition = (decimal)(item.PMisc ?? 0);
+                    summary.DiscountPercentTotal = (decimal)(item.PTotal ?? 0);
+                    summary.DiscountPercentTuition = (decimal)(item.PTuition ?? 0);
+                    summary.StartDate = startdate.ToShortDateString();
+                    summary.EndDate = enddate.ToShortDateString();
+                    summary.GradeYear = item.GradeYear.ToString();
+                    summary.PeriodFullName = Period.FullName;
+                    summary.ProgramCode = item.ProgramCode;
+                    summary.StudentName = student.FullName256.Length > 0 ? student.FullName256 : student.FullName;
+                    summary.StudentNo = item.StudentNo;
+                    summary.DiscountT = (decimal)(item.Discount ?? 0);
+                    summary.DiscountA = (decimal)(item.discountA ?? 0);
+                    summary.DiscountL = (decimal)(item.discountL ?? 0);
+                    summary.DiscountM = (decimal)(item.discountM);
+                    summary.DiscountS = (decimal)(item.discountS);
+                    summary.DiscountV = (decimal)(item.discountV);
+                    summary.DiscountO = (decimal)(item.discountO ?? 0);
+                    summary.DiscountTotal = (decimal)(item.Total ?? 0);
+                    summary.Source = item.WhenDiscounted;
+                    summaries.Add(summary);
+                }
+            }
+            return View(summaries);
+        }
         public ActionResult ARSetupSummary()
         {
             return View();
@@ -184,7 +232,7 @@ namespace ARManila.Controllers
                     }
                     reportDocument.Subreports["consolidated"].SetDataSource(consolidateitems);
                     reportDocument.Subreports["chart"].SetDataSource(consolidateitems);
-                   
+
                 }
                 else
                 {
@@ -279,7 +327,7 @@ namespace ARManila.Controllers
             summary.TotalStudentsWithBalance.Item = "";
             summary.CollectionPercent1.Item = "Collections in %age";
             summary.ARBalancePercent1.Item = "A/R Balance in %age";
-            var noofstudentswithbalancerunninglist = new List<StudentCount>();            
+            var noofstudentswithbalancerunninglist = new List<StudentCount>();
             if (consolidatedperiodids.Count() > 0)
             {
                 summary.ARSetupSummaryConsolidatedItems.Add(1, new ARSetupSummaryConsolidatedItem { Item = "Basic Ed", ARFeesSetup = 0, ARBalance = 0 });
@@ -311,7 +359,7 @@ namespace ARManila.Controllers
                         var artrails = db.ArTrail2024(item.PeriodID, asofdate).ToList();
                         List<StudentCount> templist = artrails.Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
                         studentnos.AddRange(templist);
-                        List<StudentCount> templistnobalance = artrails.Where(m => m.ArBalance <= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();                        
+                        List<StudentCount> templistnobalance = artrails.Where(m => m.ArBalance <= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
                         List<StudentCount> templistbalance = artrails.Where(m => m.ArBalance > 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
                         studentnoswithbalance.AddRange(templistbalance);
                         studentnoswithbalance = studentnoswithbalance.Where(m => !templistnobalance.Any(p => p.StudentNo == m.StudentNo)).ToList();
@@ -346,7 +394,7 @@ namespace ARManila.Controllers
                         }
                     }
 
-                }                
+                }
                 var arsetuptotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARFeesSetup);
                 var arbalancetotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARBalance);
                 var enrolledstudents = studentnos.Select(student => student.StudentNo).Distinct();
@@ -2451,7 +2499,7 @@ namespace ARManila.Controllers
         {
             try
             {
-                SqlConnectionStringBuilder SConn = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());                
+                SqlConnectionStringBuilder SConn = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString());
                 //document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "SOA.pdf"
                 LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
                 var userWithClaims = (System.Security.Claims.ClaimsPrincipal)User;

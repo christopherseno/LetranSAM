@@ -14,6 +14,12 @@ namespace ARManila.Models
     
     public partial class Discount
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Discount()
+        {
+            this.DmcmDiscountDetail = new HashSet<DmcmDiscountDetail>();
+        }
+    
         public int DiscountID { get; set; }
         public int StudentID { get; set; }
         public int PeriodID { get; set; }
@@ -23,9 +29,11 @@ namespace ARManila.Models
         public Nullable<int> DiscountCategoryID { get; set; }
         public Nullable<double> MaxUnit { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DmcmDiscountDetail> DmcmDiscountDetail { get; set; }
         public virtual DiscountType DiscountType { get; set; }
         public virtual Period Period { get; set; }
-        public virtual DiscountCategory DiscountCategory { get; set; }
         public virtual Student Student { get; set; }
+        public virtual DiscountCategory DiscountCategory { get; set; }
     }
 }

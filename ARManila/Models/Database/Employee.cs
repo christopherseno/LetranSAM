@@ -17,6 +17,7 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Employee()
         {
+            this.ARSMSLog = new HashSet<ARSMSLog>();
             this.Payment = new HashSet<Payment>();
             this.Payment1 = new HashSet<Payment>();
             this.Payment2 = new HashSet<Payment>();
@@ -96,6 +97,7 @@ namespace ARManila.Models
         public string LastName256 { get; set; }
         public string FirstName256 { get; set; }
         public string MiddleName256 { get; set; }
+        public string MiddleInitial256 { get; set; }
         public string NickName256 { get; set; }
         public string ResidentialAddress256 { get; set; }
         public string ProvincialAddress256 { get; set; }
@@ -126,8 +128,10 @@ namespace ARManila.Models
         public string PhilHealth256 { get; set; }
         public string CedulaNo256 { get; set; }
         public string BankAccountNo256 { get; set; }
-        public string MiddleInitial256 { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ARSMSLog> ARSMSLog { get; set; }
+        public virtual AcademicDepartment AcademicDepartment { get; set; }
         public virtual Employee Employee1 { get; set; }
         public virtual Employee Employee2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -138,6 +142,5 @@ namespace ARManila.Models
         public virtual ICollection<Payment> Payment2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty { get; set; }
-        public virtual AcademicDepartment AcademicDepartment { get; set; }
     }
 }

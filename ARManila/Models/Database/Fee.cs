@@ -17,9 +17,12 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Fee()
         {
+            this.DmcmDiscountDetail = new HashSet<DmcmDiscountDetail>();
+            this.ReAssessment = new HashSet<ReAssessment>();
+            this.SpecificFee = new HashSet<SpecificFee>();
+            this.StudentFeeAttachment = new HashSet<StudentFeeAttachment>();
             this.AdjustmentDetailFees = new HashSet<AdjustmentDetailFees>();
             this.Assessment = new HashSet<Assessment>();
-            this.ReAssessment = new HashSet<ReAssessment>();
         }
     
         public int FeeID { get; set; }
@@ -30,7 +33,15 @@ namespace ARManila.Models
         public Nullable<int> FeeNameID { get; set; }
         public string QneAccountCode { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DmcmDiscountDetail> DmcmDiscountDetail { get; set; }
         public virtual QNEGLAccount QNEGLAccount { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ReAssessment> ReAssessment { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SpecificFee> SpecificFee { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentFeeAttachment> StudentFeeAttachment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AdjustmentDetailFees> AdjustmentDetailFees { get; set; }
         public virtual Aircon Aircon { get; set; }
@@ -39,14 +50,11 @@ namespace ARManila.Models
         public virtual ChartOfAccounts ChartOfAccounts { get; set; }
         public virtual Period Period { get; set; }
         public virtual Lab Lab { get; set; }
-        public virtual Others Others { get; set; }
         public virtual Various Various { get; set; }
         public virtual FeeName FeeName { get; set; }
         public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
-        public virtual Miscellaneous Miscellaneous { get; set; }
         public virtual Supplemental Supplemental { get; set; }
         public virtual Tuition Tuition { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ReAssessment> ReAssessment { get; set; }
+        public virtual Miscellaneous Miscellaneous { get; set; }
     }
 }

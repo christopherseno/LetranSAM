@@ -18,7 +18,6 @@ namespace ARManila.Models
         public Paycode()
         {
             this.AssessmentPaymentDate = new HashSet<AssessmentPaymentDate>();
-            this.AssessmentPaymentDate_ReAss = new HashSet<AssessmentPaymentDate_ReAss>();
             this.IssuedSOADetail = new HashSet<IssuedSOADetail>();
             this.PaymentDetails = new HashSet<PaymentDetails>();
             this.PaySchedule = new HashSet<PaySchedule>();
@@ -37,15 +36,13 @@ namespace ARManila.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AssessmentPaymentDate> AssessmentPaymentDate { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssessmentPaymentDate_ReAss> AssessmentPaymentDate_ReAss { get; set; }
+        public virtual ChartOfAccounts ChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IssuedSOADetail> IssuedSOADetail { get; set; }
+        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentDetails> PaymentDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaySchedule> PaySchedule { get; set; }
-        public virtual ChartOfAccounts ChartOfAccounts { get; set; }
-        public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
     }
 }

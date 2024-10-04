@@ -394,7 +394,7 @@ namespace ARManila.Controllers
                 backaccountPaymentWrapper.Remarks = item.Payment.StudentID.HasValue ? item.Payment.Period.FullName : item.Payment.CheckNo;
                 backaccountPaymentWrapper.Period = item.Payment.Period.FullName;
                 backaccountwrapper.BackaccountPaymentWrappers.Add(backaccountPaymentWrapper);
-                paymentids.Add(item.PaymentID.Value);
+                paymentids.Add(item.PaymentID);
             }
 
             backaccountwrapper.BackaccountDMCMWrappers = new List<BackaccountDMCMWrapper>();
@@ -413,7 +413,7 @@ namespace ARManila.Controllers
                 backaccountDMCMWrapper.Remarks = dmcm.Remarks;
                 backaccountDMCMWrapper.Period = item.DMCM.Period.FullName;
                 backaccountwrapper.BackaccountDMCMWrappers.Add(backaccountDMCMWrapper);
-                dmcmids.Add(item.DMCMID.Value);
+                dmcmids.Add(item.DMCMID);
             }
         }
     }

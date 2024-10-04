@@ -36,11 +36,11 @@ namespace ARManila.Models
         public virtual Payment Payment { get; set; }
         public virtual Period Period { get; set; }
         public virtual Period Period1 { get; set; }
+        public virtual Student Student { get; set; }
         public virtual Student_Section Student_Section { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackaccountDMCM> BackaccountDMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BackAccountPayment> BackAccountPayment { get; set; }
-        public virtual Student Student { get; set; }
     }
 }
