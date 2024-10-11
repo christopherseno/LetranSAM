@@ -53,7 +53,7 @@ namespace ARManila.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult DiscountSummaryConsolidated(DateTime startdate, DateTime enddate, int viewas)
+        public ActionResult DiscountSummaryConsolidated(DateTime startdate, DateTime enddate, int viewas, int reporttype)
         {
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
             Period = db.Period.Find(periodid);
@@ -62,7 +62,7 @@ namespace ARManila.Controllers
             List<DiscountSummaryDTO> summaries = new List<DiscountSummaryDTO>();
             foreach (var item in studentswithdiscount)
             {
-                if (item.Total > 0)
+                if (item.Total != 0)
                 {
                     var student = db.Student.Find(item.StudentID);
                     var summary = new DiscountSummaryDTO();
@@ -93,7 +93,34 @@ namespace ARManila.Controllers
                     summaries.Add(summary);
                 }
             }
-            return View(summaries);
+            if (viewas == 1)
+            {
+                return View(summaries.OrderBy(m => m.StudentName).ToList());
+            }
+            else
+            {
+                if (reporttype == 1)
+                {
+                    ReportDocument reportDocument = new DiscountSummary();
+                    reportDocument.SetDataSource(summaries.OrderBy(m => m.StudentName).ToList());
+                    return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                }
+                else
+                {
+                    ReportDocument reportDocument = new DiscountSummaryV2();
+                    summaries.ForEach(s =>
+                    {
+                        if (s.Category.Equals("CBAA") || s.Category.Equals("CEIT") 
+                        || s.Category.Equals("CLAS") || s.Category.Equals("CoE"))
+                        {
+                            s.Category = string.Empty;
+                        }
+                    });
+                    reportDocument.SetDataSource(summaries.OrderBy(m => m.StudentName).ToList());
+                    return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                }
+            }
+            
         }
         public ActionResult ARSetupSummary()
         {

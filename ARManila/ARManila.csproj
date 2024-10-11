@@ -274,6 +274,8 @@
     <Compile Include="Controllers\FinanceReportsController.cs" />
     <Compile Include="Controllers\AccountSetupController.cs" />
     <Compile Include="Controllers\PermitsController.cs" />
+    <Compile Include="Controllers\ReassessmentController.cs" />
+    <Compile Include="Controllers\ReassessmentRefactor.cs" />
     <Compile Include="Controllers\UtilityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -819,6 +821,7 @@
     <Compile Include="Models\Database\Various.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DmcmTransaction.cs" />
     <Compile Include="Models\EnrolledStudent.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -862,6 +865,7 @@
     <Compile Include="Models\QNE\QneJournal.cs" />
     <Compile Include="Models\ReportsDTO\BankDeposit.cs" />
     <Compile Include="Models\ReportsDTO\BankDepositJournalEntry.cs" />
+    <Compile Include="Models\ReportsDTO\DiscountSummary.cs" />
     <Compile Include="Models\ReportsDTO\DMCMReportDTO.cs" />
     <Compile Include="Models\ReportsDTO\FeesSummaryDTO.cs" />
     <Compile Include="Models\ReportsDTO\QneJournalEntryDTO.cs" />
@@ -925,6 +929,18 @@
     </Compile>
     <Compile Include="Reports\CrystalReportResultPdf.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Reports\DiscountSummaryV2.cs">
+      <DependentUpon>DiscountSummaryV2.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Reports\DiscountSummary.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DiscountSummary.rpt</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Reports\DMCMReport.cs">
       <AutoGen>True</AutoGen>
@@ -5215,6 +5231,11 @@
     <Content Include="Views\Alpha4\AddPayment.cshtml" />
     <Content Include="Views\DMCM\StudentList.cshtml" />
     <Content Include="Views\DMCM\TransactionLog.cshtml" />
+    <Content Include="Views\Reassessment\Index.cshtml" />
+    <Content Include="Views\Reassessment\Reassess.cshtml" />
+    <Content Include="Views\Reassessment\ViewReassessment.cshtml" />
+    <Content Include="Views\FinanceReports\DiscountSummaryConsolidated.cshtml" />
+    <Content Include="Views\DMCM\Discount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -5326,6 +5347,14 @@
     <EmbeddedResource Include="Reports\BankDepositReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>BankDepositReport.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\DiscountSummaryV2.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>DiscountSummaryV2.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\DiscountSummary.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>DiscountSummary.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\DMCMReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

@@ -8,6 +8,12 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public partial class DmcmDiscountDetail
+    {
+        public int AccountId { get; set; }
+        public string AccountName { get; set; }
+        public string AccountNo { get; set; }
+    }
     public partial class ChartOfAccounts
     {
         public string FullName

@@ -18,6 +18,19 @@ namespace ARManila.Controllers
     {
         LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
 
+        public ActionResult Discount()
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+            var dmcmdiscounts = db.DMCM.Where(m => m.AccountNumber.StartsWith("E") && m.PeriodID == periodid && m.ChargeToStudentAr==false);
+            return View(dmcmdiscounts);
+        }
+        public ActionResult DiscountDetail(int id)
+        {
+            var discountdetail = db.DmcmDiscountDetail.Where(m => m.DmcmId == id);
+            return View();
+        }
         public ActionResult DeleteDMCM(int id)
         {
             var start = id - 3;
@@ -62,10 +75,13 @@ namespace ARManila.Controllers
 
             ViewBag.accounts = new SelectList(db.ChartOfAccounts.OrderBy(m => m.AcctName), "AcctID", "FullName");
             ViewBag.subaccounts = new SelectList(db.SubChartOfAccounts.OrderBy(m => m.SubbAcctName), "SubAcctID", "SubbAcctName");
+             
             BatchDmcm batch = new BatchDmcm();
             if (scheduleid.HasValue)
             {
+                var schedule = db.Schedule.Find(scheduleid.Value);
                 var students = db.Student_Section.Where(m => m.ValidationDate.HasValue && m.StudentSchedule.Any(x => x.ScheduleID == scheduleid)).ToList();
+                batch.Particular = schedule.Subject.SubjectCode;
                 batch.Students = students.OrderBy(m => m.Student.FullName).ToList();
             }
             else if (sectionid.HasValue)
@@ -135,7 +151,7 @@ namespace ARManila.Controllers
                     syaccountid = schoolyearCOA.AcctID;
                 }
             }
-            var araccount = db.ChartOfAccounts.Find(syaccountid);
+            var araccount = syaccountid == 0 ? db.ChartOfAccounts.Find(syaccountid) : db.ChartOfAccounts.Find(syaccountid);
             var docnumlast = db.DMCM.OrderByDescending(m => m.DocNum).FirstOrDefault().DocNum.Value;
             var start = docnumlast;
 

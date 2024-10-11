@@ -40,16 +40,47 @@
                 }
             </tbody>
         </table>
-        <div class="form-group">
-            <label>Posting Date:</label>
-            @Html.TextBoxFor(m => m.PostingDate, "", new { @class = "form-control", @type = "date" })
-        </div>
-        <div class="form-group">
-            <label>Remarks:</label>
-            @Html.TextBoxFor(m => m.Remarks, "", new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Post" class="btn btn-primary" />
+        <div class="row">
+            <div class="col-sm-6 col-md-6">
+                <div class="form-group">
+                    <label>Posting Date:</label>
+                    @Html.TextBoxFor(m => m.PostingDate, "", new { @class = "form-control", @type = "date" })
+                </div>
+                <div class="form-group">
+                    <label>Remarks:</label>
+                    @Html.TextAreaFor(m => m.Remarks, 3, 60, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Post" class="btn btn-primary" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                @if (Model.DiscountDetails.Count > 0)
+                {
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>Account No</th>
+                            <th>Account Name</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        </tr>
+                        @for(int i=0;i<Model.DiscountDetails.Count;i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Model.DiscountDetails[i].AccountNo
+                                    @Html.HiddenFor(m => m.DiscountDetails[i].FeeId)
+                                    @Html.HiddenFor(m => m.DiscountDetails[i].Amount)
+                                    @Html.HiddenFor(m => m.DiscountDetails[i].DiscountId)
+                                </td>
+                                <td>@Model.DiscountDetails[i].AccountName</td>
+                                <td>@(Model.DiscountDetails[i].Amount>0? Model.DiscountDetails[i].Amount.ToString("#,#00.00") : "")</td>
+                                <td>@(Model.DiscountDetails[i].Amount>0? "" : (0- Model.DiscountDetails[i].Amount).ToString("#,#00.00")  )</td>
+                            </tr>
+                        }
+                    </table>
+                }
+            </div>
         </div>
     }
 </div>

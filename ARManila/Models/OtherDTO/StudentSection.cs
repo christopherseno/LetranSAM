@@ -31,6 +31,7 @@ namespace ARManila.Models
         public DateTime PostingDate { get; set; }
         public string Remarks { get; set; }
         public List<DmcmDetailDto> DetailDtos { get; set; } = new List<DmcmDetailDto>();
+        public List<DmcmDiscountDetail> DiscountDetails { get; set; } = new List<DmcmDiscountDetail>();
     }
     public class DmcmDetailDto
     {

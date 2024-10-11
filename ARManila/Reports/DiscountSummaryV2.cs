@@ -16,14 +16,14 @@ namespace ARManila.Reports {
     using CrystalDecisions.CrystalReports.Engine;
     
     
-    public class DiscountSummary : ReportClass {
+    public class DiscountSummaryV2 : ReportClass {
         
-        public DiscountSummary() {
+        public DiscountSummaryV2() {
         }
         
         public override string ResourceName {
             get {
-                return "DiscountSummary.rpt";
+                return "DiscountSummaryV2.rpt";
             }
             set {
                 // Do nothing
@@ -41,7 +41,7 @@ namespace ARManila.Reports {
         
         public override string FullResourceName {
             get {
-                return "ARManila.Reports.DiscountSummary.rpt";
+                return "ARManila.Reports.DiscountSummaryV2.rpt";
             }
             set {
                 // Do nothing
@@ -122,9 +122,9 @@ namespace ARManila.Reports {
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedDiscountSummary : Component, ICachedReport {
+    public class CachedDiscountSummaryV2 : Component, ICachedReport {
         
-        public CachedDiscountSummary() {
+        public CachedDiscountSummaryV2() {
         }
         
         [Browsable(false)]
@@ -161,7 +161,7 @@ namespace ARManila.Reports {
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            DiscountSummary rpt = new DiscountSummary();
+            DiscountSummaryV2 rpt = new DiscountSummaryV2();
             rpt.Site = this.Site;
             return rpt;
         }

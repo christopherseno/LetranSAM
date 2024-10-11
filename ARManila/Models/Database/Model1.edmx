@@ -8566,9 +8566,6 @@
             <Parameter Name="bankid" Mode="In" Type="Int32" />
             <Parameter Name="periodid" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="GetReAssessment" ReturnType="Collection(LetranIntegratedSystemModel.GetReAssessment_Result)">
-          <Parameter Name="studentsectionid" Mode="In" Type="Int32" />
-          </FunctionImport>
           <FunctionImport Name="GetReassessmentOld" ReturnType="Collection(LetranIntegratedSystemModel.GetReassessmentOld_Result)">
           <Parameter Name="studentsectionid" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -9024,6 +9021,9 @@
             <Parameter Name="edate" Mode="In" Type="DateTime" />
             <Parameter Name="deptid" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="GetReAssessment" ReturnType="Collection(LetranIntegratedSystemModel.GetReAssessment_Result)">
+            <Parameter Name="studentsectionid" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="ArTrail2024_Result">
           <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
@@ -9311,14 +9311,6 @@
           <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
           <Property Type="String" Name="Dept" Nullable="true" MaxLength="10" />
           <Property Type="String" Name="Remarks" Nullable="true" MaxLength="255" />
-        </ComplexType>
-        <ComplexType Name="GetReAssessment_Result">
-          <Property Type="Int32" Name="studentsectionid" Nullable="true" />
-          <Property Type="Int32" Name="FeeID" Nullable="false" />
-          <Property Type="String" Name="FeeCategory" Nullable="false" MaxLength="1" />
-          <Property Type="String" Name="Description" Nullable="false" MaxLength="120" />
-          <Property Type="Double" Name="Amount" Nullable="true" />
-          <Property Type="Double" Name="DiscountRate" Nullable="true" />
         </ComplexType>
         <ComplexType Name="GetReassessmentOld_Result">
           <Property Type="Int32" Name="studentsectionid" Nullable="true" />
@@ -10383,6 +10375,14 @@
           <Property Type="String" Name="AccountNo" Nullable="true" MaxLength="50" />
           <Property Type="Int32" Name="Debit" Nullable="false" />
           <Property Type="Double" Name="Credit" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="GetReAssessment_Result">
+          <Property Type="Int32" Name="studentsectionid" Nullable="true" />
+          <Property Type="Int32" Name="FeeID" Nullable="false" />
+          <Property Type="String" Name="FeeCategory" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="120" />
+          <Property Type="Double" Name="Amount" Nullable="true" />
+          <Property Type="Double" Name="DiscountRate" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -12039,18 +12039,6 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="GetReAssessment" FunctionName="LetranIntegratedSystemModel.Store.GetReAssessment">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetReAssessment_Result">
-                <ScalarProperty Name="studentsectionid" ColumnName="studentsectionid" />
-                <ScalarProperty Name="FeeID" ColumnName="FeeID" />
-                <ScalarProperty Name="FeeCategory" ColumnName="FeeCategory" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="DiscountRate" ColumnName="DiscountRate" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="GetReassessmentOld" FunctionName="LetranIntegratedSystemModel.Store.GetReassessmentOld">
             <ResultMapping>
               <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetReassessmentOld_Result">
@@ -13100,6 +13088,18 @@
                 <ScalarProperty Name="AccountNo" ColumnName="AccountNo" />
                 <ScalarProperty Name="Debit" ColumnName="Debit" />
                 <ScalarProperty Name="Credit" ColumnName="Credit" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetReAssessment" FunctionName="LetranIntegratedSystemModel.Store.GetReAssessment">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetReAssessment_Result">
+                <ScalarProperty Name="studentsectionid" ColumnName="studentsectionid" />
+                <ScalarProperty Name="FeeID" ColumnName="FeeID" />
+                <ScalarProperty Name="FeeCategory" ColumnName="FeeCategory" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="DiscountRate" ColumnName="DiscountRate" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

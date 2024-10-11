@@ -337,15 +337,6 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetOnlinePaymentPosted_Result>("GetOnlinePaymentPosted", sdateParameter, edateParameter, bankidParameter, periodidParameter);
         }
     
-        public virtual ObjectResult<GetReAssessment_Result> GetReAssessment(Nullable<int> studentsectionid)
-        {
-            var studentsectionidParameter = studentsectionid.HasValue ?
-                new ObjectParameter("studentsectionid", studentsectionid) :
-                new ObjectParameter("studentsectionid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetReAssessment_Result>("GetReAssessment", studentsectionidParameter);
-        }
-    
         public virtual ObjectResult<GetReassessmentOld_Result> GetReassessmentOld(Nullable<int> studentsectionid)
         {
             var studentsectionidParameter = studentsectionid.HasValue ?
@@ -1561,6 +1552,15 @@ namespace ARManila.Models
                 new ObjectParameter("deptid", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MakeBankDepositJournalEntry_Result>("MakeBankDepositJournalEntry", sdateParameter, edateParameter, deptidParameter);
+        }
+    
+        public virtual ObjectResult<GetReAssessment_Result> GetReAssessment(Nullable<int> studentsectionid)
+        {
+            var studentsectionidParameter = studentsectionid.HasValue ?
+                new ObjectParameter("studentsectionid", studentsectionid) :
+                new ObjectParameter("studentsectionid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetReAssessment_Result>("GetReAssessment", studentsectionidParameter);
         }
     }
 }

@@ -126,7 +126,7 @@
                 @foreach (var item in (IEnumerable<ARManila.Models.StudentSectionReAssessment>)ViewBag.reassessment)
                 {
                     <tr>
-                        <td>@item.AssessmentDate</td>
+                        <td>@item.AssessmentDate.Value.ToShortDateString()</td>
                         <td>@item.AssessedBy</td>
                         <td>
                             @Html.ActionLink("View Reassessment", "ViewReassessment", new { id = item.StudentSectionReAssessmentID }, new { @class = "btn btn-primary" })
