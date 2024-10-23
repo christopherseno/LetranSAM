@@ -3343,6 +3343,10 @@
           <Parameter Name="asofdate" Type="date" Mode="In" />
           <Parameter Name="studentid" Type="int" Mode="In" />
         </Function>
+        <Function Name="Backaccounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
+          <Parameter Name="periodids" Type="varchar(max)" Mode="In" />
+          <Parameter Name="asofdate" Type="date" Mode="In" />
+        </Function>
         <Function Name="GetARQueryByPeriod" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="studentid" Type="int" Mode="In" />
           <Parameter Name="periodid" Type="int" Mode="In" />
@@ -3357,6 +3361,7 @@
         <Function Name="GetAssessmentSHSSummer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="studentsectionid" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetBackaccountSchoolYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR" />
         <Function Name="GetCollectionSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="asofdate" Type="date" Mode="In" />
@@ -9024,6 +9029,11 @@
             <Parameter Name="edate" Mode="In" Type="DateTime" />
             <Parameter Name="semid" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="GetBackaccountSchoolYear" ReturnType="Collection(LetranIntegratedSystemModel.GetBackaccountSchoolYear_Result)" />
+          <FunctionImport Name="Backaccounts" ReturnType="Collection(LetranIntegratedSystemModel.Backaccounts_Result)">
+            <Parameter Name="periodids" Mode="In" Type="String" />
+            <Parameter Name="asofdate" Mode="In" Type="DateTime" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="ArTrail2024_Result">
           <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
@@ -10384,6 +10394,27 @@
           <Property Type="String" Name="WhenDiscounted" Nullable="false" MaxLength="10" />
           <Property Type="Int32" Name="StudentID" Nullable="true" />
           <Property Type="String" Name="ShortName" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="GetBackaccountSchoolYear_Result">
+          <Property Type="Int32" Name="SchoolYearID" Nullable="false" />
+          <Property Type="String" Name="SchoolYearName" Nullable="false" MaxLength="30" />
+        </ComplexType>
+        <ComplexType Name="Backaccounts_Result">
+          <Property Type="Int32" Name="BackaccountId" Nullable="false" />
+          <Property Type="Int32" Name="StudentID" Nullable="true" />
+          <Property Type="Int32" Name="PeriodID" Nullable="false" />
+          <Property Type="String" Name="Period" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="SYID" Nullable="false" />
+          <Property Type="String" Name="SchoolYearName" Nullable="false" MaxLength="30" />
+          <Property Type="Int32" Name="EducLevelID" Nullable="false" />
+          <Property Type="String" Name="EducLevelName" Nullable="true" MaxLength="20" />
+          <Property Type="Double" Name="Balance" Nullable="true" />
+          <Property Type="String" Name="ORNo" Nullable="true" MaxLength="120" />
+          <Property Type="Double" Name="ORAmont" Nullable="true" />
+          <Property Type="DateTime" Name="ORDate" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="DocNum" Nullable="true" />
+          <Property Type="DateTime" Name="DocDate" Nullable="true" Precision="23" />
+          <Property Type="Double" Name="DCAmount" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -13102,6 +13133,35 @@
                 <ScalarProperty Name="WhenDiscounted" ColumnName="WhenDiscounted" />
                 <ScalarProperty Name="StudentID" ColumnName="StudentID" />
                 <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetBackaccountSchoolYear" FunctionName="LetranIntegratedSystemModel.Store.GetBackaccountSchoolYear">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetBackaccountSchoolYear_Result">
+                <ScalarProperty Name="SchoolYearID" ColumnName="SchoolYearID" />
+                <ScalarProperty Name="SchoolYearName" ColumnName="SchoolYearName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Backaccounts" FunctionName="LetranIntegratedSystemModel.Store.Backaccounts">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.Backaccounts_Result">
+                <ScalarProperty Name="BackaccountId" ColumnName="BackaccountId" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="PeriodID" ColumnName="PeriodID" />
+                <ScalarProperty Name="Period" ColumnName="Period" />
+                <ScalarProperty Name="SYID" ColumnName="SYID" />
+                <ScalarProperty Name="SchoolYearName" ColumnName="SchoolYearName" />
+                <ScalarProperty Name="EducLevelID" ColumnName="EducLevelID" />
+                <ScalarProperty Name="EducLevelName" ColumnName="EducLevelName" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="ORNo" ColumnName="ORNo" />
+                <ScalarProperty Name="ORAmont" ColumnName="ORAmont" />
+                <ScalarProperty Name="ORDate" ColumnName="ORDate" />
+                <ScalarProperty Name="DocNum" ColumnName="DocNum" />
+                <ScalarProperty Name="DocDate" ColumnName="DocDate" />
+                <ScalarProperty Name="DCAmount" ColumnName="DCAmount" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

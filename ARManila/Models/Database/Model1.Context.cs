@@ -1562,5 +1562,23 @@ namespace ARManila.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetConsolidatedDiscountDetails_Result>("GetConsolidatedDiscountDetails", sdateParameter, edateParameter, semidParameter);
         }
+    
+        public virtual ObjectResult<GetBackaccountSchoolYear_Result> GetBackaccountSchoolYear()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetBackaccountSchoolYear_Result>("GetBackaccountSchoolYear");
+        }
+    
+        public virtual ObjectResult<Backaccounts_Result> Backaccounts(string periodids, Nullable<System.DateTime> asofdate)
+        {
+            var periodidsParameter = periodids != null ?
+                new ObjectParameter("periodids", periodids) :
+                new ObjectParameter("periodids", typeof(string));
+    
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Backaccounts_Result>("Backaccounts", periodidsParameter, asofdateParameter);
+        }
     }
 }

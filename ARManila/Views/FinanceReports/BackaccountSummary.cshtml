@@ -1,4 +1,4 @@
-﻿
+﻿@model ARManila.Models.ReportsDTO.BackaccountSummaryDTO
 @{
     ViewBag.Title = "BackaccountSummary";
 }
@@ -11,22 +11,86 @@
 @using (Html.BeginForm())
 {
     <div class="row">
-        <div class="mb-12">
-            <label class="form-label">Select School Year</label>
-            <div class="space-x-2">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" value="" id="example-checkbox-inline1" name="example-checkbox-inline1" checked="">
-                    <label class="form-check-label" for="example-checkbox-inline1">Option 1</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" value="" id="example-checkbox-inline2" name="example-checkbox-inline2">
-                    <label class="form-check-label" for="example-checkbox-inline2">Option 2</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" value="" id="example-checkbox-inline3" name="example-checkbox-inline3" disabled="">
-                    <label class="form-check-label" for="example-checkbox-inline3">Option 3</label>
+        <div class="col-lg-8">
+            <div class="mb-12">
+                <label class="form-label">Select School Year</label>
+                <div class="space-x-0">
+                    @for (int i = 0; i < Model.GetBackaccountSchoolYear_Result.Count; i++)
+                    {
+                        <div class="form-check form-check-inline">
+                            @Html.HiddenFor(m => Model.GetBackaccountSchoolYear_Result[i].SchoolYearID)
+                            @Html.HiddenFor(m => Model.GetBackaccountSchoolYear_Result[i].SchoolYearName)
+                            @Html.CheckBoxFor(m => Model.GetBackaccountSchoolYear_Result[i].IsSelected,
+                                new
+                                {
+                                    @class = "form-check-input",
+                                    @checked = ""
+                                })
+                            <label class="form-check-label" for="example-checkbox-inline1">@Model.GetBackaccountSchoolYear_Result[i].SchoolYearName</label>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
+        <div class="col-lg-4">
+            <div class="mb-12">
+                <label class="form-label">As Of Date</label>
+                <input type="date" value=@Model.AsOfDate.ToString("yyyy-MM-dd") name="AsOfDate" id="AsOfDate" class="form-control" />
+            </div>
+            <div class="mb-12">
+                <label>View As</label>
+                <select id="ViewAs" name="ViewAs" class="form-select">
+                    <option value="1">Web</option>
+                    <option value="2">PDF</option>
+                    <option value="3">Excel</option>
+                </select>
+            </div>
+            <div class="mb=12">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </div>
     </div>
+}
+<hr />
+@if (Model.BackaccountDtos.Count > 0)
+{
+    foreach (var group1 in Model.BackaccountDtos.GroupBy(m => new { m.EducationalLevelId, m.EducationalLevel }))
+    {
+        <h2>@group1.Key.EducationalLevel</h2>
+        foreach (var group2 in group1.OrderBy(m => m.StudentName).GroupBy(m => new { m.SchoolYearId, m.SchoolYear }))
+        {
+
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-full dataTable no-footer" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+                <caption style="caption-side: top">@group2.Key.SchoolYear</caption>
+                <thead>
+                    <tr>
+                        <th>Student No</th>
+                        <th>Student Name</th>
+                        <th>Semester</th>
+                        <th>Department</th>
+                        <th>Amount</th>
+                        <th>Balance</th>
+                        <th>Payments</th>
+                        <th>DMCM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in group2)
+                    {
+                        <tr class="odd">
+                            <td>@item.StudentNo</td>
+                            <td>@item.StudentName</td>
+                            <td>@item.CompletePeriodName</td>
+                            <td>@item.Department</td>
+                            <td>@item.Amount.ToString("#,##0.00")</td>
+                            <td>@item.Balance.ToString("#,##0.00")</td>
+                            <td>@item.Payment</td>
+                            <td>@item.DMCM</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    }
 }

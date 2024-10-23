@@ -8,6 +8,10 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public partial class GetBackaccountSchoolYear_Result
+    {
+        public bool IsSelected { get; set; }
+    }
     public partial class DmcmDiscountDetail
     {
         public int AccountId { get; set; }

@@ -48,7 +48,108 @@ namespace ARManila.Controllers
 
         public ActionResult BackaccountSummary()
         {
-            return View();
+            var backaccountsummary = new BackaccountSummaryDTO();
+            backaccountsummary.AsOfDate = DateTime.Today;
+            foreach (var schoolyear in db.GetBackaccountSchoolYear())
+            {
+                backaccountsummary.GetBackaccountSchoolYear_Result.Add(new GetBackaccountSchoolYear_Result
+                {
+                    IsSelected = false,
+                    SchoolYearID = schoolyear.SchoolYearID,
+                    SchoolYearName = schoolyear.SchoolYearName
+                });
+            }
+            return View(backaccountsummary);
+
+        }
+        [HttpPost]
+        public ActionResult BackaccountSummary(BackaccountSummaryDTO model)
+        {
+            List<BackaccountDto> backaccountDtos = new List<BackaccountDto>();
+            var asofdate = model.AsOfDate.AddDays(1);
+            foreach (var schoolyear in model.GetBackaccountSchoolYear_Result.Where(m => m.IsSelected))
+            {
+                var periodids = db.Period.Where(m => m.SchoolYearID == schoolyear.SchoolYearID).Select(m => m.PeriodID).ToList();
+                foreach (var periodid in periodids)
+                {
+                    var backaccounts = db.BackAccount.Where(m => m.Student_SectionID == null && m.SemID.HasValue && m.SemID.Value == periodid && m.StudentID.HasValue && m.Balance>0);                   
+                    foreach (var backaccount in backaccounts)
+                    {
+                        BackaccountDto backaccountDto = new BackaccountDto();
+                        var backaccountpayments = db.BackAccountPayment.Where(m => m.BackAccountID == backaccount.BankAccountID);
+                        decimal totalpayments = 0;
+                        foreach (var backaccountpayment in backaccountpayments)
+                        {
+                            var paymentdetail = db.PaymentDetails.Where(m => m.PaymentID == backaccountpayment.PaymentID && m.Payment.DateReceived < asofdate && m.Payment.StudentID.HasValue && m.PaycodeID == 11).FirstOrDefault();
+                            if (paymentdetail != null)
+                            {
+                                backaccountDto.Payments.Add(new BackaccountPaymentDto
+                                {
+                                    Amount = (decimal)paymentdetail.Amount.Value,
+                                    OrDate = paymentdetail.Payment.DateReceived.ToShortDateString(),
+                                    OrNo = paymentdetail.Payment.ORNo,
+                                    PaymentId = paymentdetail.PaymentID
+                                });
+                                totalpayments += (decimal)paymentdetail.Amount.Value;
+                            }
+                        }
+                        var backaccountdmcms = db.BackaccountDMCM.Where(m => m.BackaccountID == backaccount.BankAccountID);
+                        decimal totaldmcm = 0;
+                        foreach (var backaccountdmcm in backaccountdmcms)
+                        {
+                            var dmcmdetail = db.DMCM.Where(m => m.DMCMID == backaccountdmcm.DMCMID && m.TransactionDate< asofdate).FirstOrDefault();
+                            if (dmcmdetail != null)
+                            {
+                                backaccountDto.Dmcms.Add(new BackaccountDmcmDto
+                                {
+                                    Amount = dmcmdetail.DC.Equals("D") ? 0-(decimal)dmcmdetail.Amount.Value : (decimal)dmcmdetail.Amount.Value,
+                                    DocDate = dmcmdetail.TransactionDate.Value.ToShortDateString(),
+                                    DocNo = dmcmdetail.DocNum.Value.ToString(),
+                                    DmcmId = dmcmdetail.DMCMID
+                                });
+                                totaldmcm += (dmcmdetail.DC.Equals("D") ? 0 - (decimal)dmcmdetail.Amount.Value : (decimal)dmcmdetail.Amount.Value);
+                            }
+                        }
+                        if (((decimal)backaccount.Balance.Value - totalpayments - totaldmcm) > 0.01m || ((decimal)backaccount.Balance.Value - totalpayments - totaldmcm) < -0.01m)
+                        {
+                            backaccountDto.Amount = (decimal)backaccount.Balance.Value;
+                            backaccountDto.BackaccountId = backaccount.BankAccountID;
+                            backaccountDto.CompletePeriodName = backaccount.Period.FullName;
+                            var studentcurriculum = db.Student_Curriculum.Where(m => m.StudentID == backaccount.StudentID && m.Status == 1).FirstOrDefault();
+                            AcademicDepartment academicdepartment = null;
+                            if (studentcurriculum != null)
+                            {
+                                academicdepartment = studentcurriculum.Curriculum.AcaDeptID.HasValue ? db.AcademicDepartment.Find(studentcurriculum.Curriculum.AcaDeptID.Value) : null;
+                            }
+                            backaccountDto.Department = academicdepartment != null ? (backaccount.Period.EducLevelID==4 ? academicdepartment.AcaAcronym: "" ) : "";
+                            backaccountDto.DepartmentId = academicdepartment != null ? academicdepartment.AcaDeptID : 0;
+                            backaccountDto.EducationalLevel = backaccount.Period.EducationalLevel1.EducLevelName;
+                            backaccountDto.EducationalLevelId = backaccount.Period.EducLevelID.Value;
+                            backaccountDto.PeriodId = backaccount.SemID.Value;
+                            backaccountDto.PeriodName = backaccount.Period.EducLevelID<4 ? "" : backaccount.Period.Period1;
+                            backaccountDto.SchoolYear = backaccount.Period.SchoolYear.SchoolYearName;
+                            backaccountDto.SchoolYearId = backaccount.Period.SchoolYearID;
+                            backaccountDto.StudentName = backaccount.Student.FullName256;
+                            backaccountDto.StudentNo = backaccount.Student.StudentNo;
+                            backaccountDto.StudentId = backaccount.StudentID.Value;
+                            backaccountDto.Balance = (decimal)backaccount.Balance.Value - totalpayments - totaldmcm;
+                            backaccountDtos.Add(backaccountDto);
+                        }
+                    }
+                }
+            }
+            model.BackaccountDtos = backaccountDtos;
+            if (model.ViewAs == 1)
+            {
+                return View(model);
+            }
+            else
+            {
+                ReportDocument reportDocument = new BackaccountSummaryReport();
+                reportDocument.SetDataSource(model.BackaccountDtos.OrderBy(m => m.StudentName).ToList());
+                return ExportType(model.ViewAs - 1, "BackaccountSummaryReport_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+            }
+
         }
         #region ARSetupSummary
 
@@ -110,16 +211,16 @@ namespace ARManila.Controllers
                     return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
                 }
                 else
-                {                    
+                {
                     summaries.ForEach(s =>
                     {
-                        if (s.Category.Equals("CBAA") || s.Category.Equals("CEIT") 
+                        if (s.Category.Equals("CBAA") || s.Category.Equals("CEIT")
                         || s.Category.Equals("CLAS") || s.Category.Equals("CoE"))
                         {
                             if (s.AccountNo.Equals("E1404") || s.AccountNo.Equals("E1423"))
                             {
                                 s.Category = s.ProgramCode;
-                            }                            
+                            }
                             else if (s.AccountNo.Equals("E1308") || s.AccountNo.Equals("E1314"))
                             {
 
@@ -144,7 +245,7 @@ namespace ARManila.Controllers
                     }
                 }
             }
-            
+
         }
         public ActionResult ARSetupSummary()
         {

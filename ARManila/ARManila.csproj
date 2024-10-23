@@ -344,6 +344,9 @@
     <Compile Include="Models\Database\BackAccountPayment.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Database\Backaccounts_Result.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Database\BackaccountTransactionLog.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -438,6 +441,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\GetAssessment_Result.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Database\GetBackaccountSchoolYear_Result.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\GetBankDeposit_Result.cs">
@@ -913,6 +919,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ARSetupSummaryReportSHS.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\BackaccountSummaryReport.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BackaccountSummaryReport.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Reports\BankDepositReceiptJournalEntryReport.cs">
@@ -5346,6 +5358,10 @@
     <EmbeddedResource Include="Reports\ARSetupSummaryReportSHS.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>ARSetupSummaryReportSHS.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\BackaccountSummaryReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>BackaccountSummaryReport.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\BankDepositReceiptJournalEntryReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
