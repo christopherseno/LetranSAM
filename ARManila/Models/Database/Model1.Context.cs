@@ -249,23 +249,6 @@ namespace ARManila.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetComparativeEndTermARBalanceWithPaymentDetailsV2_Result>("GetComparativeEndTermARBalanceWithPaymentDetailsV2", educlevelidParameter);
         }
     
-        public virtual ObjectResult<GetConsolidatedDiscountDetails_Result> GetConsolidatedDiscountDetails(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> semid)
-        {
-            var sdateParameter = sdate.HasValue ?
-                new ObjectParameter("sdate", sdate) :
-                new ObjectParameter("sdate", typeof(System.DateTime));
-    
-            var edateParameter = edate.HasValue ?
-                new ObjectParameter("edate", edate) :
-                new ObjectParameter("edate", typeof(System.DateTime));
-    
-            var semidParameter = semid.HasValue ?
-                new ObjectParameter("semid", semid) :
-                new ObjectParameter("semid", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetConsolidatedDiscountDetails_Result>("GetConsolidatedDiscountDetails", sdateParameter, edateParameter, semidParameter);
-        }
-    
         public virtual ObjectResult<GetCurriculumDetails_Result> GetCurriculumDetails(Nullable<int> curriculumid)
         {
             var curriculumidParameter = curriculumid.HasValue ?
@@ -1561,6 +1544,23 @@ namespace ARManila.Models
                 new ObjectParameter("studentsectionid", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetReAssessment_Result>("GetReAssessment", studentsectionidParameter);
+        }
+    
+        public virtual ObjectResult<GetConsolidatedDiscountDetails_Result> GetConsolidatedDiscountDetails(Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate, Nullable<int> semid)
+        {
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            var semidParameter = semid.HasValue ?
+                new ObjectParameter("semid", semid) :
+                new ObjectParameter("semid", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetConsolidatedDiscountDetails_Result>("GetConsolidatedDiscountDetails", sdateParameter, edateParameter, semidParameter);
         }
     }
 }

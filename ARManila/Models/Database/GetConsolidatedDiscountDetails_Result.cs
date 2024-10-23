@@ -39,5 +39,6 @@ namespace ARManila.Models
         public string EducLevelName { get; set; }
         public string WhenDiscounted { get; set; }
         public Nullable<int> StudentID { get; set; }
+        public string ShortName { get; set; }
     }
 }

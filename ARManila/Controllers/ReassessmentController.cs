@@ -148,7 +148,7 @@ namespace ARManila.Controllers
                 memo.PeriodID = periodid;
                 memo.Remarks = model.Remarks;
                 memo.StudentID = model.StudentId;
-                memo.AcaDeptID = studentsection.Section.Curriculum.AcaDeptID;
+                memo.AcaDeptID = i.DepartmentId;
                 memo.TransactionDate = model.PostingDate;
                 memo.AcctID = i.AccountId == 0 ? (int?)null : i.AccountId;
                 memo.SubAcctID = i.SubaccountId == 0 ? (int?)null : i.SubaccountId;
@@ -273,7 +273,8 @@ namespace ARManila.Controllers
                     Amount = Math.Abs(totaldiscount),
                     IsDebit = totaldiscount > 0 ? true : false,
                     ChargeToStudentAr = true,
-                    SubaccountId = 0
+                    SubaccountId = 0,
+                    DepartmentId = reassessment.Section.Curriculum.AcaDeptID ?? 0
                 });
                 dmcm.DetailDtos.Add(new DmcmDetailDto
                 {
@@ -283,7 +284,8 @@ namespace ARManila.Controllers
                     Amount = Math.Abs(totaldiscount),
                     IsDebit = totaldiscount > 0 ? false : true,
                     ChargeToStudentAr = false,
-                    SubaccountId = discountSubCoa != null ? discountSubCoa.SubAcctID : 0
+                    SubaccountId = discountSubCoa != null ? discountSubCoa.SubAcctID : 0,
+                    DepartmentId = discount.DiscountCategoryID.HasValue ? discount.DiscountCategory.AcctID ?? 0 : (reassessment.Section.Curriculum.AcaDeptID ?? 0)
                 });
             }
             else
@@ -319,10 +321,9 @@ namespace ARManila.Controllers
                     Amount = Math.Abs(totalar),
                     IsDebit = totalar > 0 ? true : false,
                     ChargeToStudentAr = true,
-                    SubaccountId = 0
+                    SubaccountId = 0,
+                    DepartmentId = reassessment.Section.Curriculum.AcaDeptID ?? 0
                 });
-
-
             }
             return View(dmcm);
         }

@@ -386,7 +386,7 @@ namespace ARManila.Controllers
             var assessedtuitionfee = computedassessment.Where(m => m.FeeCategory == "T").FirstOrDefault();
             var cashtuitionfee = (decimal)(computedassessment.Where(m => m.FeeCategory == "Z").FirstOrDefault() != null ?
                     computedassessment.Where(m => m.FeeCategory == "Z").FirstOrDefault().Amount : 0);
-            var totalhours = (db.OriginalStudentSchedule.Where(m => m.StudentSectionID == enlistment.Student_SectionID).GroupBy(m => m.StudentSectionID).Select(g => new { TotalUnit = g.Sum(c => c.Schedule.Subject.NoOfHours) }).FirstOrDefault()).TotalUnit.Value;
+            var totalhours = (db.OriginalStudentSchedule.Where(m => m.StudentSectionID == enlistment.Student_SectionID && m.Schedule.Subject.IsTuition.HasValue && m.Schedule.Subject.IsTuition.Value ==true).GroupBy(m => m.StudentSectionID).Select(g => new { TotalUnit = g.Sum(c => c.Schedule.Subject.NoOfHours) }).FirstOrDefault()).TotalUnit.Value;
             if (assessedtuitionfee == null)
             {
                 tuitionfee = 0;
@@ -479,25 +479,33 @@ namespace ARManila.Controllers
             var computedmiscfees = computedassessment.Where(m => m.FeeCategory == "M").ToList();
             foreach (var i in computedmiscfees)
             {
-                miscfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? (discount.DiscountType.PercentForMisc == null ? 0 : discount.DiscountType.PercentForMisc.Value) : discount.DiscountType.PercentForTotal.Value), FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
+                miscfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount =i.DiscountRate.HasValue
+                    ? i.DiscountRate.Value : (discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? (discount.DiscountType.PercentForMisc == null ? 0 : discount.DiscountType.PercentForMisc.Value) : discount.DiscountType.PercentForTotal.Value)),
+                    FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
             }
 
             var computedsupplementalfees = computedassessment.Where(m => m.FeeCategory == "S").ToList();
             foreach (var i in computedsupplementalfees)
             {
-                supplementalfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value), FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
+                supplementalfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = i.DiscountRate.HasValue
+                    ? i.DiscountRate.Value : (discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value)), 
+                    FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
             }
 
             var variousfees = computedassessment.Where(m => m.FeeCategory == "V").ToList();
             foreach (var i in variousfees)
             {
-                variousfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value), FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
+                variousfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = i.DiscountRate.HasValue
+                    ? i.DiscountRate.Value : (discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value)), 
+                    FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
             }
 
             var otherfees = computedassessment.Where(m => m.FeeCategory == "O").ToList();
             foreach (var i in otherfees)
             {
-                otherfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value), FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
+                otherfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = i.DiscountRate.HasValue
+                    ? i.DiscountRate.Value : (discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value)), 
+                    FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
             }
 
             List<GetReAssessment_Result> labair = new List<GetReAssessment_Result>();
@@ -505,7 +513,9 @@ namespace ARManila.Controllers
             labair.AddRange(computedassessment.Where(m => m.FeeCategory == "L"));
             foreach (var i in labair)
             {
-                labairconfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value), FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
+                labairconfeeswithdiscount.Add(new Assessment { Amount = i.Amount, Discount = i.DiscountRate.HasValue
+                    ? i.DiscountRate.Value : (discount == null ? 0 : ((discount.DiscountType.PercentForTotal == null || discount.DiscountType.PercentForTotal == 0) ? 0 : discount.DiscountType.PercentForTotal.Value)), 
+                    FeeID = i.FeeID, FeeType = i.FeeCategory, Student_SectionID = i.studentsectionid, Description = i.Description });
             }
         }
 

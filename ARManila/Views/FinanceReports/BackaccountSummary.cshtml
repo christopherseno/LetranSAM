@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "BackaccountSummary";
+}
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item">Report Menu</span>
+    <span class="breadcrumb-item active">Backaccount Summary</span>
+</nav>
+
+<h2>Backaccount Summary</h2>
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="mb-12">
+            <label class="form-label">Select School Year</label>
+            <div class="space-x-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" value="" id="example-checkbox-inline1" name="example-checkbox-inline1" checked="">
+                    <label class="form-check-label" for="example-checkbox-inline1">Option 1</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" value="" id="example-checkbox-inline2" name="example-checkbox-inline2">
+                    <label class="form-check-label" for="example-checkbox-inline2">Option 2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" value="" id="example-checkbox-inline3" name="example-checkbox-inline3" disabled="">
+                    <label class="form-check-label" for="example-checkbox-inline3">Option 3</label>
+                </div>
+            </div>
+        </div>
+    </div>
+}

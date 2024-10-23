@@ -42,6 +42,7 @@ namespace ARManila.Models
         public string AccountCode { get; set; }
         public string AccountName { get; set; }
         public bool ChargeToStudentAr { get; set; }
+        public int DepartmentId { get; set; }
 
     }
     public class StudentForDmcm

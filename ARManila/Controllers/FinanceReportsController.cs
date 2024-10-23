@@ -46,6 +46,10 @@ namespace ARManila.Controllers
             employee = db.Employee.FirstOrDefault(m => m.EmployeeNo == User.Identity.Name);
         }
 
+        public ActionResult BackaccountSummary()
+        {
+            return View();
+        }
         #region ARSetupSummary
 
         public ActionResult DiscountSummaryConsolidated()
@@ -78,7 +82,7 @@ namespace ARManila.Controllers
                     summary.EndDate = enddate.ToShortDateString();
                     summary.GradeYear = item.GradeYear.ToString();
                     summary.PeriodFullName = Period.FullName;
-                    summary.ProgramCode = item.ProgramCode;
+                    summary.ProgramCode = item.ShortName; //item.ProgramCode;
                     summary.StudentName = student.FullName256.Length > 0 ? student.FullName256 : student.FullName;
                     summary.StudentNo = item.StudentNo;
                     summary.DiscountT = (decimal)(item.Discount ?? 0);
@@ -106,18 +110,38 @@ namespace ARManila.Controllers
                     return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
                 }
                 else
-                {
-                    ReportDocument reportDocument = new DiscountSummaryV2();
+                {                    
                     summaries.ForEach(s =>
                     {
                         if (s.Category.Equals("CBAA") || s.Category.Equals("CEIT") 
                         || s.Category.Equals("CLAS") || s.Category.Equals("CoE"))
                         {
-                            s.Category = string.Empty;
+                            if (s.AccountNo.Equals("E1404") || s.AccountNo.Equals("E1423"))
+                            {
+                                s.Category = s.ProgramCode;
+                            }                            
+                            else if (s.AccountNo.Equals("E1308") || s.AccountNo.Equals("E1314"))
+                            {
+
+                            }
+                            else
+                            {
+                                s.Category = string.Empty;
+                            }
                         }
                     });
-                    reportDocument.SetDataSource(summaries.OrderBy(m => m.StudentName).ToList());
-                    return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                    if (reporttype == 2)
+                    {
+                        ReportDocument reportDocument = new DiscountSummaryV2();
+                        reportDocument.SetDataSource(summaries.OrderBy(m => m.StudentName).ToList());
+                        return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                    }
+                    else
+                    {
+                        ReportDocument reportDocument = new DiscountSummaryV3();
+                        reportDocument.SetDataSource(summaries.OrderBy(m => m.StudentName).ToList());
+                        return ExportType(viewas - 1, "Discountconsolidatedsummary_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                    }
                 }
             }
             

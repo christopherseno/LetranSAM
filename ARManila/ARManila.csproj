@@ -930,6 +930,12 @@
     <Compile Include="Reports\CrystalReportResultPdf.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Reports\DiscountSummaryV3.cs">
+      <DependentUpon>DiscountSummaryV3.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Reports\DiscountSummaryV2.cs">
       <DependentUpon>DiscountSummaryV2.rpt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -5236,6 +5242,7 @@
     <Content Include="Views\Reassessment\ViewReassessment.cshtml" />
     <Content Include="Views\FinanceReports\DiscountSummaryConsolidated.cshtml" />
     <Content Include="Views\DMCM\Discount.cshtml" />
+    <Content Include="Views\FinanceReports\BackaccountSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -5347,6 +5354,10 @@
     <EmbeddedResource Include="Reports\BankDepositReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>BankDepositReport.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\DiscountSummaryV3.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>DiscountSummaryV3.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\DiscountSummaryV2.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
