@@ -921,6 +921,12 @@
       <DependentUpon>ARSetupSummaryReportSHS.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Reports\BackaccountSummaryReportV2.cs">
+      <DependentUpon>BackaccountSummaryReportV2.rpt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Reports\BackaccountSummaryReport.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -937,6 +943,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>BankDepositReport.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\ComparativeEndTermARBalanceReportV2.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComparativeEndTermARBalanceReportV2.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Reports\CrystalReportResultPdf.cs">
@@ -5359,6 +5371,10 @@
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>ARSetupSummaryReportSHS.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\BackaccountSummaryReportV2.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>BackaccountSummaryReportV2.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\BackaccountSummaryReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>BackaccountSummaryReport.cs</LastGenOutput>
@@ -5370,6 +5386,10 @@
     <EmbeddedResource Include="Reports\BankDepositReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>BankDepositReport.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\ComparativeEndTermARBalanceReportV2.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ComparativeEndTermARBalanceReportV2.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\DiscountSummaryV3.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

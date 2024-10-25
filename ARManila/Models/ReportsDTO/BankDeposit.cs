@@ -10,6 +10,7 @@ namespace ARManila.Models.ReportsDTO
     {
         public DateTime AsOfDate { get; set; }
         public int ViewAs { get; set; }
+        public int ReportType { get; set; }
         public List<GetBackaccountSchoolYear_Result> GetBackaccountSchoolYear_Result { get; set; } = new List<GetBackaccountSchoolYear_Result>();
         public List<BackaccountDto> BackaccountDtos { get; set; } = new List<BackaccountDto>();
     }
@@ -52,8 +53,7 @@ namespace ARManila.Models.ReportsDTO
     }
 
     public class BackaccountPaymentDto
-    {
-        public int PaymentId { get; set; }
+    {        
         public string OrNo { get; set; }
         public string OrDate { get; set; }
         public decimal Amount { get; set; }
@@ -63,8 +63,7 @@ namespace ARManila.Models.ReportsDTO
         }
     }
     public class BackaccountDmcmDto
-    {
-        public int DmcmId { get; set; }
+    {        
         public string DocNo { get; set; }
         public string DocDate { get; set; }
         public decimal Amount { get; set; }

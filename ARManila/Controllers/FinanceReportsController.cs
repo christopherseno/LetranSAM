@@ -69,85 +69,88 @@ namespace ARManila.Controllers
             var asofdate = model.AsOfDate.AddDays(1);
             foreach (var schoolyear in model.GetBackaccountSchoolYear_Result.Where(m => m.IsSelected))
             {
-                var periodids = db.Period.Where(m => m.SchoolYearID == schoolyear.SchoolYearID).Select(m => m.PeriodID).ToList();
-                foreach (var periodid in periodids)
+                var periodids = db.Period.Where(m => m.SchoolYearID == schoolyear.SchoolYearID).Select(m => m.PeriodID).ToList().ToArray();
+                var backaccounts = db.Backaccounts(string.Join(",", periodids), asofdate);
+                foreach (var group in backaccounts.GroupBy(m=> new {m.BackaccountId, m.Balance, m.EducLevelID, m.EducLevelName, m.Period, m.PeriodID, m.SchoolYearName, m.StudentID, m.SYID }))
                 {
-                    var backaccounts = db.BackAccount.Where(m => m.Student_SectionID == null && m.SemID.HasValue && m.SemID.Value == periodid && m.StudentID.HasValue && m.Balance>0);                   
-                    foreach (var backaccount in backaccounts)
-                    {
-                        BackaccountDto backaccountDto = new BackaccountDto();
-                        var backaccountpayments = db.BackAccountPayment.Where(m => m.BackAccountID == backaccount.BankAccountID);
-                        decimal totalpayments = 0;
-                        foreach (var backaccountpayment in backaccountpayments)
+                    BackaccountDto backaccountDto = new BackaccountDto();                    
+                    decimal totalpayments = 0;
+                    decimal totaldmcm = 0;
+                    foreach (var item in group)
+                    {                       
+                        if (item.ORAmont.HasValue)
                         {
-                            var paymentdetail = db.PaymentDetails.Where(m => m.PaymentID == backaccountpayment.PaymentID && m.Payment.DateReceived < asofdate && m.Payment.StudentID.HasValue && m.PaycodeID == 11).FirstOrDefault();
-                            if (paymentdetail != null)
+                            backaccountDto.Payments.Add(new BackaccountPaymentDto
                             {
-                                backaccountDto.Payments.Add(new BackaccountPaymentDto
-                                {
-                                    Amount = (decimal)paymentdetail.Amount.Value,
-                                    OrDate = paymentdetail.Payment.DateReceived.ToShortDateString(),
-                                    OrNo = paymentdetail.Payment.ORNo,
-                                    PaymentId = paymentdetail.PaymentID
-                                });
-                                totalpayments += (decimal)paymentdetail.Amount.Value;
-                            }
+                                Amount = (decimal)item.ORAmont.Value,
+                                OrDate = item.ORDate.Value.ToShortDateString(),
+                                OrNo = item.ORNo                                
+                            });
+                            totalpayments += (decimal)item.ORAmont.Value;
                         }
-                        var backaccountdmcms = db.BackaccountDMCM.Where(m => m.BackaccountID == backaccount.BankAccountID);
-                        decimal totaldmcm = 0;
-                        foreach (var backaccountdmcm in backaccountdmcms)
+                        if(item.DocNum.HasValue)
                         {
-                            var dmcmdetail = db.DMCM.Where(m => m.DMCMID == backaccountdmcm.DMCMID && m.TransactionDate< asofdate).FirstOrDefault();
-                            if (dmcmdetail != null)
+                            backaccountDto.Dmcms.Add(new BackaccountDmcmDto
                             {
-                                backaccountDto.Dmcms.Add(new BackaccountDmcmDto
-                                {
-                                    Amount = dmcmdetail.DC.Equals("D") ? 0-(decimal)dmcmdetail.Amount.Value : (decimal)dmcmdetail.Amount.Value,
-                                    DocDate = dmcmdetail.TransactionDate.Value.ToShortDateString(),
-                                    DocNo = dmcmdetail.DocNum.Value.ToString(),
-                                    DmcmId = dmcmdetail.DMCMID
-                                });
-                                totaldmcm += (dmcmdetail.DC.Equals("D") ? 0 - (decimal)dmcmdetail.Amount.Value : (decimal)dmcmdetail.Amount.Value);
-                            }
-                        }
-                        if (((decimal)backaccount.Balance.Value - totalpayments - totaldmcm) > 0.01m || ((decimal)backaccount.Balance.Value - totalpayments - totaldmcm) < -0.01m)
-                        {
-                            backaccountDto.Amount = (decimal)backaccount.Balance.Value;
-                            backaccountDto.BackaccountId = backaccount.BankAccountID;
-                            backaccountDto.CompletePeriodName = backaccount.Period.FullName;
-                            var studentcurriculum = db.Student_Curriculum.Where(m => m.StudentID == backaccount.StudentID && m.Status == 1).FirstOrDefault();
-                            AcademicDepartment academicdepartment = null;
-                            if (studentcurriculum != null)
-                            {
-                                academicdepartment = studentcurriculum.Curriculum.AcaDeptID.HasValue ? db.AcademicDepartment.Find(studentcurriculum.Curriculum.AcaDeptID.Value) : null;
-                            }
-                            backaccountDto.Department = academicdepartment != null ? (backaccount.Period.EducLevelID==4 ? academicdepartment.AcaAcronym: "" ) : "";
-                            backaccountDto.DepartmentId = academicdepartment != null ? academicdepartment.AcaDeptID : 0;
-                            backaccountDto.EducationalLevel = backaccount.Period.EducationalLevel1.EducLevelName;
-                            backaccountDto.EducationalLevelId = backaccount.Period.EducLevelID.Value;
-                            backaccountDto.PeriodId = backaccount.SemID.Value;
-                            backaccountDto.PeriodName = backaccount.Period.EducLevelID<4 ? "" : backaccount.Period.Period1;
-                            backaccountDto.SchoolYear = backaccount.Period.SchoolYear.SchoolYearName;
-                            backaccountDto.SchoolYearId = backaccount.Period.SchoolYearID;
-                            backaccountDto.StudentName = backaccount.Student.FullName256;
-                            backaccountDto.StudentNo = backaccount.Student.StudentNo;
-                            backaccountDto.StudentId = backaccount.StudentID.Value;
-                            backaccountDto.Balance = (decimal)backaccount.Balance.Value - totalpayments - totaldmcm;
-                            backaccountDtos.Add(backaccountDto);
+                                Amount = (decimal)item.DCAmount.Value,
+                                DocDate = item.DocDate.Value.ToShortDateString(),
+                                DocNo = item.DocNum.Value.ToString()                                
+                            });
+                            totaldmcm += (decimal)item.DCAmount.Value;
                         }
                     }
+
+                    if (((decimal)group.Key.Balance.Value - totalpayments - totaldmcm) > 0.01m )// || ((decimal)group.Key.Balance.Value - totalpayments - totaldmcm) < -0.01m)
+                    {
+                        backaccountDto.Amount = (decimal)group.Key.Balance.Value;
+                        backaccountDto.BackaccountId = group.Key.BackaccountId;
+                        backaccountDto.CompletePeriodName = group.Key.Period + " " + group.Key.SchoolYearName;
+                        var studentcurriculum = db.Student_Curriculum.Where(m => m.StudentID == group.Key.StudentID && m.Status == 1).FirstOrDefault();
+                        AcademicDepartment academicdepartment = null;
+                        if (studentcurriculum != null)
+                        {
+                            academicdepartment = studentcurriculum.Curriculum.AcaDeptID.HasValue ? db.AcademicDepartment.Find(studentcurriculum.Curriculum.AcaDeptID.Value) : null;
+                        }
+                        var student = db.Student.Find(group.Key.StudentID);
+                        backaccountDto.Department = academicdepartment != null ? (group.Key.EducLevelID == 4 ? academicdepartment.AcaAcronym : "") : "";
+                        backaccountDto.DepartmentId = academicdepartment != null ? academicdepartment.AcaDeptID : 0;
+                        backaccountDto.EducationalLevel = group.Key.EducLevelName;
+                        backaccountDto.EducationalLevelId = group.Key.EducLevelID;
+                        backaccountDto.PeriodId = group.Key.PeriodID;
+                        backaccountDto.PeriodName = group.Key.EducLevelID < 4 ? "" : group.Key.Period;
+                        backaccountDto.SchoolYear = group.Key.SchoolYearName;
+                        backaccountDto.SchoolYearId = group.Key.SYID;
+                        backaccountDto.StudentName = student.FullName256;
+                        backaccountDto.StudentNo = student.StudentNo;
+                        backaccountDto.StudentId = group.Key.StudentID.Value;
+                        backaccountDto.Balance = (decimal)group.Key.Balance.Value - totalpayments - totaldmcm;
+                        backaccountDtos.Add(backaccountDto);
+                    }
                 }
+
             }
-            model.BackaccountDtos = backaccountDtos;
+            model.BackaccountDtos = backaccountDtos.OrderBy(m=>m.StudentName).ToList();
             if (model.ViewAs == 1)
             {
                 return View(model);
             }
             else
             {
-                ReportDocument reportDocument = new BackaccountSummaryReport();
-                reportDocument.SetDataSource(model.BackaccountDtos.OrderBy(m => m.StudentName).ToList());
-                return ExportType(model.ViewAs - 1, "BackaccountSummaryReport_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                if (model.ReportType == 1)
+                {
+                    ReportDocument reportDocument = new BackaccountSummaryReport();
+                    reportDocument.SetDataSource(model.BackaccountDtos.OrderBy(m => m.StudentName).ToList());
+                    return ExportType(model.ViewAs - 1, "BackaccountSummaryReport_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                }
+                else
+                {
+                    ReportDocument reportDocument = new BackaccountSummaryReportV2();
+                    var basiced = model.BackaccountDtos.Where(m => m.EducationalLevelId < 4).ToList();
+                    var hed = model.BackaccountDtos.Where(m => m.EducationalLevelId >= 4).ToList();
+                    reportDocument.Subreports["basiced"].SetDataSource(basiced);
+                    reportDocument.Subreports["hed"].SetDataSource(hed);
+                    return ExportType(model.ViewAs - 1, "BackaccountSummaryReport_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                }
             }
 
         }
