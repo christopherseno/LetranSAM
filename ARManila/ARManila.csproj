@@ -951,6 +951,12 @@
       <DependentUpon>ComparativeEndTermARBalanceReportV2.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Reports\ComparativeEndTermBalanceReport.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ComparativeEndTermBalanceReport.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Reports\CrystalReportResultPdf.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -5267,6 +5273,7 @@
     <Content Include="Views\FinanceReports\DiscountSummaryConsolidated.cshtml" />
     <Content Include="Views\DMCM\Discount.cshtml" />
     <Content Include="Views\FinanceReports\BackaccountSummary.cshtml" />
+    <Content Include="Views\FinanceReports\ComparativeEndTermBalance.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -5390,6 +5397,10 @@
     <EmbeddedResource Include="Reports\ComparativeEndTermARBalanceReportV2.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>ComparativeEndTermARBalanceReportV2.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\ComparativeEndTermBalanceReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ComparativeEndTermBalanceReport.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\DiscountSummaryV3.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

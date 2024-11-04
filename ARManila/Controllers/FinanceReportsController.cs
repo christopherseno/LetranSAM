@@ -154,6 +154,88 @@ namespace ARManila.Controllers
             }
 
         }
+
+        public ActionResult ComparativeEndTermBalance()
+        {
+            var comparativeendtermbalance = new ComparativeEndTermBalanceDTO();
+            comparativeendtermbalance.AsOfDate = DateTime.Today;
+            foreach (var schoolyear in db.GetBackaccountSchoolYear())
+            {
+                comparativeendtermbalance.GetBackaccountSchoolYear_Result.Add(new GetBackaccountSchoolYear_Result
+                {
+                    IsSelected = false,
+                    SchoolYearID = schoolyear.SchoolYearID,
+                    SchoolYearName = schoolyear.SchoolYearName
+                });
+            }
+            return View(comparativeendtermbalance);
+            
+
+        }
+        [HttpPost]
+        public ActionResult ComparativeEndTermBalance(ComparativeEndTermBalanceDTO model)
+        {
+            List<ComparativeEndTermBalance> balances = new List<ComparativeEndTermBalance>();
+            foreach (var item in model.GetBackaccountSchoolYear_Result.Where(m=>m.IsSelected))
+            {
+                var periods = db.Period.Where(m => m.SchoolYearID == item.SchoolYearID && m.EducLevelID == Period.EducLevelID);
+                foreach (var period in periods)
+                {
+                    var artrails = db.ArTrail2024(period.PeriodID,model.AsOfDate).ToList();                    
+                    var templistcreditbalance = artrails.Where(m => m.ArBalance < -0.1m).ToList();
+                    var templistdebitbalance = artrails.Where(m => m.ArBalance > 0.1m).ToList();
+                    ComparativeEndTermBalance balance = new ComparativeEndTermBalance();
+                    balance.PeriodId = period.PeriodID;
+                    balance.Period = period.Period1;
+                    balance.SchoolYearId = period.SchoolYearID;
+                    balance.SchoolYear = period.SchoolYear.SchoolYearName;
+                    balance.EducationalLevelId = period.EducLevelID ?? 0;
+                    balance.EducationalLevel = period.EducationalLevel1.EducLevelName;
+                    balance.TotalStudent = artrails.Count;
+                    balance.TotalARSetup = (decimal)artrails.Sum(m => m.Assessment);
+                    balance.DebitCount = templistdebitbalance.Count;
+                    balance.Debit = (decimal)templistdebitbalance.Sum(m => m.Assessment) + (decimal)templistdebitbalance.Sum(m => m.Balance) + (decimal)templistdebitbalance.Sum(m => m.DNForm) + (decimal)templistdebitbalance.Sum(m => m.CMForm) + (decimal)templistdebitbalance.Sum(m => m.DebitMemo) - (decimal)templistdebitbalance.Sum(m => m.CreditMemo) - (decimal)templistdebitbalance.Sum(m => m.Discount) - (decimal)templistdebitbalance.Sum(m => m.AdjDiscount) - (decimal)templistdebitbalance.Sum(m => m.Voucher) - (decimal)templistdebitbalance.Sum(m => m.Payment) - (decimal)templistdebitbalance.Sum(m => m.Processing);
+                    balance.CreditCount = templistcreditbalance.Count;
+                    balance.Credit = (decimal)templistcreditbalance.Sum(m => m.Assessment) + (decimal)templistcreditbalance.Sum(m => m.Balance) + (decimal)templistcreditbalance.Sum(m => m.DNForm) + (decimal)templistcreditbalance.Sum(m => m.CMForm) + (decimal)templistcreditbalance.Sum(m => m.CreditMemo) - (decimal)templistcreditbalance.Sum(m => m.CreditMemo) - (decimal)templistcreditbalance.Sum(m => m.Discount) - (decimal)templistcreditbalance.Sum(m => m.AdjDiscount) - (decimal)templistcreditbalance.Sum(m => m.Voucher) - (decimal)templistcreditbalance.Sum(m => m.Payment) - (decimal)templistcreditbalance.Sum(m => m.Processing);
+                    balances.Add(balance);
+                    //summary.BeginningBalance.Amount1 += (decimal)artrails.Sum(m => m.Balance);
+                    //summary.Collection.Amount1 += -((decimal)artrails.Sum(m => m.Processing) + (decimal)artrails.Sum(m => m.Payment));
+                    //summary.Adjustment.Amount1 += (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo);
+                    //summary.Voucher.Amount1 += -(decimal)artrails.Sum(m => m.Voucher);
+                    //summary.Discount.Amount1 += -(decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount);
+                    //summary.ARBalance.Amount1 += (decimal)artrails.Sum(m => m.Assessment) + (decimal)artrails.Sum(m => m.Balance) + (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo) - (decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount) - (decimal)artrails.Sum(m => m.Voucher) - (decimal)artrails.Sum(m => m.Payment) - (decimal)artrails.Sum(m => m.Processing);
+                    //summary.TotalStudentsWithBalance.Amount1 += artrails.Where(m => m.ArBalance >= 1).Count();
+                    //summary.ARBalancePercent1.Amount1 = summary.TotalStudent.Amount1 == 0 ? 0 : (summary.TotalStudentsWithBalance.Amount1 / summary.TotalStudent.Amount1);
+                    //summary.ARBalancePercent2.Amount1 = summary.TotalFees.Amount1 == 0 ? 0 : (summary.ARBalance.Amount1 / summary.TotalFees.Amount1);
+                    //summary.CollectionPercent1.Amount1 = (1 - summary.ARBalancePercent1.Amount1);
+                    //summary.CollectionPercent2.Amount1 = (1 - summary.ARBalancePercent2.Amount1);
+                }
+
+            }
+            var comparativeendtermbalance = new ComparativeEndTermBalanceDTO();
+            comparativeendtermbalance.AsOfDate = DateTime.Today;
+            foreach (var schoolyear in db.GetBackaccountSchoolYear())
+            {
+                comparativeendtermbalance.GetBackaccountSchoolYear_Result.Add(new GetBackaccountSchoolYear_Result
+                {
+                    IsSelected = false,
+                    SchoolYearID = schoolyear.SchoolYearID,
+                    SchoolYearName = schoolyear.SchoolYearName
+                });
+            }
+            if (model.ViewAs == 1)
+            {
+                comparativeendtermbalance.ComparativeEndTermBalances = balances;
+                return View(comparativeendtermbalance);
+            }
+            else
+            {
+                ReportDocument reportDocument = new ComparativeEndTermBalanceReport();               
+                reportDocument.SetDataSource(balances);                
+                return ExportType(model.ViewAs - 1, "ComparativeEndTermBalance_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+            }
+           
+        }
         #region ARSetupSummary
 
         public ActionResult DiscountSummaryConsolidated()
@@ -260,6 +342,9 @@ namespace ARManila.Controllers
             GetARSummaryDataViaArTrail(periodids, asofdate, summary, consolidatedperiodids);
             return View(summary);
         }
+
+
+
 
         [HttpPost]
         public ActionResult ARSetupSummary(DateTime asofdate, int viewas, string isconsolidated, string isschoolyear)

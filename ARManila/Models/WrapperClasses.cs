@@ -8,6 +8,95 @@ using System.Web.Mvc;
 
 namespace ARManila.Models
 {
+    public class ComparativeEndTermBalance
+    {
+        public int PeriodId { get; set; }
+        public int EducationalLevelId { get; set; }
+        public int SchoolYearId { get; set; }
+        public string Period { get; set; }
+        public string SchoolYear { get; set; }
+        public string EducationalLevel { get; set; }
+        public int DebitCount { get; set; }
+        public decimal Debit { get; set; }
+        public int CreditCount { get; set; }
+        public decimal Credit { get; set; }
+        public int TotalStudent { get; set; }
+        public decimal TotalARSetup { get; set; }
+        public int DebitCreditCount
+        {
+            get
+            {
+                return this.DebitCount + this.CreditCount;
+            }
+        }
+        public decimal DebitCredit
+        {
+            get
+            {
+                return this.Debit + this.Credit;
+            }
+        }
+        public decimal PercentTotalCount
+        {
+            get
+            {
+                if (this.TotalStudent == 0)
+                    return 0;
+                else
+                return ((this.CreditCount + this.DebitCount) / (decimal)this.TotalStudent) * 100;
+            }
+        }
+        public decimal PercentDebitCount
+        {
+            get
+            {
+                if (this.TotalStudent == 0)
+                    return 0;
+                else
+                    return (this.DebitCount / (decimal)this.TotalStudent) * 100;
+            }
+        }
+        public decimal PercentCreditCount
+        {
+            get
+            {
+                if (this.TotalStudent == 0)
+                    return 0;
+                else
+                    return (this.CreditCount / (decimal)this.TotalStudent) * 100;
+            }
+        }
+        public decimal PercentageTotal
+        {
+            get
+            {
+                if (this.TotalStudent == 0)
+                    return 0;
+                else
+                    return ((this.Debit + this.Credit) / this.TotalARSetup) * 100;
+            }
+        }
+        public decimal PercentageDebit
+        {
+            get
+            {
+                if (this.TotalStudent == 0)
+                    return 0;
+                else
+                    return (this.Debit / this.TotalARSetup) * 100;
+            }
+        }
+        public decimal PercentageCredit
+        {
+            get
+            {
+                if (this.TotalStudent == 0)
+                    return 0;
+                else
+                    return ( this.Credit / this.TotalARSetup) * 100;
+            }
+        }
+    }
     public partial class GetBackaccountSchoolYear_Result
     {
         public bool IsSelected { get; set; }

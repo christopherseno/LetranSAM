@@ -1,0 +1,104 @@
+﻿@model ARManila.Models.ReportsDTO.ComparativeEndTermBalanceDTO
+@{
+    ViewBag.Title = "Comparative End-Term Balance";
+}
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item">Report Menu</span>
+    <span class="breadcrumb-item active">Comparative End-term Balance</span>
+</nav>
+
+<h2>Comparative End-term Balance</h2>
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="mb-12">
+                <label class="form-label">Select School Year</label>
+                <div class="space-x-0">
+                    @for (int i = 0; i < Model.GetBackaccountSchoolYear_Result.Count; i++)
+                    {
+                        <div class="form-check form-check-inline">
+                            @Html.HiddenFor(m => Model.GetBackaccountSchoolYear_Result[i].SchoolYearID)
+                            @Html.HiddenFor(m => Model.GetBackaccountSchoolYear_Result[i].SchoolYearName)
+                            @Html.CheckBoxFor(m => Model.GetBackaccountSchoolYear_Result[i].IsSelected,
+                                new
+                                {
+                                    @class = "form-check-input",
+                                    @checked = ""
+                                })
+                            <label class="form-check-label" for="example-checkbox-inline1">@Model.GetBackaccountSchoolYear_Result[i].SchoolYearName</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="mb-12">
+                <label class="form-label">As Of Date</label>
+                <input type="date" value=@Model.AsOfDate.ToString("yyyy-MM-dd") name="AsOfDate" id="AsOfDate" class="form-control" />
+            </div>
+            <div class="mb-12">
+                <label>View As</label>
+                <select id="ViewAs" name="ViewAs" class="form-select">
+                    <option value="1">Web</option>
+                    <option value="2">PDF</option>
+                    <option value="3">Excel</option>
+                </select>
+            </div>
+            <div class="mb=12">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+<hr />
+@if (Model.ComparativeEndTermBalances.Count > 0)
+{
+    <table class="table table-bordered table-striped table-vcenter js-dataTable-full dataTable no-footer" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+        <thead>
+            <tr>
+                <th>School Year</th>
+                <th>Semester / Term </th>
+                <th>No of Students</th>
+                <th>AR Balance</th>
+                <th>Total Enrolled</th>
+                <th>Total Set-up</th>
+                <th>% Stat</th>
+                <th>% Setup</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var balance in Model.ComparativeEndTermBalances)
+            {
+                <tr>
+                    <td rowspan="3">@balance.SchoolYear</td>
+                    <td>@balance.Period</td>
+                    <td align="right">@balance.DebitCreditCount</td>
+                    <td align="right">@balance.DebitCredit.ToString("#,##0.00")</td>
+                    <td align="right">@balance.TotalStudent</td>
+                    <td align="right">@balance.TotalARSetup.ToString("#,##0.00")</td>
+                    <td align="right">@balance.PercentTotalCount.ToString("##0.0")</td>
+                    <td align="right">@balance.PercentageTotal.ToString("##0.0")</td>
+                </tr>
+                <tr>
+                    <td>&nbsp; Debit Balance</td>
+                    <td align="right">@balance.DebitCount</td>
+                    <td align="right">@balance.Debit.ToString("#,##0.00")</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td align="right">@balance.PercentDebitCount.ToString("##0.0")</td>
+                    <td align="right">@balance.PercentageDebit.ToString("##0.0")</td>
+                </tr>
+                <tr>
+                    <td>&nbsp; Credit Balance</td>
+                    <td align="right">@balance.CreditCount</td>
+                    <td align="right">@balance.Credit.ToString("#,##0.00")</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td align="right">@balance.PercentCreditCount.ToString("##0.0")</td>
+                    <td align="right">@balance.PercentageCredit.ToString("##0.0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

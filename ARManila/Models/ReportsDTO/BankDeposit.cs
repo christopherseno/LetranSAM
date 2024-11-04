@@ -6,6 +6,13 @@ using System.Web;
 using ARManila.Models;
 namespace ARManila.Models.ReportsDTO
 {
+    public class ComparativeEndTermBalanceDTO
+    {
+        public DateTime AsOfDate { get; set; }
+        public int ViewAs { get; set; }        
+        public List<GetBackaccountSchoolYear_Result> GetBackaccountSchoolYear_Result { get; set; } = new List<GetBackaccountSchoolYear_Result>();
+        public List<ComparativeEndTermBalance> ComparativeEndTermBalances { get; set; } = new List<ComparativeEndTermBalance>();
+    }
     public class BackaccountSummaryDTO
     {
         public DateTime AsOfDate { get; set; }
