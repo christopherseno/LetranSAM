@@ -139,7 +139,8 @@ namespace ARManila.Controllers
                     pos++;
                     receiptvoucher.details.Add(receiptdetail);
                 }
-                receiptvoucher.description = String.Join(";", description.ToArray());
+                var finaldescription = String.Join(";", description.ToArray());
+                receiptvoucher.description =finaldescription.Length> 100 ? finaldescription.Substring(0,100) : finaldescription;
                 dcrs.Add(receiptvoucher);
             }
 

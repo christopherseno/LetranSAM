@@ -24,15 +24,17 @@ namespace ARManila
             return Task.Run(() => {
                 MailMessage email = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-                email.From = new MailAddress("itms@letranbataan.edu.ph", "ITSD");
+                //email.From = new MailAddress("itms@letranbataan.edu.ph", "ITSD");
+                email.From = new MailAddress("admin@letran.edu.ph", "LETRAN");
                 email.To.Add(message.Destination);                
                 email.Subject = message.Subject;
                 email.IsBodyHtml = true;
                 email.Body = message.Body;
-                email.Bcc.Add("admin@letranbataan.edu.ph");
+                //email.Bcc.Add("admin@letranbataan.edu.ph");
                 SmtpServer.Port = 587;
                 SmtpServer.UseDefaultCredentials = false;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("itms@letranbataan.edu.ph", "1T3@mWoRk0");
+                SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp");
+                //SmtpServer.Credentials = new System.Net.NetworkCredential("itms@letranbataan.edu.ph", "1T3@mWoRk0");
                 //SmtpServer.Credentials = new System.Net.NetworkCredential("christopher.seno@letran.edu.ph", "-951Han5");
                 SmtpServer.EnableSsl = true;
                 SmtpServer.Send(email);

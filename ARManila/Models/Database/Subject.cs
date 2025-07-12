@@ -21,6 +21,7 @@ namespace ARManila.Models
             this.Lab = new HashSet<Lab>();
             this.Schedule = new HashSet<Schedule>();
             this.Subject1 = new HashSet<Subject>();
+            this.Others = new HashSet<Others>();
         }
     
         public int SubjectID { get; set; }
@@ -52,5 +53,7 @@ namespace ARManila.Models
         public virtual ICollection<Subject> Subject1 { get; set; }
         public virtual Subject Subject2 { get; set; }
         public virtual EducationalLevel EducationalLevel { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Others> Others { get; set; }
     }
 }

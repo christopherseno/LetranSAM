@@ -23,7 +23,6 @@ namespace ARManila.Models
             this.EducationalLevelDepartment = new HashSet<EducationalLevelDepartment>();
             this.Curriculum = new HashSet<Curriculum>();
             this.DiscountType = new HashSet<DiscountType>();
-            this.FeeName = new HashSet<FeeName>();
             this.Payment = new HashSet<Payment>();
             this.PaySchedule = new HashSet<PaySchedule>();
             this.Period1 = new HashSet<Period>();
@@ -32,6 +31,7 @@ namespace ARManila.Models
             this.Supplemental = new HashSet<Supplemental>();
             this.Miscellaneous = new HashSet<Miscellaneous>();
             this.Faculty = new HashSet<Faculty>();
+            this.FeeName = new HashSet<FeeName>();
         }
     
         public int EducLevelID { get; set; }
@@ -60,8 +60,6 @@ namespace ARManila.Models
         public virtual Period Period { get; set; }
         public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FeeName> FeeName { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Payment> Payment { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaySchedule> PaySchedule { get; set; }
@@ -77,5 +75,7 @@ namespace ARManila.Models
         public virtual ICollection<Miscellaneous> Miscellaneous { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FeeName> FeeName { get; set; }
     }
 }

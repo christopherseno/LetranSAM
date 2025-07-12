@@ -232,6 +232,7 @@ namespace ARManila.Models
                 return (decimal)(this.Assessment + this.Balance + this.DNForm + this.CMForm + this.DebitMemo - this.CreditMemo - this.Discount - this.AdjDiscount - this.Voucher - this.Processing) - this.Payment;
             }
         }
+        public decimal TotalARSetup { get; set; }
     }
     public partial class SchoolYear
     {

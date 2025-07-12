@@ -24,12 +24,12 @@ namespace ARManila.Models
     }
     public class QneJournal : QneJournalBase
     {
-        [Required(ErrorMessage ="Start date is required")]
+        [Required(ErrorMessage = "Start date is required")]
         public DateTime SDate { get; set; }
         [Required(ErrorMessage = "End date is required.")]
         public DateTime EDate { get; set; }
         [Required]
-        public bool IsQne { get; set; }       
+        public bool IsQne { get; set; }
         public List<QneJournalEntryDTO> Entries = new List<QneJournalEntryDTO>();
         [Required]
         public string Action { get; set; }
@@ -47,9 +47,19 @@ namespace ARManila.Models
         public string taxCode { get; set; }
         public string costCentre { get; set; }
         public string project { get; set; }
+        public int IsDebit
+        {
+            get
+            {
+                return this.debit == 0 ? 2 : 1;
+            }
+        }
         [JsonIgnore]
         public string Department { get; set; }
-        
+        [JsonIgnore]
+        public string AcctNo { get; set; }
+        [JsonIgnore]
+        public string GLCode { get; set; }
     }
     public class Dcr
     {
@@ -66,11 +76,11 @@ namespace ARManila.Models
     }
     public class DcrDetail
     {
-        public int pos { get; set; }        
+        public int pos { get; set; }
         public string account { get; set; }
         public string description { get; set; }
         public string project { get; set; }
         public decimal amount { get; set; }
-   
+
     }
 }

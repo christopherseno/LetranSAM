@@ -11,17 +11,18 @@ namespace ARManila.Models.ReportsDTO
         public string StudentNo { get; set; }
     }
     public class ARSetupSummaryConsolidatedItem
-    {       
+    {
         public string Item { get; set; }
         public decimal ARFeesSetup { get; set; }
+        public decimal TotalFees { get; set; }
         public decimal ARBalance { get; set; }
         public bool IsCollegeOrGs { get; set; } = false;
         public decimal AgePercent
         {
             get
             {
-                return this.ARFeesSetup==0 ? 0 : this.ARBalance / this.ARFeesSetup; 
-            }            
+                return this.TotalFees == 0 ? 0 : Math.Round(this.ARBalance / this.TotalFees, 2);
+            }
         }
         public int Order { get; set; }
     }
@@ -38,15 +39,18 @@ namespace ARManila.Models.ReportsDTO
         public decimal AmountB2 { get; set; } = 0;
         public decimal AmountB3 { get; set; } = 0;
         public decimal AmountB4 { get; set; } = 0;
-        public decimal Total { 
-            get 
+        public decimal BeginningBalanceTotal { get; set; }
+        public decimal Total
+        {
+            get
             {
                 return this.IsBeginningBalance ? this.Amount1 : (
                     this.IsARTotalUsingBeginningBalance ? this.Amount1 + this.Amount2 + this.Amount3 + this.Amount4 - this.AmountB2 - this.AmountB3 - this.AmountB4
                     : this.Amount1 + this.Amount2 + this.Amount3 + this.Amount4);
-            } 
+            }
         }
         public decimal TotalRW { get; set; } = 0;
+       
     }
     public class ARSetupSummary
     {
@@ -54,7 +58,7 @@ namespace ARManila.Models.ReportsDTO
         public string Subheader1 { get; set; }
         public string Subheader2 { get; set; }
         public string Subheader3 { get; set; }
-        public string Subheader4 { get; set; }        
+        public string Subheader4 { get; set; }
         public string AsOfDate { get; set; }
         public string PreparedBy { get; set; }
         public List<string> Periods { get; set; } = new List<string>();

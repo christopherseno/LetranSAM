@@ -8,9 +8,11 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using ARManila.Models;
+using ARManila.Models.OtherDTO;
 using ARManila.Models.ReportsDTO;
 using ARManila.Reports;
 using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Shared;
 using Newtonsoft.Json;
 
 namespace ARManila.Controllers
@@ -37,15 +39,112 @@ namespace ARManila.Controllers
         private void InitializeDatabaseContext()
         {
             db.Database.CommandTimeout = 300;
+            if (HttpContext.Request.Cookies["PeriodId"] != null)
+            {
+                var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+                Period = db.Period.Find(periodid);
+                if (Period == null)
+                {
+                    throw new Exception("Invalid period id.");
+                }
+            }
+            employee = db.Employee.FirstOrDefault(m => m.EmployeeNo == User.Identity.Name);
+        }
+
+        public ActionResult ARTrail()
+        {
+            ARTrailDTO aRTrail = new ARTrailDTO();
+            aRTrail.AsOfDate = DateTime.Today;
+            return View(aRTrail);
+        }
+        [HttpPost]
+        public ActionResult ARTrail(ARTrailDTO model, string isschoolyear)
+        {
             var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
             Period = db.Period.Find(periodid);
             if (Period == null)
             {
                 throw new Exception("Invalid period id.");
             }
-            employee = db.Employee.FirstOrDefault(m => m.EmployeeNo == User.Identity.Name);
-        }
+            if (isschoolyear != null && isschoolyear.Equals("on"))
+            {
+                var rawdata = db.GetArTrailBySchoolYear(Period.SchoolYearID, Period.EducLevelID.Value, model.AsOfDate.ToString("MM-dd-yyyy"));
+                var deptrawdata = db.GetArTrailBySchoolYearWithDept(Period.SchoolYearID, Period.EducLevelID.Value, model.AsOfDate.ToString("MM-dd-yyyy"));
+                foreach (var item in rawdata)
+                {
+                    item.StudentName = item.LastName == null || item.FirstName == null ? "Not Set" : Utility.DecryptString(item.LastName) + ", " + Utility.DecryptString(item.FirstName);
+                    item.BegBalanceSource = item.Balance1st != 0 ? "1st Term" : (item.Balance2nd != 0 ? "2nd Term" : (item.Balance3rd != 0 ? "3rd Term" : ""));
+                }
+                if (model.ViewAs == 1)
+                {
+                    model.ARTrailWrappers = rawdata;
+                    return View(model);
+                }
+                else
+                {
+                    ReportDocument reportDocument = new ARTrailReport();
+                    reportDocument.Subreports["DepartmentSummary"].SetDataSource(deptrawdata);
+                    reportDocument.SetDataSource(rawdata);
+                    ParameterValues param1 = new ParameterValues();
+                    ParameterDiscreteValue paramValue1 = new ParameterDiscreteValue();
+                    paramValue1.Value = "1";
+                    param1.Add(paramValue1);
+                    ParameterValues param0 = new ParameterValues();
+                    ParameterDiscreteValue paramValue0 = new ParameterDiscreteValue();
+                    paramValue0.Value = "0";
+                    param0.Add(paramValue0);
+                    reportDocument.ParameterFields["showvalidationdate"].CurrentValues = param0;
+                    if (Period.EducLevelID == 4)
+                        reportDocument.ParameterFields["showdepartmentsummary"].CurrentValues = param1;
+                    else
+                        reportDocument.ParameterFields["showdepartmentsummary"].CurrentValues = param0;
 
+                    if (rawdata == null || deptrawdata == null)
+                    {
+                        throw new Exception("Data source is null. Ensure it is loaded before setting parameters.");
+                    }
+                    return ExportType(model.ViewAs - 1, "ARTrail_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                }
+            }
+            else
+            {
+                var rawdata = db.ArTrail2024(Period.PeriodID, model.AsOfDate);
+                List<ARTrailWrapper> data = new List<ARTrailWrapper>();
+                foreach (var item in rawdata)
+                {
+                    data.Add(item.ToDto());
+                }
+
+                if (model.ViewAs == 1)
+                {
+                    model.ARTrailWrappers = data;
+                    return View(model);
+                }
+                else
+                {
+                    ReportDocument reportDocument = new ARTrailReport();
+                    reportDocument.SetDataSource(data);
+                    reportDocument.Subreports["DepartmentSummary"].SetDataSource(data);
+                    ParameterValues param1 = new ParameterValues();
+                    ParameterDiscreteValue paramValue1 = new ParameterDiscreteValue();
+                    paramValue1.Value = "1";
+                    param1.Add(paramValue1);
+                    ParameterValues param0 = new ParameterValues();
+                    ParameterDiscreteValue paramValue0 = new ParameterDiscreteValue();
+                    paramValue0.Value = "0";
+                    param0.Add(paramValue0);
+                    reportDocument.ParameterFields["showvalidationdate"].CurrentValues = param1;
+                    if (Period.EducLevelID == 4)
+                        reportDocument.ParameterFields[1].CurrentValues = param1;
+                    else
+                        reportDocument.ParameterFields[1].CurrentValues = param0;
+
+                    return ExportType(model.ViewAs - 1, "ARTrail_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
+                }
+
+            }
+
+        }
         public ActionResult BackaccountSummary()
         {
             var backaccountsummary = new BackaccountSummaryDTO();
@@ -71,36 +170,36 @@ namespace ARManila.Controllers
             {
                 var periodids = db.Period.Where(m => m.SchoolYearID == schoolyear.SchoolYearID).Select(m => m.PeriodID).ToList().ToArray();
                 var backaccounts = db.Backaccounts(string.Join(",", periodids), asofdate);
-                foreach (var group in backaccounts.GroupBy(m=> new {m.BackaccountId, m.Balance, m.EducLevelID, m.EducLevelName, m.Period, m.PeriodID, m.SchoolYearName, m.StudentID, m.SYID }))
+                foreach (var group in backaccounts.GroupBy(m => new { m.BackaccountId, m.Balance, m.EducLevelID, m.EducLevelName, m.Period, m.PeriodID, m.SchoolYearName, m.StudentID, m.SYID }))
                 {
-                    BackaccountDto backaccountDto = new BackaccountDto();                    
+                    BackaccountDto backaccountDto = new BackaccountDto();
                     decimal totalpayments = 0;
                     decimal totaldmcm = 0;
                     foreach (var item in group)
-                    {                       
+                    {
                         if (item.ORAmont.HasValue)
                         {
                             backaccountDto.Payments.Add(new BackaccountPaymentDto
                             {
                                 Amount = (decimal)item.ORAmont.Value,
                                 OrDate = item.ORDate.Value.ToShortDateString(),
-                                OrNo = item.ORNo                                
+                                OrNo = item.ORNo
                             });
                             totalpayments += (decimal)item.ORAmont.Value;
                         }
-                        if(item.DocNum.HasValue)
+                        if (item.DocNum.HasValue)
                         {
                             backaccountDto.Dmcms.Add(new BackaccountDmcmDto
                             {
                                 Amount = (decimal)item.DCAmount.Value,
                                 DocDate = item.DocDate.Value.ToShortDateString(),
-                                DocNo = item.DocNum.Value.ToString()                                
+                                DocNo = item.DocNum.Value.ToString()
                             });
                             totaldmcm += (decimal)item.DCAmount.Value;
                         }
                     }
 
-                    if (((decimal)group.Key.Balance.Value - totalpayments - totaldmcm) > 0.01m )// || ((decimal)group.Key.Balance.Value - totalpayments - totaldmcm) < -0.01m)
+                    if (((decimal)group.Key.Balance.Value - totalpayments - totaldmcm) > 0.01m)// || ((decimal)group.Key.Balance.Value - totalpayments - totaldmcm) < -0.01m)
                     {
                         backaccountDto.Amount = (decimal)group.Key.Balance.Value;
                         backaccountDto.BackaccountId = group.Key.BackaccountId;
@@ -129,7 +228,7 @@ namespace ARManila.Controllers
                 }
 
             }
-            model.BackaccountDtos = backaccountDtos.OrderBy(m=>m.StudentName).ToList();
+            model.BackaccountDtos = backaccountDtos.OrderBy(m => m.StudentName).ToList();
             if (model.ViewAs == 1)
             {
                 return View(model);
@@ -169,21 +268,26 @@ namespace ARManila.Controllers
                 });
             }
             return View(comparativeendtermbalance);
-            
+
 
         }
         [HttpPost]
         public ActionResult ComparativeEndTermBalance(ComparativeEndTermBalanceDTO model)
         {
             List<ComparativeEndTermBalance> balances = new List<ComparativeEndTermBalance>();
-            foreach (var item in model.GetBackaccountSchoolYear_Result.Where(m=>m.IsSelected))
+            List<ArTrail2024_Result> artrailsall = new List<ArTrail2024_Result>();
+            foreach (var item in model.GetBackaccountSchoolYear_Result.Where(m => m.IsSelected))
             {
                 var periods = db.Period.Where(m => m.SchoolYearID == item.SchoolYearID && m.EducLevelID == Period.EducLevelID);
                 foreach (var period in periods)
                 {
-                    var artrails = db.ArTrail2024(period.PeriodID,model.AsOfDate).ToList();                    
-                    var templistcreditbalance = artrails.Where(m => m.ArBalance < -0.1m).ToList();
-                    var templistdebitbalance = artrails.Where(m => m.ArBalance > 0.1m).ToList();
+                    var artrails = db.ArTrail2024(period.PeriodID, model.AsOfDate).ToList();
+                    // var artrails = artrailraw.ToList();
+                    artrailsall.AddRange(artrails);
+                    var truetemplistcreditbalance = artrails.Where(m => m.ArBalance <= -1).ToList();//artrails.Where(m => (m.Assessment + m.Balance + m.DNForm + m.CMForm + m.DebitMemo - m.CreditMemo - m.Discount - m.AdjDiscount - m.Voucher - (double)m.Payment - m.Processing) <= -1).ToList();
+                    var creditbalance = artrails.Where(m => m.ArBalance < 1).ToList();
+                    //var templistdebitbalance = artrails.Where(m => (m.Assessment + m.Balance + m.DNForm +  m.CMForm + m.DebitMemo - m.CreditMemo - m.Discount - m.AdjDiscount - m.Voucher -  (double)m.Payment -  m.Processing) >= 1).ToList();
+                    var templistdebitbalance = artrails.Where(m => m.ArBalance >= 1).ToList();
                     ComparativeEndTermBalance balance = new ComparativeEndTermBalance();
                     balance.PeriodId = period.PeriodID;
                     balance.Period = period.Period1;
@@ -194,24 +298,53 @@ namespace ARManila.Controllers
                     balance.TotalStudent = artrails.Count;
                     balance.TotalARSetup = (decimal)artrails.Sum(m => m.Assessment);
                     balance.DebitCount = templistdebitbalance.Count;
-                    balance.Debit = (decimal)templistdebitbalance.Sum(m => m.Assessment) + (decimal)templistdebitbalance.Sum(m => m.Balance) + (decimal)templistdebitbalance.Sum(m => m.DNForm) + (decimal)templistdebitbalance.Sum(m => m.CMForm) + (decimal)templistdebitbalance.Sum(m => m.DebitMemo) - (decimal)templistdebitbalance.Sum(m => m.CreditMemo) - (decimal)templistdebitbalance.Sum(m => m.Discount) - (decimal)templistdebitbalance.Sum(m => m.AdjDiscount) - (decimal)templistdebitbalance.Sum(m => m.Voucher) - (decimal)templistdebitbalance.Sum(m => m.Payment) - (decimal)templistdebitbalance.Sum(m => m.Processing);
-                    balance.CreditCount = templistcreditbalance.Count;
-                    balance.Credit = (decimal)templistcreditbalance.Sum(m => m.Assessment) + (decimal)templistcreditbalance.Sum(m => m.Balance) + (decimal)templistcreditbalance.Sum(m => m.DNForm) + (decimal)templistcreditbalance.Sum(m => m.CMForm) + (decimal)templistcreditbalance.Sum(m => m.CreditMemo) - (decimal)templistcreditbalance.Sum(m => m.CreditMemo) - (decimal)templistcreditbalance.Sum(m => m.Discount) - (decimal)templistcreditbalance.Sum(m => m.AdjDiscount) - (decimal)templistcreditbalance.Sum(m => m.Voucher) - (decimal)templistcreditbalance.Sum(m => m.Payment) - (decimal)templistcreditbalance.Sum(m => m.Processing);
+                    balance.Debit = (decimal)templistdebitbalance.Sum(m => m.ArBalance); //(decimal)templistdebitbalance.Sum(m => m.Assessment) + (decimal)templistdebitbalance.Sum(m => m.Balance) + (decimal)templistdebitbalance.Sum(m => m.DNForm) + (decimal)templistdebitbalance.Sum(m => m.CMForm) + (decimal)templistdebitbalance.Sum(m => m.DebitMemo) - (decimal)templistdebitbalance.Sum(m => m.CreditMemo) - (decimal)templistdebitbalance.Sum(m => m.Discount) - (decimal)templistdebitbalance.Sum(m => m.AdjDiscount) - (decimal)templistdebitbalance.Sum(m => m.Voucher) - (decimal)templistdebitbalance.Sum(m => m.Payment) - (decimal)templistdebitbalance.Sum(m => m.Processing);
+                    var total = (decimal)artrails.Sum(m => m.Assessment) + (decimal)artrails.Sum(m => m.Balance) + (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo) - (decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount) - (decimal)artrails.Sum(m => m.Voucher) - (decimal)artrails.Sum(m => m.Payment) - (decimal)artrails.Sum(m => m.Processing);
+                    balance.Credit = (decimal)creditbalance.Sum(m => m.ArBalance); //total - balance.Debit; //(decimal)truetemplistcreditbalance.Sum(m => m.Assessment) + (decimal)truetemplistcreditbalance.Sum(m => m.Balance) + (decimal)truetemplistcreditbalance.Sum(m => m.DNForm) + (decimal)truetemplistcreditbalance.Sum(m => m.CMForm) + (decimal)truetemplistcreditbalance.Sum(m => m.CreditMemo) - (decimal)truetemplistcreditbalance.Sum(m => m.CreditMemo) - (decimal)truetemplistcreditbalance.Sum(m => m.Discount) - (decimal)truetemplistcreditbalance.Sum(m => m.AdjDiscount) - (decimal)truetemplistcreditbalance.Sum(m => m.Voucher) - (decimal)truetemplistcreditbalance.Sum(m => m.Payment) - (decimal)truetemplistcreditbalance.Sum(m => m.Processing);                    
+                    balance.CreditCount = truetemplistcreditbalance.Count;
                     balances.Add(balance);
-                    //summary.BeginningBalance.Amount1 += (decimal)artrails.Sum(m => m.Balance);
-                    //summary.Collection.Amount1 += -((decimal)artrails.Sum(m => m.Processing) + (decimal)artrails.Sum(m => m.Payment));
-                    //summary.Adjustment.Amount1 += (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo);
-                    //summary.Voucher.Amount1 += -(decimal)artrails.Sum(m => m.Voucher);
-                    //summary.Discount.Amount1 += -(decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount);
-                    //summary.ARBalance.Amount1 += (decimal)artrails.Sum(m => m.Assessment) + (decimal)artrails.Sum(m => m.Balance) + (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo) - (decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount) - (decimal)artrails.Sum(m => m.Voucher) - (decimal)artrails.Sum(m => m.Payment) - (decimal)artrails.Sum(m => m.Processing);
-                    //summary.TotalStudentsWithBalance.Amount1 += artrails.Where(m => m.ArBalance >= 1).Count();
-                    //summary.ARBalancePercent1.Amount1 = summary.TotalStudent.Amount1 == 0 ? 0 : (summary.TotalStudentsWithBalance.Amount1 / summary.TotalStudent.Amount1);
-                    //summary.ARBalancePercent2.Amount1 = summary.TotalFees.Amount1 == 0 ? 0 : (summary.ARBalance.Amount1 / summary.TotalFees.Amount1);
-                    //summary.CollectionPercent1.Amount1 = (1 - summary.ARBalancePercent1.Amount1);
-                    //summary.CollectionPercent2.Amount1 = (1 - summary.ARBalancePercent2.Amount1);
                 }
 
             }
+            var artrailallfinal = new List<ArTrail2024_Result>();
+            foreach (var item in artrailsall.GroupBy(m => new { m.SchoolYearName, m.StudentNo })
+                .Select(g => new
+                {
+                    g.Key.SchoolYearName,
+                    g.Key.StudentNo,
+                    MaxPeriodId = g.Max(m => m.PeriodID.Value),
+                    StudentSetup = g.Sum(m => m.Assessment)
+                }))
+            {
+                var artrail = artrailsall.FirstOrDefault(m => m.SchoolYearName.Equals(item.SchoolYearName)
+                    && m.PeriodID == item.MaxPeriodId && m.StudentNo == item.StudentNo);
+                artrail.TotalARSetup = (decimal)item.StudentSetup;
+                artrailallfinal.Add(artrail);
+
+            }
+            foreach (var item in artrailallfinal.GroupBy(m => m.SchoolYearName))
+            {
+                var schoolyear = db.SchoolYear.FirstOrDefault(m => m.SchoolYearName == item.Key);
+                ComparativeEndTermBalance schoolyearbalance = new ComparativeEndTermBalance();
+                schoolyearbalance.PeriodId = 1000000;
+                schoolyearbalance.Period = "Total";
+                schoolyearbalance.SchoolYearId = schoolyear.SYID;
+                schoolyearbalance.SchoolYear = schoolyear.SchoolYearName;
+                schoolyearbalance.EducationalLevelId = Period.EducLevelID ?? 0;
+                schoolyearbalance.EducationalLevel = Period.EducationalLevel1.EducLevelName;
+                schoolyearbalance.TotalStudent = item.Count();
+                schoolyearbalance.TotalARSetup = item.Sum(m => m.TotalARSetup);
+                var templistcreditbalance = item.Where(m => m.ArBalance <= -1m); //item.Where(m => (m.Assessment + m.Balance + m.DNForm + m.CMForm + m.DebitMemo - m.CreditMemo - m.Discount - m.AdjDiscount - m.Voucher - (double)m.Payment - m.Processing) <= -1).ToList();
+                var templistdebitbalance = item.Where(m => m.ArBalance >= 1m);//item.Where(m => (m.Assessment + m.Balance + m.DNForm + m.CMForm + m.DebitMemo - m.CreditMemo - m.Discount - m.AdjDiscount - m.Voucher - (double)m.Payment - m.Processing) >= 1).ToList();
+                var creditbalance = item.Where(m => m.ArBalance < 1m);
+                schoolyearbalance.DebitCount = templistdebitbalance.Count();
+                schoolyearbalance.Debit = templistdebitbalance.Sum(m => m.ArBalance); //(decimal)templistdebitbalance.Sum(m => m.Assessment) + (decimal)templistdebitbalance.Sum(m => m.Balance) + (decimal)templistdebitbalance.Sum(m => m.DNForm) + (decimal)templistdebitbalance.Sum(m => m.CMForm) + (decimal)templistdebitbalance.Sum(m => m.DebitMemo) - (decimal)templistdebitbalance.Sum(m => m.CreditMemo) - (decimal)templistdebitbalance.Sum(m => m.Discount) - (decimal)templistdebitbalance.Sum(m => m.AdjDiscount) - (decimal)templistdebitbalance.Sum(m => m.Voucher) - (decimal)templistdebitbalance.Sum(m => m.Payment) - (decimal)templistdebitbalance.Sum(m => m.Processing);
+                var total = (decimal)artrailallfinal.Sum(m => m.Assessment) + (decimal)artrailallfinal.Sum(m => m.Balance) + (decimal)artrailallfinal.Sum(m => m.DNForm) + (decimal)artrailallfinal.Sum(m => m.CMForm) + (decimal)artrailallfinal.Sum(m => m.DebitMemo) - (decimal)artrailallfinal.Sum(m => m.CreditMemo) - (decimal)artrailallfinal.Sum(m => m.Discount) - (decimal)artrailallfinal.Sum(m => m.AdjDiscount) - (decimal)artrailallfinal.Sum(m => m.Voucher) - (decimal)artrailallfinal.Sum(m => m.Payment) - (decimal)artrailallfinal.Sum(m => m.Processing);
+                schoolyearbalance.CreditCount = templistcreditbalance.Count();
+                schoolyearbalance.Credit = creditbalance.Sum(m => m.ArBalance); //total - schoolyearbalance.Debit; //(decimal)templistcreditbalance.Sum(m => m.Assessment) + (decimal)templistcreditbalance.Sum(m => m.Balance) + (decimal)templistcreditbalance.Sum(m => m.DNForm) + (decimal)templistcreditbalance.Sum(m => m.CMForm) + (decimal)templistcreditbalance.Sum(m => m.CreditMemo) - (decimal)templistcreditbalance.Sum(m => m.CreditMemo) - (decimal)templistcreditbalance.Sum(m => m.Discount) - (decimal)templistcreditbalance.Sum(m => m.AdjDiscount) - (decimal)templistcreditbalance.Sum(m => m.Voucher) - (decimal)templistcreditbalance.Sum(m => m.Payment) - (decimal)templistcreditbalance.Sum(m => m.Processing);
+                balances.Add(schoolyearbalance);
+            }
+
             var comparativeendtermbalance = new ComparativeEndTermBalanceDTO();
             comparativeendtermbalance.AsOfDate = DateTime.Today;
             foreach (var schoolyear in db.GetBackaccountSchoolYear())
@@ -223,6 +356,8 @@ namespace ARManila.Controllers
                     SchoolYearName = schoolyear.SchoolYearName
                 });
             }
+
+
             if (model.ViewAs == 1)
             {
                 comparativeendtermbalance.ComparativeEndTermBalances = balances;
@@ -230,11 +365,11 @@ namespace ARManila.Controllers
             }
             else
             {
-                ReportDocument reportDocument = new ComparativeEndTermBalanceReport();               
-                reportDocument.SetDataSource(balances);                
+                ReportDocument reportDocument = new ComparativeEndTermARBalanceReportV2();
+                reportDocument.SetDataSource(balances);
                 return ExportType(model.ViewAs - 1, "ComparativeEndTermBalance_" + DateTime.Today.ToString("dd-MMMM-yyyy"), reportDocument);
             }
-           
+
         }
         #region ARSetupSummary
 
@@ -336,12 +471,12 @@ namespace ARManila.Controllers
         {
             return View();
         }
-        public ActionResult ARDetailsWithBalance(List<Period> periodids, DateTime asofdate, Dictionary<int, List<Period>> consolidatedperiodids)
-        {
-            ARSetupSummary summary = new ARSetupSummary();
-            GetARSummaryDataViaArTrail(periodids, asofdate, summary, consolidatedperiodids);
-            return View(summary);
-        }
+        //public ActionResult ARDetailsWithBalance(List<Period> periodids, DateTime asofdate, Dictionary<int, List<Period>> consolidatedperiodids)
+        //{
+        //    ARSetupSummary summary = new ARSetupSummary();
+        //    GetARSummaryDataViaArTrail(periodids, asofdate, summary, consolidatedperiodids);
+        //    return View(summary);
+        //}
 
 
 
@@ -354,7 +489,6 @@ namespace ARManila.Controllers
             summary.AsOfDate = asofdate.ToString("MMMM dd, yyyy");
             summary.PreparedBy = employee.FullName;
             summary.Subheader1 = Period.SchoolYear.SchoolYearName;
-            var schoolyearid = Period.SchoolYearID;
             var periodids = new List<Period>();
             Dictionary<int, List<Period>> consolidatedperiodids = new Dictionary<int, List<Period>>();
             ViewBag.asofdate = asofdate.ToString("yyyy-MM-dd");
@@ -363,25 +497,25 @@ namespace ARManila.Controllers
                 summary.Subheader2 = "1st Term";
                 summary.Subheader3 = "2nd Term";
                 summary.Subheader4 = "3rd Term";
-                var firstsetperiodids = db.Period.Where(m => m.EducLevelID < 4 && m.SchoolYearID == schoolyearid).ToList();
-                var college1 = db.Period.Where(m => m.EducLevelID == 4 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).FirstOrDefault();
-                var masteral1 = db.Period.Where(m => m.EducLevelID == 5 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).FirstOrDefault();
-                var doctoral1 = db.Period.Where(m => m.EducLevelID == 6 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).FirstOrDefault();
+                var firstsetperiodids = db.Period.Where(m => m.EducLevelID < 4 && m.SchoolYearID == Period.SchoolYearID).ToList();
+                var college1 = db.Period.Where(m => m.EducLevelID == 4 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).FirstOrDefault();
+                var masteral1 = db.Period.Where(m => m.EducLevelID == 5 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).FirstOrDefault();
+                var doctoral1 = db.Period.Where(m => m.EducLevelID == 6 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).FirstOrDefault();
                 firstsetperiodids.Add(college1);
                 firstsetperiodids.Add(masteral1);
                 firstsetperiodids.Add(doctoral1);
                 consolidatedperiodids.Add(0, firstsetperiodids);
-                var college2 = db.Period.Where(m => m.EducLevelID == 4 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).Skip(1).FirstOrDefault();
-                var masteral2 = db.Period.Where(m => m.EducLevelID == 5 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).Skip(1).FirstOrDefault();
-                var doctoral2 = db.Period.Where(m => m.EducLevelID == 6 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).Skip(1).FirstOrDefault();
+                var college2 = db.Period.Where(m => m.EducLevelID == 4 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).Skip(1).FirstOrDefault();
+                var masteral2 = db.Period.Where(m => m.EducLevelID == 5 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).Skip(1).FirstOrDefault();
+                var doctoral2 = db.Period.Where(m => m.EducLevelID == 6 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).Skip(1).FirstOrDefault();
                 List<Period> secondsetperiodids = new List<Period>();
                 secondsetperiodids.Add(college2);
                 secondsetperiodids.Add(masteral2);
                 secondsetperiodids.Add(doctoral2);
                 consolidatedperiodids.Add(1, secondsetperiodids);
-                var college3 = db.Period.Where(m => m.EducLevelID == 4 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).Skip(2).FirstOrDefault();
-                var masteral3 = db.Period.Where(m => m.EducLevelID == 5 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).Skip(2).FirstOrDefault();
-                var doctoral3 = db.Period.Where(m => m.EducLevelID == 6 && m.SchoolYearID == schoolyearid).OrderBy(m => m.PeriodID).Skip(2).FirstOrDefault();
+                var college3 = db.Period.Where(m => m.EducLevelID == 4 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).Skip(2).FirstOrDefault();
+                var masteral3 = db.Period.Where(m => m.EducLevelID == 5 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).Skip(2).FirstOrDefault();
+                var doctoral3 = db.Period.Where(m => m.EducLevelID == 6 && m.SchoolYearID == Period.SchoolYearID).OrderBy(m => m.PeriodID).Skip(2).FirstOrDefault();
                 List<Period> thirdsetperiodids = new List<Period>();
                 thirdsetperiodids.Add(college3);
                 thirdsetperiodids.Add(masteral3);
@@ -390,7 +524,7 @@ namespace ARManila.Controllers
             }
             else if (isschoolyear != null && isschoolyear.Equals("on"))
             {
-                periodids = db.Period.Where(m => m.EducLevelID == Period.EducLevelID && m.SchoolYearID == schoolyearid).ToList();
+                periodids = db.Period.Where(m => m.EducLevelID == Period.EducLevelID && m.SchoolYearID == Period.SchoolYearID).ToList();
                 switch (Period.EducLevelID)
                 {
                     case 1:
@@ -446,7 +580,7 @@ namespace ARManila.Controllers
             }
 
             //GetARSummaryData(periodids, asofdate, summary, consolidatedperiodids);            
-            GetARSummaryDataViaArTrail(periodids, asofdate, summary, consolidatedperiodids);
+            GetARSummaryDataViaArTrail(periodids, Period.SchoolYearID, Period.EducLevelID.Value, asofdate, summary, consolidatedperiodids);
 
             if (viewas == 1)
             {
@@ -467,6 +601,7 @@ namespace ARManila.Controllers
                             Item = item.Value.Item,
                             ARBalance = item.Value.ARBalance,
                             ARFeesSetup = item.Value.ARFeesSetup,
+                            TotalFees = item.Value.TotalFees,
                             Order = item.Value.Item.Contains("Basic") ? 1 : (item.Value.Item.Contains("SHS") ? 2 : (item.Value.Item.Contains("Coll") ? 3 : (item.Value.Item.Contains("gs") ? 4 : 5)))
                         });
                     }
@@ -522,8 +657,8 @@ namespace ARManila.Controllers
                 List<ARSetupSummaryItem> vouchers = new List<ARSetupSummaryItem>();
                 vouchers.Add(summary.Voucher);
                 reportDocument.Subreports["vouchers"].SetDataSource(vouchers);
-                if (!(vouchers.Count > 0 && vouchers.First().Amount1 > 0))
-                    reportDocument.ReportDefinition.Sections[11].SectionFormat.EnableSuppress = true;
+                //if (!(vouchers.Count > 0 && vouchers.First().Amount1 > 0))
+                //    reportDocument.ReportDefinition.Sections[11].SectionFormat.EnableSuppress = true;
                 List<ARSetupSummaryItem> arbalance = new List<ARSetupSummaryItem>();
                 arbalance.Add(summary.ARBalance);
                 reportDocument.Subreports["arbalance"].SetDataSource(arbalance);
@@ -551,7 +686,7 @@ namespace ARManila.Controllers
             }
         }
 
-        private void GetARSummaryDataViaArTrail(List<Period> periodids, DateTime asofdate, ARSetupSummary summary, Dictionary<int, List<Period>> consolidatedperiodids)
+        private void GetARSummaryDataViaArTrail(List<Period> periodids, int schoolyearid, int educlevelid, DateTime asofdate, ARSetupSummary summary, Dictionary<int, List<Period>> consolidatedperiodids)
         {
             summary.Tuition.Item = "Tuition";
             summary.Miscellaneous.Item = "Miscellaneous";
@@ -574,8 +709,31 @@ namespace ARManila.Controllers
                 summary.ARSetupSummaryConsolidatedItems.Add(2, new ARSetupSummaryConsolidatedItem { Item = "SHS", ARFeesSetup = 0, ARBalance = 0 });
                 summary.ARSetupSummaryConsolidatedItems.Add(3, new ARSetupSummaryConsolidatedItem { Item = "College", ARFeesSetup = 0, ARBalance = 0 });
                 summary.ARSetupSummaryConsolidatedItems.Add(4, new ARSetupSummaryConsolidatedItem { Item = "GS", ARFeesSetup = 0, ARBalance = 0 });
-                List<StudentCount> studentnos = new List<StudentCount>();
-                List<StudentCount> studentnoswithbalance = new List<StudentCount>();
+                var arschoolyear1 = db.GetArTrailBySchoolYear(schoolyearid, 1, asofdate.ToString("MM-dd-yyyy")).ToList();
+                var arschoolyear2 = db.GetArTrailBySchoolYear(schoolyearid, 2, asofdate.ToString("MM-dd-yyyy")).ToList();
+                var arschoolyear3 = db.GetArTrailBySchoolYear(schoolyearid, 3, asofdate.ToString("MM-dd-yyyy")).ToList();
+                var arschoolyear4 = db.GetArTrailBySchoolYear(schoolyearid, 4, asofdate.ToString("MM-dd-yyyy")).ToList();
+                var arschoolyear5 = db.GetArTrailBySchoolYear(schoolyearid, 5, asofdate.ToString("MM-dd-yyyy")).ToList();
+                var arschoolyear6 = db.GetArTrailBySchoolYear(schoolyearid, 6, asofdate.ToString("MM-dd-yyyy")).ToList();
+
+                var consolidateditembasiced = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 1);
+                ConsolidatedSummary(arschoolyear1.Concat(arschoolyear2).ToList(), consolidateditembasiced, false);
+
+                var consolidateditemshs = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 2);
+                ConsolidatedSummary(arschoolyear3, consolidateditemshs, false);
+
+                summary.BeginningBalance.IsBeginningBalance = true;
+                summary.ARBalance.IsARTotalUsingBeginningBalance = true;
+                var consolidateditemcollege = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 3);
+                consolidateditemcollege.Value.IsCollegeOrGs = true;
+                ConsolidatedSummary(arschoolyear4, consolidateditemcollege, false);
+
+                summary.BeginningBalance.IsBeginningBalance = true;
+                summary.ARBalance.IsARTotalUsingBeginningBalance = true;
+                var consolidateditemgs = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 4);
+                consolidateditemgs.Value.IsCollegeOrGs = true;
+                ConsolidatedSummary(arschoolyear5.Concat(arschoolyear6).ToList(), consolidateditemgs,false);
+
                 foreach (var consolidatedperiod in consolidatedperiodids)
                 {
                     switch (consolidatedperiod.Key)
@@ -593,97 +751,114 @@ namespace ARManila.Controllers
                             summary.Periods.Add("4th Term");
                             break;
                     }
-
                     foreach (var item in consolidatedperiod.Value)
                     {
                         var artrails = db.ArTrail2024(item.PeriodID, asofdate).ToList();
-                        List<StudentCount> templist = artrails.Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                        studentnos.AddRange(templist);
-                        List<StudentCount> templistnobalance = artrails.Where(m => m.ArBalance <= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                        List<StudentCount> templistbalance = artrails.Where(m => m.ArBalance > 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                        studentnoswithbalance.AddRange(templistbalance);
-                        studentnoswithbalance = studentnoswithbalance.Where(m => !templistnobalance.Any(p => p.StudentNo == m.StudentNo)).ToList();
                         SumARSetupData(summary, consolidatedperiod.Key, artrails);
 
-                        switch (item.EducLevelID.Value)
-                        {
-                            case 1:
-                            case 2:
-                                var consolidateditembasiced = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 1);
-                                ConsolidatedSummary(artrails, consolidateditembasiced, false);
-                                break;
-                            case 3:
-                                var consolidateditemshs = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 2);
-                                ConsolidatedSummary(artrails, consolidateditemshs, false);
-                                break;
-                            case 4:
-                                summary.BeginningBalance.IsBeginningBalance = true;
-                                summary.ARBalance.IsARTotalUsingBeginningBalance = true;
-                                var consolidateditemcollege = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 3);
-                                consolidateditemcollege.Value.IsCollegeOrGs = true;
-                                ConsolidatedSummary(artrails, consolidateditemcollege, consolidatedperiod.Key == 0 ? false : true);
-                                break;
-                            case 5:
-                            case 6:
-                                summary.BeginningBalance.IsBeginningBalance = true;
-                                summary.ARBalance.IsARTotalUsingBeginningBalance = true;
-                                var consolidateditemgs = summary.ARSetupSummaryConsolidatedItems.FirstOrDefault(m => m.Key == 4);
-                                consolidateditemgs.Value.IsCollegeOrGs = true;
-                                ConsolidatedSummary(artrails, consolidateditemgs, consolidatedperiod.Key == 0 ? false : true);
-                                break;
-                        }
                     }
 
                 }
-                var arsetuptotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARFeesSetup);
-                var arbalancetotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARBalance);
-                var enrolledstudents = studentnos.Select(student => student.StudentNo).Distinct();
-                summary.TotalStudent.TotalRW = enrolledstudents.Count();
-                summary.TotalStudentsWithBalance.TotalRW = studentnoswithbalance.Select(student => student.StudentNo).Distinct().Count();
+                var allarschoolyear = arschoolyear1.Concat(arschoolyear2).Concat(arschoolyear3).Concat(arschoolyear4).Concat(arschoolyear5).Concat(arschoolyear6);
+                summary.TotalStudent.Amount4 = allarschoolyear.Count();
+                summary.BeginningBalance.Amount4 = allarschoolyear.Sum(m => m.BegBalance);
+                //summary.ARBalance.AmountB4 += (decimal)artrails.Sum(m => m.Balance);
+                summary.ARBalance.Amount4 = allarschoolyear.Sum(m => m.EndBalance);
+                summary.ARBalance.TotalRW = allarschoolyear.Sum(m => m.EndBalance);
+                summary.TotalStudentsWithBalance.Amount4 = allarschoolyear.Where(m => m.EndBalance >= 1).Count();
+                summary.ARBalancePercent1.Amount4 = summary.TotalStudent.Amount4 == 0 ? 0 : (summary.TotalStudentsWithBalance.Amount4 / summary.TotalStudent.Amount4);
+                summary.ARBalancePercent2.Amount4 = summary.TotalFees.Amount4 == 0 ? 0 : (summary.ARBalance.Amount4 / summary.TotalFees.Amount4);
                 summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
                 summary.CollectionPercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : 1 - summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
-                summary.ARSetupSummaryConsolidatedItems.Add(5, new ARSetupSummaryConsolidatedItem { Item = "Total", ARFeesSetup = arsetuptotal, ARBalance = arbalancetotal });
                 summary.CollectionPercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (1 - summary.ARBalance.Total / summary.TotalFees.Total);
                 summary.ARBalancePercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (summary.ARBalance.Total / summary.TotalFees.Total);
+
+                summary.ARBalance.BeginningBalanceTotal = allarschoolyear.Sum(m => m.EndBalance);
+                summary.BeginningBalance.BeginningBalanceTotal = allarschoolyear.Sum(m => m.BegBalance);
+                var arsetuptotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARFeesSetup);
+                var arbalancetotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARBalance);
+                var totalsetup = summary.Adjustment.Total + summary.BeginningBalance.BeginningBalanceTotal + summary.TotalFees.Total + summary.Voucher.Total + summary.Discount.Total;
+                summary.TotalStudent.TotalRW = allarschoolyear.Count();
+                summary.TotalStudentsWithBalance.TotalRW = allarschoolyear.Where(m => m.EndBalance >= 1).Count();
+                summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
+                summary.CollectionPercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : 1 - summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
+                summary.ARSetupSummaryConsolidatedItems.Add(5, new ARSetupSummaryConsolidatedItem { Item = "Total", ARFeesSetup = arsetuptotal, ARBalance = arbalancetotal, TotalFees = totalsetup });
+                summary.CollectionPercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (1 - summary.ARBalance.TotalRW / totalsetup);
+                summary.ARBalancePercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (summary.ARBalance.TotalRW / totalsetup);
             }
             else
             {
-                int i = 0;
-                List<StudentCount> studentnosnobalance = new List<StudentCount>();
-                List<StudentCount> studentnos = new List<StudentCount>();
-                List<StudentCount> studentnoswithbalance = new List<StudentCount>();
-                foreach (var item in periodids)
+
+                if (periodids.Count > 1)
                 {
-                    if (item.EducLevelID >= 4)
+                    int i = 0;
+                    foreach (var item in periodids)
+                    {
+                        if (item.EducLevelID >= 4)
+                        {
+                            summary.BeginningBalance.IsBeginningBalance = true;
+                            summary.ARBalance.IsARTotalUsingBeginningBalance = true;
+                        }
+                        var artrail = db.ArTrail2024(item.PeriodID, asofdate).ToList();
+                        if (artrail.Count > 1)
+                        {
+                            summary.Periods.Add(item.Period1);
+                            SumARSetupData(summary, i, artrail);
+                            i++;
+                        }
+                    }
+                    var arschoolyear = db.GetArTrailBySchoolYear(schoolyearid, educlevelid, asofdate.ToString("MM-dd-yyyy")).ToList();
+                    summary.ARBalance.BeginningBalanceTotal = arschoolyear.Sum(m => m.EndBalance);
+                    summary.BeginningBalance.BeginningBalanceTotal = arschoolyear.Sum(m => m.BegBalance);
+                    summary.TotalStudent.TotalRW = arschoolyear.Count();
+                    summary.TotalStudentsWithBalance.TotalRW = arschoolyear.Where(m => m.EndBalance >= 1m).Count();
+                    summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
+                    summary.CollectionPercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : 1 - summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
+                    summary.CollectionPercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (1 - summary.ARBalance.Total / summary.TotalFees.Total);
+                    summary.ARBalancePercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (summary.ARBalance.Total / summary.TotalFees.Total);
+                }
+                else
+                {
+                    var period = periodids.FirstOrDefault();
+                    if (educlevelid >= 4)
                     {
                         summary.BeginningBalance.IsBeginningBalance = true;
                         summary.ARBalance.IsARTotalUsingBeginningBalance = true;
                     }
-                    var artrails = db.ArTrail2024(item.PeriodID, asofdate).ToList();
-                    if (artrails.Count > 1)
+                    var artrail = db.ArTrail2024(period.PeriodID, asofdate).ToList();
+                    if (artrail.Count > 1)
                     {
-                        List<StudentCount> templist = artrails.Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                        studentnos.AddRange(templist);
-                        List<StudentCount> templistnobalance = artrails.Where(m => m.ArBalance <= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                        studentnosnobalance = templistnobalance;
-                        List<StudentCount> templistbalance = artrails.Where(m => m.ArBalance >= 1).Select(m => new StudentCount { EducLevelId = item.EducLevelID.Value, StudentNo = m.StudentNo }).ToList();
-                        studentnoswithbalance.AddRange(templistbalance);
-                        summary.Periods.Add(item.Period1);
-                        SumARSetupData(summary, i, artrails);
-                        i++;
+                        summary.Periods.Add(period.Period1);
+                        SumARSetupData(summary, 0, artrail);
                     }
+                    summary.ARBalance.BeginningBalanceTotal = (decimal)artrail.Sum(m => m.ArBalance);
+                    summary.BeginningBalance.BeginningBalanceTotal = summary.ARBalance.BeginningBalanceTotal - summary.Discount.Total - summary.Voucher.Total - summary.Adjustment.Total - summary.Collection.Total - summary.TotalFees.Total;
+                    summary.TotalStudent.TotalRW = artrail.Count();
+                    summary.TotalStudentsWithBalance.TotalRW = artrail.Where(m => m.ArBalance >= 1m).Count(); //artrailallfinal.Where(m=> m.ArBalance>=1).Count();
+                    summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
+                    summary.CollectionPercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : 1 - summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
+                    summary.CollectionPercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (1 - summary.ARBalance.Total / summary.TotalFees.Total);
+                    summary.ARBalancePercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (summary.ARBalance.Total / summary.TotalFees.Total);
                 }
-                studentnoswithbalance = studentnoswithbalance.Where(m => !studentnosnobalance.Any(p => p.StudentNo == m.StudentNo)).ToList();
-                summary.TotalStudent.TotalRW = studentnos.Select(student => student.StudentNo).Distinct().Count();
-                summary.TotalStudentsWithBalance.TotalRW = studentnoswithbalance.Select(student => student.StudentNo).Distinct().Count();
-                summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
-                summary.CollectionPercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : 1 - summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
-                summary.CollectionPercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (1 - summary.ARBalance.Total / summary.TotalFees.Total);
-                summary.ARBalancePercent2.TotalRW = summary.TotalFees.Total == 0 ? 0 : (summary.ARBalance.Total / summary.TotalFees.Total);
+                //foreach (var item in artrailsall.GroupBy(m => new { m.SchoolYearName, m.StudentNo })
+                //    .Select(g => new
+                //    {
+                //        g.Key.SchoolYearName,
+                //        g.Key.StudentNo,
+                //        MaxPeriodId = g.Max(m => m.PeriodID.Value),
+                //        StudentSetup = g.Sum(m => m.Assessment)
+                //    }))
+                //{
+                //    var artrail = artrailsall.FirstOrDefault(m => m.SchoolYearName.Equals(item.SchoolYearName)
+                //        && m.PeriodID == item.MaxPeriodId && m.StudentNo == item.StudentNo);
+                //    artrail.TotalARSetup = (decimal)item.StudentSetup;
+                //    //artrailallfinal.Add(artrail);
+                //}
+
             }
         }
 
-        private static void ConsolidatedSummary(List<ArTrail2024_Result> artrails, KeyValuePair<int, ARSetupSummaryConsolidatedItem> consolidateditem, bool dontincludebalance)
+        private static void ConsolidatedSummary(List<ARTrailWrapper> artrails, KeyValuePair<int, ARSetupSummaryConsolidatedItem> consolidateditem, bool dontincludebalance)
         {
             if (dontincludebalance)
             {
@@ -692,9 +867,12 @@ namespace ARManila.Controllers
             }
             else
             {
-                consolidateditem.Value.ARBalance += (decimal)artrails.Sum(m => m.Assessment) + (decimal)artrails.Sum(m => m.Balance) + (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo) - (decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount) - (decimal)artrails.Sum(m => m.Voucher) - (decimal)artrails.Sum(m => m.Payment) - (decimal)artrails.Sum(m => m.Processing);
+                consolidateditem.Value.ARBalance += (decimal)artrails.Sum(m => m.Assessment) + (decimal)artrails.Sum(m => m.BegBalance) + (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo) - (decimal)artrails.Sum(m => m.Discount) - (decimal)artrails.Sum(m => m.AdjDiscount) - (decimal)artrails.Sum(m => m.Voucher) - (decimal)artrails.Sum(m => m.Payment) - (decimal)artrails.Sum(m => m.Processing);
 
-            }
+            }          
+            consolidateditem.Value.TotalFees += (decimal)artrails.Sum(m => m.Assessment) + (decimal)artrails.Sum(m => m.BegBalance) + (decimal)artrails.Sum(m => m.DNForm) + (decimal)artrails.Sum(m => m.CMForm) 
+                + (decimal)artrails.Sum(m => m.DebitMemo) - (decimal)artrails.Sum(m => m.CreditMemo) - (decimal)artrails.Sum(m => m.Discount) 
+                - (decimal)artrails.Sum(m => m.AdjDiscount) - (decimal)artrails.Sum(m => m.Voucher);
             consolidateditem.Value.ARFeesSetup += (decimal)artrails.Sum(m => m.Assessment);
         }
 

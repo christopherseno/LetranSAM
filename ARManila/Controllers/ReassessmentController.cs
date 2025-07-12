@@ -214,7 +214,8 @@ namespace ARManila.Controllers
 
                     mail.IsBodyHtml = true;
                     SmtpServer.Port = 587;
-                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
+                    //SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
+                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp");
                     SmtpServer.EnableSsl = true;
                     SmtpServer.Send(mail);
                     IQueryable<DMCM> dmcms = GetStudentDMCM(dmcm.Student.StudentNo);
@@ -285,7 +286,8 @@ namespace ARManila.Controllers
                     IsDebit = totaldiscount > 0 ? false : true,
                     ChargeToStudentAr = false,
                     SubaccountId = discountSubCoa != null ? discountSubCoa.SubAcctID : 0,
-                    DepartmentId = discount.DiscountCategoryID.HasValue ? discount.DiscountCategory.AcctID ?? 0 : (reassessment.Section.Curriculum.AcaDeptID ?? 0)
+                    DepartmentId = discount.DiscountCategoryID.HasValue && discount.DiscountCategory.AcademicDepartmentID.HasValue ? 
+                    discount.DiscountCategory.AcademicDepartmentID.Value : (reassessment.Section.Curriculum.AcaDeptID ?? 0)
                 });
             }
             else

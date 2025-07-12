@@ -26,11 +26,12 @@ namespace ARManila.Models
         public string FeeCategory { get; set; }
         public Nullable<decimal> Amount { get; set; }
         public Nullable<int> EducLevelID { get; set; }
+        public Nullable<bool> Deactivated { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DiscountTypeDetail> DiscountTypeDetail { get; set; }
+        public virtual EducationalLevel EducationalLevel { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Fee> Fee { get; set; }
-        public virtual EducationalLevel EducationalLevel { get; set; }
     }
 }

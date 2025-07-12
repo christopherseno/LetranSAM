@@ -1,0 +1,160 @@
+﻿@model ARManila.Models.OtherDTO.ARTrailDTO
+@using ARManila.Models.OtherDTO
+@{
+    ViewBag.Title = "AR Trail";
+}
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item">Report Menu</span>
+    <span class="breadcrumb-item active">AR Trail</span>
+</nav>
+
+<h2>AR Trail</h2>
+@using (Html.BeginForm())
+{
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label>As Of Date</label>
+                <input type="date" value="@Model.AsOfDate" id="asofdate" name="asofdate" class="form-control" required />
+            </div>
+            <div class="form-group col-md-4">
+                <label>View As</label>
+                <select id="viewas" name="viewas" class="form-select">
+                    <option value="1">Web</option>
+                    <option value="2">PDF</option>
+                    <option value="3">Excel</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="isschoolyear" id="isschoolyear">
+                    <label class="form-check-label" for="isschoolyear">
+                        Use School Year Data
+                    </label>
+                </div>
+                <input type="submit" value="View" class="form-control btn btn-primary" />
+            </div>
+        </div>
+    
+}
+<hr />
+@if (Model.ARTrailWrappers.Count > 0)
+{
+    <table class="table table-bordered table-striped table-vcenter js-dataTable-full" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+        <thead>
+            <tr>
+                <th class="text-center"></th>
+                <th>Student No</th>
+                <th>Student Name</th>
+                <th>Assessment</th>
+                <th>Beg. Balance</th>
+                <th>Debit Adj</th>
+                <th>Credit Adj</th>
+                <th>Debit Memo</th>
+                <th>Credit Memo</th>
+                <th>Discount</th>
+                <th>Discount Adj</th>
+                <th>Voucher</th>
+                <th>Payment</th>
+                <th>Processing</th>
+                <th>Source of Beg Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ARTrailWrappers)
+            {
+            <tr>
+                <td class="text-center"></td>
+                <td>@item.StudentNo</td>
+                <td>@item.StudentName</td>
+                <td>@item.Assessment.ToFormattedString()</td>
+                <td>@item.BegBalance.ToFormattedString()</td>
+                <td>@item.DNForm.ToFormattedString()</td>
+                <td>@item.CMForm.ToFormattedString()</td>
+                <td>@item.DebitMemo.ToFormattedString()</td>
+                <td>@item.CreditMemo.ToFormattedString()</td>
+                <td>@item.Discount.ToFormattedString()</td>
+                <td>@item.AdjDiscount.ToFormattedString()</td>
+                <td>@item.Voucher.ToFormattedString()</td>
+                <td>@item.Payment.ToFormattedString()</td>
+                <td>@item.Processing.ToFormattedString()</td>
+                <td>@item.BegBalanceSource</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <h2>Summary</h2>
+    <table class="table table-bordered table-striped table-vcenter" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+        <thead>
+            <tr>                
+                <th>Particular</th>
+                <th>Debit</th>
+                <th>Credit</th>                
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Assessment</td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.Assessment).ToFormattedString()</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Beg. Balance</td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.BegBalance).ToFormattedString()</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Debit Adjustment</td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.DNForm).ToFormattedString()</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Credit Adjustment</td>
+                <td></td>
+                <td align="right">@((0-Model.ARTrailWrappers.Sum(m => m.CMForm)).ToFormattedString())</td>
+            </tr>
+            <tr>
+                <td>Debit Memo</td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.DebitMemo).ToFormattedString()</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Credit Memo</td>
+                <td></td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.CreditMemo).ToFormattedString()</td>
+            </tr>
+            <tr>
+                <td>Discount</td>
+                <td></td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => Math.Round(m.Discount, 2)).ToFormattedString()</td>
+            </tr>
+            <tr>
+                <td>Discount Adj</td>
+                <td></td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => Math.Round(m.AdjDiscount, 2)).ToFormattedString()</td>
+            </tr>
+            <tr>
+                <td>Voucher</td>
+                <td></td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => Math.Round(m.Voucher, 2)).ToFormattedString()</td>
+            </tr>
+            <tr>
+            <tr>
+                <td>Payment</td>
+                <td></td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.Payment).ToFormattedString()</td>
+            </tr>
+            <tr>
+                <td>Processing Fee</td>
+                <td></td>
+                <td align="right">@Model.ARTrailWrappers.Sum(m => m.Processing).ToFormattedString()</td>
+            </tr>
+        </tbody>
+        <caption>
+            <h2>Ending Balance: @((Model.ARTrailWrappers.Sum(m => m.Assessment) + Model.ARTrailWrappers.Sum(m => m.BegBalance)  + Model.ARTrailWrappers.Sum(m => m.DNForm) + Model.ARTrailWrappers.Sum(m => m.CMForm) + Model.ARTrailWrappers.Sum(m => m.DebitMemo) - Model.ARTrailWrappers.Sum(m => m.CreditMemo) - Model.ARTrailWrappers.Sum(m => m.Discount) - Model.ARTrailWrappers.Sum(m => m.AdjDiscount) - Model.ARTrailWrappers.Sum(m => m.Voucher) - Model.ARTrailWrappers.Sum(m => m.Payment) - Model.ARTrailWrappers.Sum(m => m.Processing)).ToFormattedString())</h2>
+            <h3>Total Students: @Model.ARTrailWrappers.Count() </h3>
+            <h3>Total Students with Credit Balance: @Model.ARTrailWrappers.Where(m=>m.EndBalance<=-1).Count() </h3>
+            <h3>Total Students with Debit Balance: @Model.ARTrailWrappers.Where(m => m.EndBalance >= 1).Count()</h3>
+        </caption>
+    </table>
+}
+

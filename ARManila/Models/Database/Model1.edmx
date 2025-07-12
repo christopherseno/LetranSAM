@@ -759,6 +759,7 @@
           <Property Name="FeeCategory" Type="nvarchar" MaxLength="50" />
           <Property Name="Amount" Type="decimal" Precision="18" Scale="0" />
           <Property Name="EducLevelID" Type="int" />
+          <Property Name="Deactivated" Type="bit" />
         </EntityType>
         <EntityType Name="IssuedSOA">
           <Key>
@@ -804,6 +805,16 @@
           <Property Name="YearLevel" Type="int" />
           <Property Name="ExceptCurrID" Type="int" />
           <Property Name="OnlyCurrID" Type="int" />
+        </EntityType>
+        <EntityType Name="Others">
+          <Key>
+            <PropertyRef Name="FeeID" />
+          </Key>
+          <Property Name="FeeID" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="120" Nullable="false" />
+          <Property Name="Amount" Type="float" Nullable="false" />
+          <Property Name="SubjectID" Type="int" Nullable="false" />
+          <Property Name="SectionID" Type="int" />
         </EntityType>
         <EntityType Name="Paycode">
           <Key>
@@ -1174,6 +1185,8 @@
           <Property Name="OnlineDateEncoded" Type="datetime" />
           <Property Name="NoOfPayment" Type="int" />
           <Property Name="WillAvailModule" Type="bit" />
+          <Property Name="DiscountTypeId" Type="int" />
+          <Property Name="ProgramId" Type="int" />
         </EntityType>
         <EntityType Name="StudentClearance">
           <Key>
@@ -1407,6 +1420,18 @@
             </Principal>
             <Dependent Role="OriginalStudentSchedule">
               <PropertyRef Name="ScheduleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK:Others|Fee">
+          <End Role="Fee" Type="Self.Fee" Multiplicity="1" />
+          <End Role="Others" Type="Self.Others" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Fee">
+              <PropertyRef Name="FeeID" />
+            </Principal>
+            <Dependent Role="Others">
+              <PropertyRef Name="FeeID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2470,6 +2495,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Others_Section">
+          <End Role="Section" Type="Self.Section" Multiplicity="0..1" />
+          <End Role="Others" Type="Self.Others" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Section">
+              <PropertyRef Name="SectionID" />
+            </Principal>
+            <Dependent Role="Others">
+              <PropertyRef Name="SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Others_Subject">
+          <End Role="Subject" Type="Self.Subject" Multiplicity="1" />
+          <End Role="Others" Type="Self.Others" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subject">
+              <PropertyRef Name="SubjectID" />
+            </Principal>
+            <Dependent Role="Others">
+              <PropertyRef Name="SubjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Paycode_ChartOfAccounts">
           <End Role="ChartOfAccounts" Type="Self.ChartOfAccounts" Multiplicity="0..1" />
           <End Role="Paycode" Type="Self.Paycode" Multiplicity="*" />
@@ -3338,6 +3387,11 @@
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="asofdate" Type="date" Mode="In" />
         </Function>
+        <Function Name="ArTrailBySchoolYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
+          <Parameter Name="schoolyearid" Type="int" Mode="In" />
+          <Parameter Name="educlevelid" Type="int" Mode="In" />
+          <Parameter Name="asofdate" Type="date" Mode="In" />
+        </Function>
         <Function Name="ArTrailByStudent" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="AR">
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="asofdate" Type="date" Mode="In" />
@@ -3756,6 +3810,11 @@
           <Parameter Name="periodid" Type="int" Mode="In" />
           <Parameter Name="sdate" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetStudentARTrail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="periodid" Type="int" Mode="In" />
+          <Parameter Name="sdate" Type="date" Mode="In" />
+          <Parameter Name="edate" Type="date" Mode="In" />
+        </Function>
         <Function Name="GetStudentSchedules" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="STUDENT_ID" Type="int" Mode="In" />
           <Parameter Name="PERIOD_ID" Type="int" Mode="In" />
@@ -3830,6 +3889,7 @@
           <EntitySet Name="IssuedSOADetail" EntityType="Self.IssuedSOADetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lab" EntityType="Self.Lab" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Miscellaneous" EntityType="Self.Miscellaneous" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Others" EntityType="Self.Others" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Paycode" EntityType="Self.Paycode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payment" EntityType="Self.Payment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentDetails" EntityType="Self.PaymentDetails" Schema="dbo" store:Type="Tables" />
@@ -3894,6 +3954,10 @@
           <AssociationSet Name="FK:OriginalStudentSchedule-Schedule" Association="Self.FK:OriginalStudentSchedule-Schedule">
             <End Role="Schedule" EntitySet="Schedule" />
             <End Role="OriginalStudentSchedule" EntitySet="OriginalStudentSchedule" />
+          </AssociationSet>
+          <AssociationSet Name="FK:Others|Fee" Association="Self.FK:Others|Fee">
+            <End Role="Fee" EntitySet="Fee" />
+            <End Role="Others" EntitySet="Others" />
           </AssociationSet>
           <AssociationSet Name="FK:Schedule-Faculty" Association="Self.FK:Schedule-Faculty">
             <End Role="Faculty" EntitySet="Faculty" />
@@ -4246,6 +4310,14 @@
           <AssociationSet Name="FK_OriginalStudentSchedule_Student_Section" Association="Self.FK_OriginalStudentSchedule_Student_Section">
             <End Role="Student_Section" EntitySet="Student_Section" />
             <End Role="OriginalStudentSchedule" EntitySet="OriginalStudentSchedule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Others_Section" Association="Self.FK_Others_Section">
+            <End Role="Section" EntitySet="Section" />
+            <End Role="Others" EntitySet="Others" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Others_Subject" Association="Self.FK_Others_Subject">
+            <End Role="Subject" EntitySet="Subject" />
+            <End Role="Others" EntitySet="Others" />
           </AssociationSet>
           <AssociationSet Name="FK_Paycode_ChartOfAccounts" Association="Self.FK_Paycode_ChartOfAccounts">
             <End Role="ChartOfAccounts" EntitySet="ChartOfAccounts" />
@@ -5198,7 +5270,7 @@
           <Property Name="FeeNameID" Type="Int32" />
           <Property Name="DiscountRate" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="DiscountType" Relationship="Self.FK_DiscountTypeDetail_DiscountType" FromRole="DiscountTypeDetail" ToRole="DiscountType" />
-          <NavigationProperty Name="FeeName" Relationship="Self.FK_DiscountTypeDetail_FeeName" FromRole="DiscountTypeDetail" ToRole="FeeName" />
+          <NavigationProperty Name="FeeName" Relationship="LetranIntegratedSystemModel.FK_DiscountTypeDetail_FeeName" FromRole="DiscountTypeDetail" ToRole="FeeName" />
         </EntityType>
         <EntityType Name="DMCM">
           <Key>
@@ -5369,11 +5441,12 @@
           <NavigationProperty Name="Period" Relationship="Self.FK_Fee_SchoolYear" FromRole="Fee" ToRole="Period" />
           <NavigationProperty Name="Lab" Relationship="Self.FK_Lab_Fee" FromRole="Fee" ToRole="Lab" />
           <NavigationProperty Name="Various" Relationship="Self.FK_Various_Fee" FromRole="Fee" ToRole="Various" />
-          <NavigationProperty Name="FeeName" Relationship="Self.FK_Fee_FeeName" FromRole="Fee" ToRole="FeeName" />
           <NavigationProperty Name="SubChartOfAccounts" Relationship="Self.FK_Fee_SubChartOfAccounts" FromRole="Fee" ToRole="SubChartOfAccounts" />
           <NavigationProperty Name="Supplemental" Relationship="Self.FK_Supplemental_Fee" FromRole="Fee" ToRole="Supplemental" />
           <NavigationProperty Name="Tuition" Relationship="Self.FK_Tuition_Fee" FromRole="Fee" ToRole="Tuition" />
           <NavigationProperty Name="Miscellaneous" Relationship="LetranIntegratedSystemModel.FK_Miscellaneous_Fee" FromRole="Fee" ToRole="Miscellaneous" />
+          <NavigationProperty Name="Others" Relationship="LetranIntegratedSystemModel.FK_Others_Fee" FromRole="Fee" ToRole="Others" />
+          <NavigationProperty Name="FeeName" Relationship="LetranIntegratedSystemModel.FK_Fee_FeeName" FromRole="Fee" ToRole="FeeName" />
         </EntityType>
         <EntityType Name="FeeExemption">
           <Key>
@@ -5390,19 +5463,6 @@
           </Key>
           <Property Name="FeeID" Type="Int32" Nullable="false" />
           <Property Name="CurrID" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="FeeName">
-          <Key>
-            <PropertyRef Name="FeeNameID" />
-          </Key>
-          <Property Name="FeeNameID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FeeName1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FeeCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="EducLevelID" Type="Int32" />
-          <NavigationProperty Name="DiscountTypeDetail" Relationship="Self.FK_DiscountTypeDetail_FeeName" FromRole="FeeName" ToRole="DiscountTypeDetail" />
-          <NavigationProperty Name="Fee" Relationship="Self.FK_Fee_FeeName" FromRole="FeeName" ToRole="Fee" />
-          <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel" FromRole="FeeName" ToRole="EducationalLevel" />
         </EntityType>
         <EntityType Name="IssuedSOA">
           <Key>
@@ -5730,6 +5790,7 @@
           <NavigationProperty Name="Schedule" Relationship="Self.FK_Schedule_Section" FromRole="Section" ToRole="Schedule" />
           <NavigationProperty Name="Schedule1" Relationship="Self.FK_Schedule_Section2" FromRole="Section" ToRole="Schedule" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Student_Section_Section" FromRole="Section" ToRole="Student_Section" />
+          <NavigationProperty Name="Others" Relationship="LetranIntegratedSystemModel.FK_Others_Section" FromRole="Section" ToRole="Others" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -5921,6 +5982,8 @@
           <NavigationProperty Name="Student" Relationship="Self.FK_Student_Section_Student" FromRole="Student_Section" ToRole="Student" />
           <NavigationProperty Name="StudentStatus1" Relationship="Self.FK_Student_Section_StudentStatus" FromRole="Student_Section" ToRole="StudentStatus" />
           <NavigationProperty Name="StudentSchedule" Relationship="Self.FK_StudentSchedule_Student_Section" FromRole="Student_Section" ToRole="StudentSchedule" />
+          <Property Name="DiscountTypeId" Type="Int32" />
+          <Property Name="ProgramId" Type="Int32" />
         </EntityType>
         <EntityType Name="StudentClearance">
           <Key>
@@ -6019,6 +6082,7 @@
           <NavigationProperty Name="Subject1" Relationship="Self.FK_Subject_Subject_Component" FromRole="Subject" ToRole="Subject1" />
           <NavigationProperty Name="Subject2" Relationship="Self.FK_Subject_Subject_Component" FromRole="Subject1" ToRole="Subject" />
           <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_Subject_EducationalLevel" FromRole="Subject" ToRole="EducationalLevel" />
+          <NavigationProperty Name="Others" Relationship="LetranIntegratedSystemModel.FK_Others_Subject" FromRole="Subject" ToRole="Others" />
         </EntityType>
         <EntityType Name="Supplemental">
           <Key>
@@ -7149,18 +7213,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_DiscountTypeDetail_FeeName">
-          <End Role="FeeName" Type="Self.FeeName" Multiplicity="0..1" />
-          <End Role="DiscountTypeDetail" Type="Self.DiscountTypeDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="FeeName">
-              <PropertyRef Name="FeeNameID" />
-            </Principal>
-            <Dependent Role="DiscountTypeDetail">
-              <PropertyRef Name="FeeNameID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_DMCM_Period">
           <End Role="Period" Type="Self.Period" Multiplicity="0..1" />
           <End Role="DMCM" Type="Self.DMCM" Multiplicity="*" />
@@ -7278,18 +7330,6 @@
             </Principal>
             <Dependent Role="Various">
               <PropertyRef Name="FeeID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Fee_FeeName">
-          <End Role="FeeName" Type="Self.FeeName" Multiplicity="0..1" />
-          <End Role="Fee" Type="Self.Fee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="FeeName">
-              <PropertyRef Name="FeeNameID" />
-            </Principal>
-            <Dependent Role="Fee">
-              <PropertyRef Name="FeeNameID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -7884,7 +7924,6 @@
           <EntitySet Name="Fee" EntityType="Self.Fee" />
           <EntitySet Name="FeeExemption" EntityType="Self.FeeExemption" />
           <EntitySet Name="FeeInclusion" EntityType="Self.FeeInclusion" />
-          <EntitySet Name="FeeName" EntityType="Self.FeeName" />
           <EntitySet Name="IssuedSOA" EntityType="Self.IssuedSOA" />
           <EntitySet Name="IssuedSOADetail" EntityType="Self.IssuedSOADetail" />
           <EntitySet Name="Lab" EntityType="Self.Lab" />
@@ -8275,10 +8314,6 @@
             <End Role="DiscountType" EntitySet="DiscountType" />
             <End Role="DiscountTypeDetail" EntitySet="DiscountTypeDetail" />
           </AssociationSet>
-          <AssociationSet Name="FK_DiscountTypeDetail_FeeName" Association="Self.FK_DiscountTypeDetail_FeeName">
-            <End Role="FeeName" EntitySet="FeeName" />
-            <End Role="DiscountTypeDetail" EntitySet="DiscountTypeDetail" />
-          </AssociationSet>
           <AssociationSet Name="FK_DMCM_Period" Association="Self.FK_DMCM_Period">
             <End Role="Period" EntitySet="Period" />
             <End Role="DMCM" EntitySet="DMCM" />
@@ -8318,10 +8353,6 @@
           <AssociationSet Name="FK_Various_Fee" Association="Self.FK_Various_Fee">
             <End Role="Fee" EntitySet="Fee" />
             <End Role="Various" EntitySet="Various" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Fee_FeeName" Association="Self.FK_Fee_FeeName">
-            <End Role="FeeName" EntitySet="FeeName" />
-            <End Role="Fee" EntitySet="Fee" />
           </AssociationSet>
           <AssociationSet Name="FK_Fee_SubChartOfAccounts" Association="Self.FK_Fee_SubChartOfAccounts">
             <End Role="SubChartOfAccounts" EntitySet="SubChartOfAccounts" />
@@ -8923,10 +8954,6 @@
             <End Role="SubChartOfAccounts" EntitySet="SubChartOfAccounts" />
             <End Role="EducationalLevel" EntitySet="EducationalLevel" />
           </AssociationSet>
-          <AssociationSet Name="FK_FeeName_EducationalLevel" Association="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel">
-            <End Role="EducationalLevel" EntitySet="EducationalLevel" />
-            <End Role="FeeName" EntitySet="FeeName" />
-          </AssociationSet>
           <AssociationSet Name="FK_Payment_EducationalLevel" Association="LetranIntegratedSystemModel.FK_Payment_EducationalLevel">
             <End Role="EducationalLevel" EntitySet="EducationalLevel" />
             <End Role="Payment" EntitySet="Payment" />
@@ -9034,6 +9061,42 @@
             <Parameter Name="periodids" Mode="In" Type="String" />
             <Parameter Name="asofdate" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="GetStudentARTrail" ReturnType="Collection(LetranIntegratedSystemModel.GetStudentARTrail_Result)">
+            <Parameter Name="periodid" Mode="In" Type="Int32" />
+            <Parameter Name="sdate" Mode="In" Type="DateTime" />
+            <Parameter Name="edate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="ArTrailBySchoolYear">
+            <Parameter Name="schoolyearid" Mode="In" Type="Int32" />
+            <Parameter Name="educlevelid" Mode="In" Type="Int32" />
+            <Parameter Name="asofdate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="Others" EntityType="LetranIntegratedSystemModel.Others" />
+          <AssociationSet Name="FK_Others_Fee" Association="LetranIntegratedSystemModel.FK_Others_Fee">
+            <End Role="Fee" EntitySet="Fee" />
+            <End Role="Others" EntitySet="Others" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Others_Section" Association="LetranIntegratedSystemModel.FK_Others_Section">
+            <End Role="Section" EntitySet="Section" />
+            <End Role="Others" EntitySet="Others" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Others_Subject" Association="LetranIntegratedSystemModel.FK_Others_Subject">
+            <End Role="Subject" EntitySet="Subject" />
+            <End Role="Others" EntitySet="Others" />
+          </AssociationSet>
+          <EntitySet Name="FeeName" EntityType="LetranIntegratedSystemModel.FeeName" />
+          <AssociationSet Name="FK_DiscountTypeDetail_FeeName" Association="LetranIntegratedSystemModel.FK_DiscountTypeDetail_FeeName">
+            <End Role="FeeName" EntitySet="FeeName" />
+            <End Role="DiscountTypeDetail" EntitySet="DiscountTypeDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FeeName_EducationalLevel" Association="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel">
+            <End Role="EducationalLevel" EntitySet="EducationalLevel" />
+            <End Role="FeeName" EntitySet="FeeName" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Fee_FeeName" Association="LetranIntegratedSystemModel.FK_Fee_FeeName">
+            <End Role="FeeName" EntitySet="FeeName" />
+            <End Role="Fee" EntitySet="Fee" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="ArTrail2024_Result">
           <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
@@ -9827,7 +9890,6 @@
           <NavigationProperty Name="DiscountType" Relationship="LetranIntegratedSystemModel.FK_DiscountType_EducationalLevel" FromRole="EducationalLevel" ToRole="DiscountType" />
           <NavigationProperty Name="Period" Relationship="LetranIntegratedSystemModel.FK_EducationalLevel_Period" FromRole="EducationalLevel" ToRole="Period" />
           <NavigationProperty Name="SubChartOfAccounts" Relationship="LetranIntegratedSystemModel.FK_EducationalLevel_SubChartOfAccounts" FromRole="EducationalLevel" ToRole="SubChartOfAccounts" />
-          <NavigationProperty Name="FeeName" Relationship="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel" FromRole="EducationalLevel" ToRole="FeeName" />
           <NavigationProperty Name="Payment" Relationship="LetranIntegratedSystemModel.FK_Payment_EducationalLevel" FromRole="EducationalLevel" ToRole="Payment" />
           <NavigationProperty Name="PaySchedule" Relationship="LetranIntegratedSystemModel.FK_PaySchedule_EducationalLevel" FromRole="EducationalLevel" ToRole="PaySchedule" />
           <NavigationProperty Name="Period1" Relationship="LetranIntegratedSystemModel.FK_Period_EducationalLevel" FromRole="EducationalLevel" ToRole="Period" />
@@ -9836,6 +9898,7 @@
           <NavigationProperty Name="Supplemental" Relationship="LetranIntegratedSystemModel.FK_Supplemental_EducationalLevel" FromRole="EducationalLevel" ToRole="Supplemental" />
           <NavigationProperty Name="Miscellaneous" Relationship="LetranIntegratedSystemModel.FK_Miscellaneous_EducationalLevel" FromRole="EducationalLevel" ToRole="Miscellaneous" />
           <NavigationProperty Name="Faculty" Relationship="LetranIntegratedSystemModel.FK_Faculty_EducationalLevel" FromRole="EducationalLevel" ToRole="Faculty" />
+          <NavigationProperty Name="FeeName" Relationship="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel" FromRole="EducationalLevel" ToRole="FeeName" />
         </EntityType>
         <Association Name="FK_Alpha4_EducationalLevel">
           <End Type="LetranIntegratedSystemModel.EducationalLevel" Role="EducationalLevel" Multiplicity="1" />
@@ -9954,18 +10017,6 @@
             </Principal>
             <Dependent Role="EducationalLevel">
               <PropertyRef Name="AutoDebitSubAcctID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_FeeName_EducationalLevel">
-          <End Type="LetranIntegratedSystemModel.EducationalLevel" Role="EducationalLevel" Multiplicity="0..1" />
-          <End Type="LetranIntegratedSystemModel.FeeName" Role="FeeName" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EducationalLevel">
-              <PropertyRef Name="EducLevelID" />
-            </Principal>
-            <Dependent Role="FeeName">
-              <PropertyRef Name="EducLevelID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -10416,6 +10467,130 @@
           <Property Type="DateTime" Name="DocDate" Nullable="true" Precision="23" />
           <Property Type="Double" Name="DCAmount" Nullable="true" />
         </ComplexType>
+        <ComplexType Name="GetStudentARTrail_Result">
+          <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
+          <Property Type="String" Name="StudentName" Nullable="true" MaxLength="514" />
+          <Property Type="Double" Name="Assessment" Nullable="false" />
+          <Property Type="Double" Name="Balance" Nullable="false" />
+          <Property Type="Double" Name="DNForm" Nullable="false" />
+          <Property Type="Double" Name="CMForm" Nullable="false" />
+          <Property Type="Double" Name="DebitMemo" Nullable="false" />
+          <Property Type="Double" Name="CreditMemo" Nullable="false" />
+          <Property Type="Double" Name="Discount" Nullable="false" />
+          <Property Type="Double" Name="AdjDiscount" Nullable="false" />
+          <Property Type="Decimal" Name="Payment" Nullable="false" Precision="38" Scale="2" />
+          <Property Type="Double" Name="Processing" Nullable="false" />
+          <Property Type="DateTime" Name="ValidationDate" Nullable="true" />
+          <Property Type="DateTime" Name="AssessmentDate" Nullable="true" />
+          <Property Type="Int32" Name="PeriodID" Nullable="true" />
+          <Property Type="String" Name="AcaAcronym" Nullable="true" MaxLength="10" />
+          <Property Type="Int16" Name="GradeYear" Nullable="false" />
+          <Property Type="String" Name="Paymode" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="EducLevelName" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="Period" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="SchoolYearName" Nullable="false" MaxLength="30" />
+          <Property Type="String" Name="GLCode" Nullable="true" MaxLength="10" />
+          <Property Type="Int32" Name="AcaDeptID" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="Others">
+          <Key>
+            <PropertyRef Name="FeeID" />
+          </Key>
+          <Property Name="FeeID" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="120" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Double" Nullable="false" />
+          <Property Name="SubjectID" Type="Int32" Nullable="false" />
+          <Property Name="SectionID" Type="Int32" />
+          <NavigationProperty Name="Fee" Relationship="LetranIntegratedSystemModel.FK_Others_Fee" FromRole="Others" ToRole="Fee" />
+          <NavigationProperty Name="Section" Relationship="LetranIntegratedSystemModel.FK_Others_Section" FromRole="Others" ToRole="Section" />
+          <NavigationProperty Name="Subject" Relationship="LetranIntegratedSystemModel.FK_Others_Subject" FromRole="Others" ToRole="Subject" />
+        </EntityType>
+        <Association Name="FK_Others_Fee">
+          <End Type="LetranIntegratedSystemModel.Fee" Role="Fee" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.Others" Role="Others" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Fee">
+              <PropertyRef Name="FeeID" />
+            </Principal>
+            <Dependent Role="Others">
+              <PropertyRef Name="FeeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Others_Section">
+          <End Type="LetranIntegratedSystemModel.Section" Role="Section" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Others" Role="Others" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Section">
+              <PropertyRef Name="SectionID" />
+            </Principal>
+            <Dependent Role="Others">
+              <PropertyRef Name="SectionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Others_Subject">
+          <End Type="LetranIntegratedSystemModel.Subject" Role="Subject" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.Others" Role="Others" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Subject">
+              <PropertyRef Name="SubjectID" />
+            </Principal>
+            <Dependent Role="Others">
+              <PropertyRef Name="SubjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="FeeName">
+          <Key>
+            <PropertyRef Name="FeeNameID" />
+          </Key>
+          <Property Name="FeeNameID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FeeName1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FeeCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="EducLevelID" Type="Int32" />
+          <Property Name="Deactivated" Type="Boolean" />
+          <NavigationProperty Name="DiscountTypeDetail" Relationship="LetranIntegratedSystemModel.FK_DiscountTypeDetail_FeeName" FromRole="FeeName" ToRole="DiscountTypeDetail" />
+          <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel" FromRole="FeeName" ToRole="EducationalLevel" />
+          <NavigationProperty Name="Fee" Relationship="LetranIntegratedSystemModel.FK_Fee_FeeName" FromRole="FeeName" ToRole="Fee" />
+        </EntityType>
+        <Association Name="FK_DiscountTypeDetail_FeeName">
+          <End Type="LetranIntegratedSystemModel.FeeName" Role="FeeName" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.DiscountTypeDetail" Role="DiscountTypeDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FeeName">
+              <PropertyRef Name="FeeNameID" />
+            </Principal>
+            <Dependent Role="DiscountTypeDetail">
+              <PropertyRef Name="FeeNameID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FeeName_EducationalLevel">
+          <End Type="LetranIntegratedSystemModel.EducationalLevel" Role="EducationalLevel" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.FeeName" Role="FeeName" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EducationalLevel">
+              <PropertyRef Name="EducLevelID" />
+            </Principal>
+            <Dependent Role="FeeName">
+              <PropertyRef Name="EducLevelID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Fee_FeeName">
+          <End Type="LetranIntegratedSystemModel.FeeName" Role="FeeName" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Fee" Role="Fee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FeeName">
+              <PropertyRef Name="FeeNameID" />
+            </Principal>
+            <Dependent Role="Fee">
+              <PropertyRef Name="FeeNameID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11160,17 +11335,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="FeeName">
-            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.FeeName">
-              <MappingFragment StoreEntitySet="FeeName">
-                <ScalarProperty Name="FeeNameID" ColumnName="FeeNameID" />
-                <ScalarProperty Name="FeeName1" ColumnName="FeeName" />
-                <ScalarProperty Name="FeeCategory" ColumnName="FeeCategory" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="EducLevelID" ColumnName="EducLevelID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="IssuedSOA">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.IssuedSOA">
               <MappingFragment StoreEntitySet="IssuedSOA">
@@ -11552,6 +11716,8 @@
           <EntitySetMapping Name="Student_Section">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Student_Section">
               <MappingFragment StoreEntitySet="Student_Section">
+                <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
+                <ScalarProperty Name="DiscountTypeId" ColumnName="DiscountTypeId" />
                 <ScalarProperty Name="Student_SectionID" ColumnName="Student_SectionID" />
                 <ScalarProperty Name="StudentID" ColumnName="StudentID" />
                 <ScalarProperty Name="SectionID" ColumnName="SectionID" />
@@ -13165,6 +13331,59 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetStudentARTrail" FunctionName="LetranIntegratedSystemModel.Store.GetStudentARTrail">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="LetranIntegratedSystemModel.GetStudentARTrail_Result">
+                <ScalarProperty Name="StudentNo" ColumnName="StudentNo" />
+                <ScalarProperty Name="StudentName" ColumnName="StudentName" />
+                <ScalarProperty Name="Assessment" ColumnName="Assessment" />
+                <ScalarProperty Name="Balance" ColumnName="Balance" />
+                <ScalarProperty Name="DNForm" ColumnName="DNForm" />
+                <ScalarProperty Name="CMForm" ColumnName="CMForm" />
+                <ScalarProperty Name="DebitMemo" ColumnName="DebitMemo" />
+                <ScalarProperty Name="CreditMemo" ColumnName="CreditMemo" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="AdjDiscount" ColumnName="AdjDiscount" />
+                <ScalarProperty Name="Payment" ColumnName="Payment" />
+                <ScalarProperty Name="Processing" ColumnName="Processing" />
+                <ScalarProperty Name="ValidationDate" ColumnName="ValidationDate" />
+                <ScalarProperty Name="AssessmentDate" ColumnName="AssessmentDate" />
+                <ScalarProperty Name="PeriodID" ColumnName="PeriodID" />
+                <ScalarProperty Name="AcaAcronym" ColumnName="AcaAcronym" />
+                <ScalarProperty Name="GradeYear" ColumnName="GradeYear" />
+                <ScalarProperty Name="Paymode" ColumnName="Paymode" />
+                <ScalarProperty Name="EducLevelName" ColumnName="EducLevelName" />
+                <ScalarProperty Name="Period" ColumnName="Period" />
+                <ScalarProperty Name="SchoolYearName" ColumnName="SchoolYearName" />
+                <ScalarProperty Name="GLCode" ColumnName="GLCode" />
+                <ScalarProperty Name="AcaDeptID" ColumnName="AcaDeptID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ArTrailBySchoolYear" FunctionName="LetranIntegratedSystemModel.Store.ArTrailBySchoolYear" />
+          <EntitySetMapping Name="Others">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Others">
+              <MappingFragment StoreEntitySet="Others">
+                <ScalarProperty Name="SectionID" ColumnName="SectionID" />
+                <ScalarProperty Name="SubjectID" ColumnName="SubjectID" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FeeID" ColumnName="FeeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FeeName">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.FeeName">
+              <MappingFragment StoreEntitySet="FeeName">
+                <ScalarProperty Name="Deactivated" ColumnName="Deactivated" />
+                <ScalarProperty Name="EducLevelID" ColumnName="EducLevelID" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="FeeCategory" ColumnName="FeeCategory" />
+                <ScalarProperty Name="FeeName1" ColumnName="FeeName" />
+                <ScalarProperty Name="FeeNameID" ColumnName="FeeNameID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

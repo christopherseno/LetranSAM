@@ -106,7 +106,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var i in item)
+                        @foreach (var i in item.OrderBy(m=>m.IsDebit).ThenBy(m=>m.account).ThenBy(m=>m.AccountName).ThenBy(m=>m.project))
                         {
                             <tr>
                                 <td>@i.project</td>
@@ -133,7 +133,7 @@
                 <div>@item.Key</div>
                 <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
                     <thead>
-                        <tr>
+                        <tr>                            
                             <th>GL Code</th>
                             <th>Account Code</th>
                             <th>Account Name</th>
@@ -144,8 +144,8 @@
                     <tbody>
                         @foreach (var i in item)
                         {
-                            <tr>
-                                <td>@i.GLCode</td>
+                            <tr>                                
+                                <td><span class="d-none">@i.IsDebit @i.AcctNo</span> @i.GLCode </td>
                                 <td>@i.AcctNo</td>
                                 <td>@i.AcctName</td>
                                 <td align="right">@(i.Debit ==0 ? "" : i.Debit.ToString("#,##0.00"))</td>

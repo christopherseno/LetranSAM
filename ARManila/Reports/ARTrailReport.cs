@@ -16,14 +16,14 @@ namespace ARManila.Reports {
     using CrystalDecisions.CrystalReports.Engine;
     
     
-    public class ComparativeEndTermARBalanceReportV2 : ReportClass {
+    public class ARTrailReport : ReportClass {
         
-        public ComparativeEndTermARBalanceReportV2() {
+        public ARTrailReport() {
         }
         
         public override string ResourceName {
             get {
-                return "ComparativeEndTermARBalanceReportV2.rpt";
+                return "ARTrailReport.rpt";
             }
             set {
                 // Do nothing
@@ -41,7 +41,7 @@ namespace ARManila.Reports {
         
         public override string FullResourceName {
             get {
-                return "ARManila.Reports.ComparativeEndTermARBalanceReportV2.rpt";
+                return "ARManila.Reports.ARTrailReport.rpt";
             }
             set {
                 // Do nothing
@@ -66,7 +66,7 @@ namespace ARManila.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section GroupHeaderSection1 {
+        public CrystalDecisions.CrystalReports.Engine.Section Section3 {
             get {
                 return this.ReportDefinition.Sections[2];
             }
@@ -74,7 +74,7 @@ namespace ARManila.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section GroupHeaderSection2 {
+        public CrystalDecisions.CrystalReports.Engine.Section Section4 {
             get {
                 return this.ReportDefinition.Sections[3];
             }
@@ -82,7 +82,7 @@ namespace ARManila.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section3 {
+        public CrystalDecisions.CrystalReports.Engine.Section Section5 {
             get {
                 return this.ReportDefinition.Sections[4];
             }
@@ -90,41 +90,25 @@ namespace ARManila.Reports {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section GroupFooterSection2 {
+        public CrystalDecisions.Shared.IParameterField Parameter_showvalidationdate {
             get {
-                return this.ReportDefinition.Sections[5];
+                return this.DataDefinition.ParameterFields[0];
             }
         }
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section GroupFooterSection1 {
+        public CrystalDecisions.Shared.IParameterField Parameter_showdepartmentsummary {
             get {
-                return this.ReportDefinition.Sections[6];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section4 {
-            get {
-                return this.ReportDefinition.Sections[7];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.CrystalReports.Engine.Section Section5 {
-            get {
-                return this.ReportDefinition.Sections[8];
+                return this.DataDefinition.ParameterFields[1];
             }
         }
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedComparativeEndTermARBalanceReportV2 : Component, ICachedReport {
+    public class CachedARTrailReport : Component, ICachedReport {
         
-        public CachedComparativeEndTermARBalanceReportV2() {
+        public CachedARTrailReport() {
         }
         
         [Browsable(false)]
@@ -161,7 +145,7 @@ namespace ARManila.Reports {
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            ComparativeEndTermARBalanceReportV2 rpt = new ComparativeEndTermARBalanceReportV2();
+            ARTrailReport rpt = new ARTrailReport();
             rpt.Site = this.Site;
             return rpt;
         }

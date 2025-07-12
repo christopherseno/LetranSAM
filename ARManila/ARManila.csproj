@@ -9,6 +9,8 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <Nullable>enable</Nullable>
+    <NoWarn>CS8600;CS8602;CS8603;CS8618;CS8629;CS8625</NoWarn>
     <ProjectGuid>{6327036C-45EA-4119-8FBF-ABEE1FDD3E80}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -36,7 +38,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -258,6 +260,7 @@
     <Compile Include="Controllers\DMCMController.cs" />
     <Compile Include="Controllers\EnrollmentController.cs" />
     <Compile Include="Controllers\EnrollmentStatController.cs" />
+    <Compile Include="Controllers\FeeSetupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JournalEntryController_Dcr.cs" />
     <Compile Include="Controllers\JournalEntryController_Various.cs" />
@@ -512,6 +515,9 @@
     <Compile Include="Models\Database\GetStudentARSummary_Result.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Database\GetStudentARTrail_Result.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Database\GetStudentSchedules_Result.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -707,6 +713,9 @@
     <Compile Include="Models\Database\OriginalStudentSchedule.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Database\Others.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Database\Paycode.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -831,6 +840,9 @@
     <Compile Include="Models\EnrolledStudent.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\OtherDTO\ARTrail.cs" />
+    <Compile Include="Models\OtherDTO\FeeDTO.cs" />
+    <Compile Include="Models\OtherDTO\PartialContext.cs" />
     <Compile Include="Models\OtherDTO\StudentSection.cs" />
     <Compile Include="Models\OtherDTO\StudentWithBalancesDTO.cs" />
     <Compile Include="Models\PaymentClasses.cs" />
@@ -919,6 +931,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ARSetupSummaryReportSHS.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Reports\ARTrailReport.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ARTrailReport.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Reports\BackaccountSummaryReportV2.cs">
@@ -5184,6 +5202,7 @@
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\Webadmin.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -5274,6 +5293,9 @@
     <Content Include="Views\DMCM\Discount.cshtml" />
     <Content Include="Views\FinanceReports\BackaccountSummary.cshtml" />
     <Content Include="Views\FinanceReports\ComparativeEndTermBalance.cshtml" />
+    <Content Include="Views\Maintenance\EncryptedStudentInfo.cshtml" />
+    <Content Include="Views\FinanceReports\ARTrail.cshtml" />
+    <Content Include="Views\FeeSetup\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -5377,6 +5399,10 @@
     <EmbeddedResource Include="Reports\ARSetupSummaryReportSHS.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>ARSetupSummaryReportSHS.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\ARTrailReport.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ARTrailReport.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\BackaccountSummaryReportV2.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

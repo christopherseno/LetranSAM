@@ -77,7 +77,6 @@ namespace ARManila.Models
         public virtual DbSet<Fee> Fee { get; set; }
         public virtual DbSet<FeeExemption> FeeExemption { get; set; }
         public virtual DbSet<FeeInclusion> FeeInclusion { get; set; }
-        public virtual DbSet<FeeName> FeeName { get; set; }
         public virtual DbSet<IssuedSOA> IssuedSOA { get; set; }
         public virtual DbSet<IssuedSOADetail> IssuedSOADetail { get; set; }
         public virtual DbSet<Lab> Lab { get; set; }
@@ -116,6 +115,8 @@ namespace ARManila.Models
         public virtual DbSet<CancelledOR> CancelledOR { get; set; }
         public virtual DbSet<Faculty> Faculty { get; set; }
         public virtual DbSet<PermitType> PermitType { get; set; }
+        public virtual DbSet<Others> Others { get; set; }
+        public virtual DbSet<FeeName> FeeName { get; set; }
     
         public virtual ObjectResult<ArTrail2024_Result> ArTrail2024(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
         {
@@ -1579,6 +1580,40 @@ namespace ARManila.Models
                 new ObjectParameter("asofdate", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Backaccounts_Result>("Backaccounts", periodidsParameter, asofdateParameter);
+        }
+    
+        public virtual ObjectResult<GetStudentARTrail_Result> GetStudentARTrail(Nullable<int> periodid, Nullable<System.DateTime> sdate, Nullable<System.DateTime> edate)
+        {
+            var periodidParameter = periodid.HasValue ?
+                new ObjectParameter("periodid", periodid) :
+                new ObjectParameter("periodid", typeof(int));
+    
+            var sdateParameter = sdate.HasValue ?
+                new ObjectParameter("sdate", sdate) :
+                new ObjectParameter("sdate", typeof(System.DateTime));
+    
+            var edateParameter = edate.HasValue ?
+                new ObjectParameter("edate", edate) :
+                new ObjectParameter("edate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetStudentARTrail_Result>("GetStudentARTrail", periodidParameter, sdateParameter, edateParameter);
+        }
+    
+        public virtual int ArTrailBySchoolYear(Nullable<int> schoolyearid, Nullable<int> educlevelid, Nullable<System.DateTime> asofdate)
+        {
+            var schoolyearidParameter = schoolyearid.HasValue ?
+                new ObjectParameter("schoolyearid", schoolyearid) :
+                new ObjectParameter("schoolyearid", typeof(int));
+    
+            var educlevelidParameter = educlevelid.HasValue ?
+                new ObjectParameter("educlevelid", educlevelid) :
+                new ObjectParameter("educlevelid", typeof(int));
+    
+            var asofdateParameter = asofdate.HasValue ?
+                new ObjectParameter("asofdate", asofdate) :
+                new ObjectParameter("asofdate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ArTrailBySchoolYear", schoolyearidParameter, educlevelidParameter, asofdateParameter);
         }
     }
 }

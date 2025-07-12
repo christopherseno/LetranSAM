@@ -51,10 +51,11 @@ namespace ARManila.Models
         public virtual Period Period { get; set; }
         public virtual Lab Lab { get; set; }
         public virtual Various Various { get; set; }
-        public virtual FeeName FeeName { get; set; }
         public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
         public virtual Supplemental Supplemental { get; set; }
         public virtual Tuition Tuition { get; set; }
         public virtual Miscellaneous Miscellaneous { get; set; }
+        public virtual Others Others { get; set; }
+        public virtual FeeName FeeName { get; set; }
     }
 }

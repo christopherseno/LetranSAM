@@ -54,24 +54,31 @@
 <hr />
 @if (Model.ComparativeEndTermBalances.Count > 0)
 {
-    <table class="table table-bordered table-striped table-vcenter js-dataTable-full dataTable no-footer" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
-        <thead>
-            <tr>
-                <th>School Year</th>
-                <th>Semester / Term </th>
-                <th>No of Students</th>
-                <th>AR Balance</th>
-                <th>Total Enrolled</th>
-                <th>Total Set-up</th>
-                <th>% Stat</th>
-                <th>% Setup</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var balance in Model.ComparativeEndTermBalances)
+<table class="table table-bordered table-striped table-vcenter js-dataTable-full dataTable no-footer" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">
+    <thead>
+        <tr>
+            <th>School Year</th>
+            <th>Semester / Term </th>
+            <th>No of Students</th>
+            <th>AR Balance</th>
+            <th>Total Enrolled</th>
+            <th>Total Set-up</th>
+            <th>% Stat</th>
+            <th>% Setup</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var group in Model.ComparativeEndTermBalances.GroupBy(m => new { m.SchoolYear, m.SchoolYearId }))
+        {
+            bool firstRow = true; // To handle rowspan for the first row only
+            foreach (var balance in group)
             {
                 <tr>
-                    <td rowspan="3">@balance.SchoolYear</td>
+                    @if (firstRow)
+                    {
+                        <td rowspan="@(3 * group.Count())">@group.Key.SchoolYear</td>
+                        firstRow = false;
+                    }
                     <td>@balance.Period</td>
                     <td align="right">@balance.DebitCreditCount</td>
                     <td align="right">@balance.DebitCredit.ToString("#,##0.00")</td>
@@ -99,6 +106,7 @@
                     <td align="right">@balance.PercentageCredit.ToString("##0.0")</td>
                 </tr>
             }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
 }

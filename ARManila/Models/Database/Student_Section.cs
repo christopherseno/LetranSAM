@@ -59,6 +59,8 @@ namespace ARManila.Models
         public Nullable<System.DateTime> OnlineDateEncoded { get; set; }
         public Nullable<int> NoOfPayment { get; set; }
         public Nullable<bool> WillAvailModule { get; set; }
+        public Nullable<int> DiscountTypeId { get; set; }
+        public Nullable<int> ProgramId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }

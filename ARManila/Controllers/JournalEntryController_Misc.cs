@@ -58,8 +58,8 @@ namespace ARManila.Controllers
                         return View("MiscJournalEntryAr", await GetJournalEntryQNEAsync(model));
                     }
                     else
-                    {
-                        if (model.JournalEntryTypeId < 16)
+                    {                        
+                        if (model.JournalEntryTypeId < 16)                            
                             return View(await GetJournalEntryAsync(model));
                         //else if (model.JournalEntryTypeId == 16)
                         //   return View("MiscJournalEntryDcr", await GetJournalEntryAsync(model));
@@ -138,6 +138,8 @@ namespace ARManila.Controllers
                     }
                 }
             }
+            model.Entries = model.Entries.OrderBy(m=>m.AcaAcronym).OrderByDescending(m => m.IsDebit).ToList();
+            model.details = model.details.OrderBy(m => m.IsDebit).ToList();
             return View(model);
         }
 

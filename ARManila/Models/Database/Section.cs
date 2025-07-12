@@ -21,6 +21,7 @@ namespace ARManila.Models
             this.Schedule = new HashSet<Schedule>();
             this.Schedule1 = new HashSet<Schedule>();
             this.Student_Section = new HashSet<Student_Section>();
+            this.Others = new HashSet<Others>();
         }
     
         public int SectionID { get; set; }
@@ -41,5 +42,7 @@ namespace ARManila.Models
         public virtual ICollection<Schedule> Schedule1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student_Section> Student_Section { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Others> Others { get; set; }
     }
 }

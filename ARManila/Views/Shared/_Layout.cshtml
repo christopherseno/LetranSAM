@@ -94,11 +94,11 @@
         <nav id="sidebar" class="nav">
             <div class="sidebar-content">
                 <div class="content-header justify-content-lg-center">
-                    <div class="text-center">                        
+                    <div class="text-center">
                         @*<img src="~/Images/ManilaSmall.png" style="width:25%;height:25%" />*@
                         <div>
                             <a class="link-fx fw-bold tracking-wide mx-auto" href="@Url.Action("Index","Home")">
-                                <span class="fs-7 text-dual">Student Account</span>&nbsp;<br /><span class="fs-7 text-primary">Managment</span>
+                                <span class="fs-7 text-dual">Student Accounts</span>&nbsp;<br /><span class="fs-7 text-primary">Management</span>
                             </a>
                         </div>
                     </div>
@@ -167,7 +167,28 @@
         Codebase.helpersOnLoad(['cb-table-tools-sections', 'js-flatpickr', 'jq-datepicker', 'jq-colorpicker', 'jq-maxlength', 'jq-select2', 'jq-rangeslider', 'jq-masked-inputs', 'jq-pw-strength']);
     </script>
     <script type="text/javascript">
-
+        $(function () {
+            $("#table").DataTable({
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "responsive": true,
+                "autoWidth": false,
+                dom: 'Bfrtip',
+                "order": [],
+                buttons: [
+                    'copy', 'csv', 'excel'
+                ]
+            });
+            $("#tableall").DataTable({
+                "lengthMenu": [[-1], ["All"]],
+                "responsive": true,
+                "autoWidth": false,
+                "rowCallback": function (nRow, aData, iDisplayIndex) {
+                    var oSettings = this.fnSettings();
+                    $("td:first", nRow).html(oSettings._iDisplayStart + iDisplayIndex + 1);
+                    return nRow;
+                }
+            });
+        });
         $(document).ready(function () {
             if (localStorage.getItem("codebaseDarkMode") != null) {
                 $("#SwitchMode").prop('checked', true);

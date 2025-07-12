@@ -50,7 +50,7 @@
                     <td>@(i.DC=="C" ? i.Amount.Value.ToString("#,##0.00"):"")</td>
                     <td>@i.Remarks</td>
                     <td>@Html.ActionLink("View", "ViewReport", new { id = i.DocNum }, new { @target = "_blank", @class = "btn btn-primary" })</td>
-                    <td>@Html.ActionLink("Send Email", "EMailDMCM", new { id = i.DocNum }, new { @class = "btn btn-primary" })</td>
+                    <td>@Html.ActionLink("Send Email", "EMailPostedDMCM", new { id = i.DocNum }, new { @class = "btn btn-primary" })</td>
                     <td><a href="#" onclick="deletedmcm(@i.DocNum)" class="btn btn-primary">Delete</a></td>
                 </tr>
                 }

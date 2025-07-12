@@ -41,6 +41,48 @@ namespace ARManila.Models
     }
     public class Utility
     {
+        public static string DecryptString(string Text)
+        {            
+            SHA256 sha2 = new SHA256CryptoServiceProvider();
+            byte[] Key = sha2.ComputeHash(Encoding.ASCII.GetBytes("1T3@mWoRk053ñ0"));
+
+            byte[] IV = sha2.ComputeHash(Encoding.ASCII.GetBytes("N3tWoRk!nG23"));
+            Array.Resize(ref IV, 16);
+            if (Text == null || Text.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            string plaintext = null;
+            byte[] cipherText = Convert.FromBase64String(Text.Replace(' ', '+'));
+
+            using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+                aesAlg.Mode = CipherMode.CBC;
+                aesAlg.Padding = PaddingMode.PKCS7;
+
+
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+
+            }
+
+            return plaintext;
+        }
         public static string Decrypt(string passphrase, int type)
         {
            
@@ -151,7 +193,8 @@ namespace ARManila.Models
                 email.Bcc.Add("admin@letranbataan.edu.ph");
                 SmtpServer.Port = 587;
                 SmtpServer.UseDefaultCredentials = false;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("itms@letranbataan.edu.ph", "1T3@mWoRk0");
+                SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp");
+                //SmtpServer.Credentials = new System.Net.NetworkCredential("itms@letranbataan.edu.ph", "1T3@mWoRk0");
                 //SmtpServer.Credentials = new System.Net.NetworkCredential("christopher.seno@letran.edu.ph", "-951Han5");
                 SmtpServer.EnableSsl = true;
                 SmtpServer.SendMailAsync(email);

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<ARManila.Models.Student_Section>
+
+@{
+    ViewBag.Title = "EncryptedStudent";
+}
+<div class="p-2">
+    <h2>Encrypted Student Information</h2>   
+    <table class="table table-responsive">
+        <tr>
+            <th>
+                Student No
+            </th>
+            <th>
+                Student Name
+            </th>                   
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Student.StudentNo
+                </td>
+                <td>
+                    @item.Student.FullName256
+                </td>               
+            </tr>
+        }
+
+    </table>
+
+</div>

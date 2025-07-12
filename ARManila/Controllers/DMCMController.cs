@@ -308,7 +308,8 @@ namespace ARManila.Controllers
 
                     mail.IsBodyHtml = true;
                     SmtpServer.Port = 587;
-                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
+                    //SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
+                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp");
                     SmtpServer.EnableSsl = true;
                     SmtpServer.Send(mail);
                     IQueryable<DMCM> dmcms = GetStudentDMCM(dmcm.Student.StudentNo);

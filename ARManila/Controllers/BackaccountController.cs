@@ -117,7 +117,7 @@ namespace ARManila.Controllers
             var student = db.Student.FirstOrDefault(m => m.StudentNo.Equals(studentno));
             if (student == null) throw new Exception("Student Number not found.");
             var id = student.StudentID;
-            var enrollments = db.Student_Section.Where(m => m.StudentID == id).OrderBy(m => m.Student_SectionID);
+            var enrollments = db.Student_Section.Where(m => m.StudentID == id && m.ValidationDate != null).OrderBy(m => m.Student_SectionID);
             ViewBag.enrollments = enrollments;
 
             var backaccounts = db.BackAccount.Where(m => m.StudentID == id);

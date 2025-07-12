@@ -1,0 +1,173 @@
+﻿@model ARManila.Models.OtherDTO.FeeDTO
+@{
+    ViewBag.Title = "Index";
+}
+
+<ul class="nav nav-tabs" id="feeTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tuition-tab" data-bs-toggle="tab" data-bs-target="#tuition" type="button" role="tab">Tuition</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="misc-tab" data-bs-toggle="tab" data-bs-target="#misc" type="button" role="tab">Miscellaneous</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="supplemental-tab" data-bs-toggle="tab" data-bs-target="#supplemental" type="button" role="tab">Supplemental</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="various-tab" data-bs-toggle="tab" data-bs-target="#various" type="button" role="tab">Various</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="others-tab" data-bs-toggle="tab" data-bs-target="#others" type="button" role="tab">Others</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="lab-tab" data-bs-toggle="tab" data-bs-target="#lab" type="button" role="tab">Lab</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="aircon-tab" data-bs-toggle="tab" data-bs-target="#aircon" type="button" role="tab">Aircon</button>
+    </li>
+</ul>
+<div class="tab-content mt-3" id="feeTabContent">
+    <div class="tab-pane fade show active" id="tuition" role="tabpanel">
+        @if (Model.TuitionFees != null && Model.TuitionFees.Any())
+        {
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        @if (Model.Period.EducLevelID >= 3)
+                        {
+                            <th>Program</th>
+                        }
+                        @if (Model.Period.EducLevelID <= 3)
+                        {
+                            <th>Grade</th>
+                        }
+                        <th class="text-end">Payment Mode</th>
+                        <th class="text-end">Amount</th>
+                        @if (Model.Period.EducLevelID < 3)
+                        {
+                            <th>Downpayment</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fee in Model.TuitionFees)
+                    {
+                        <tr>
+                            @if (Model.Period.EducLevelID >= 3)
+                            {
+                                <th>@fee.Progam.ProgramCode</th>
+                            }
+                            @if (Model.Period.EducLevelID <= 3)
+                            {
+                                <th>@fee.YearLevel</th>
+                            }
+                            <th class="text-end">@fee.Paymode.Description</th>
+                            <th class="text-end">@fee.Amount.ToString("#,##0.00")</th>
+                            @if (Model.Period.EducLevelID < 3)
+                            {
+                                <th>@(fee.Downpayment.HasValue? fee.Downpayment.Value.ToString("#,##0.00") :"0.00")</th>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="misc" role="tabpanel">
+        @if (Model.MiscFees != null && Model.MiscFees.Any())
+        {
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-end">Fee Name</th>
+                        <th>For New Student</th>
+                        @if (Model.Period.EducLevelID < 3)
+                        {
+                            <th>Grade</th>
+                        }
+                        @if (Model.Period.EducLevelID == 4)
+                        {
+                            <th>Exempted Curr</th>
+                        }
+                        @if (Model.Period.EducLevelID == 4)
+                        {
+                            <th>For this Curr Only</th>
+                        }
+                        <th class="text-end">Amount</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fee in Model.MiscFees)
+                    {
+                        <tr>
+                            <th>@fee.Description</th>
+                            <th class="text-end">@(fee.Fee.FeeNameID.HasValue ? fee.Fee.FeeName.FeeName1 : "")</th>
+                            <th>For New Student</th>
+                            @if (Model.Period.EducLevelID < 3)
+                            {
+                                <th>Grade</th>
+                            }
+                            @if (Model.Period.EducLevelID == 4)
+                            {
+                                <th>Exempted Curr</th>
+                            }
+                            @if (Model.Period.EducLevelID == 4)
+                            {
+                                <th>For this Curr Only</th>
+                            }
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="supplemental" role="tabpanel">
+        @foreach (var item in Model.SupplementalFees)
+        {
+            <p>@item.Description - @item.Amount</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="various" role="tabpanel">
+        @foreach (var item in Model.VariousFees)
+        {
+            <p>@item.Description - @item.Amount</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="others" role="tabpanel">
+        @foreach (var item in Model.OtherFees)
+        {
+            <p>@item.Description - @item.Amount</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="lab" role="tabpanel">
+        @foreach (var item in Model.LabFees)
+        {
+            <p>@item.Description - @item.Amount</p>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="aircon" role="tabpanel">
+        @foreach (var item in Model.AirconFees)
+        {
+            <p>@item.Description - @item.Amount</p>
+        }
+    </div>
+</div>
+
+
