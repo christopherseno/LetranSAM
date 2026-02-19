@@ -4,59 +4,105 @@
 }
 
 <div class="p-3">
-    @using (Html.BeginForm("SetPeriod", "Utility", FormMethod.Post))
+
+    @* Auto-restore message shown while silently restoring from localStorage *@
+    <div id="auto-restore-msg" style="display:none" class="alert alert-info">
+        <i class="fa fa-spinner fa-spin"></i> Restoring your previous period selection&hellip;
+    </div>
+
+    @* Hidden form used only for the auto-restore path (localStorage → cookie) *@
+    @using (Html.BeginForm("SetPeriod", "Utility", FormMethod.Post, new { id = "auto-restore-form" }))
     {
-        @Html.Hidden("fromcontroller", new { @value = ViewBag.controller })
-        @Html.Hidden("fromaction", new { @value = ViewBag.action })
-        <h3>Period Selector</h3>
         @Html.AntiForgeryToken()
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="EducationalLevelId">Level: </label>
-                @Html.DropDownList("EducationalLevelId", null, htmlAttributes: new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="SchoolYearId">School Year: </label>
-                @Html.DropDownList("SchoolYearId", null, htmlAttributes: new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="Period">Period: </label>
-                <select class="form-control" id="Period" name="Period"></select>
-            </div>
-        </div>
-        <input type="submit" value="Set Period" />
+        @Html.Hidden("fromcontroller", new { @value = ViewBag.controller })
+        @Html.Hidden("fromaction",     new { @value = ViewBag.action })
+        <input type="hidden" id="auto-period-input" name="Period" value="" />
     }
+
+    @* Main period selector form — hidden until we know localStorage has no saved value *@
+    <div id="period-form-wrapper" style="display:none">
+        @using (Html.BeginForm("SetPeriod", "Utility", FormMethod.Post, new { id = "period-select-form" }))
+        {
+            @Html.Hidden("fromcontroller", new { @value = ViewBag.controller })
+            @Html.Hidden("fromaction",     new { @value = ViewBag.action })
+            <h3>Period Selector</h3>
+            @Html.AntiForgeryToken()
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="EducationalLevelId">Level: </label>
+                    @Html.DropDownList("EducationalLevelId", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="SchoolYearId">School Year: </label>
+                    @Html.DropDownList("SchoolYearId", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="Period">Period: </label>
+                    <select class="form-control" id="Period" name="Period"></select>
+                </div>
+            </div>
+            <input type="submit" value="Set Period" />
+        }
+    </div>
 
 </div>
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            var periods = new Array();
+            var STORAGE_KEY = 'armanila_periodId';
+            var toSet = '@ViewBag.ToSet' === 'True';
             var periodarray = @Html.Raw(Json.Encode(ViewBag.Period));
-            for (var i = 0; i < periodarray.length; i++) {
-                periods[i] = periodarray[i];
+
+            // ── Save PeriodId to localStorage whenever the main form is submitted ──
+            $('#period-select-form').on('submit', function () {
+                var periodId = $('#Period').val();
+                if (periodId) {
+                    localStorage.setItem(STORAGE_KEY, periodId);
+                }
+            });
+
+            // ── Decide what to show on load ──
+            if (toSet) {
+                // User explicitly navigated here to change the period — show form immediately
+                showForm();
+            } else {
+                var storedPeriodId = localStorage.getItem(STORAGE_KEY);
+                if (storedPeriodId) {
+                    // Silently restore: set the cookie via POST and redirect back
+                    $('#auto-restore-msg').show();
+                    $('#auto-period-input').val(storedPeriodId);
+                    $('#auto-restore-form').submit();
+                } else {
+                    // No saved data — show the selector form
+                    showForm();
+                }
             }
-            LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val());
-            $("#SchoolYearId").change(function () {
+
+            function showForm() {
+                $('#period-form-wrapper').show();
                 LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val());
+            }
+
+            // ── Period dropdown population ──
+            $("#SchoolYearId").on('change', function () {
+                LoadPeriod($(this).val(), $("#EducationalLevelId").val());
             });
-            $("#EducationalLevelId").change(function () {
-                LoadPeriod($("#SchoolYearId").val(), $("#EducationalLevelId").val());
+            $("#EducationalLevelId").on('change', function () {
+                LoadPeriod($("#SchoolYearId").val(), $(this).val());
             });
+
             function LoadPeriod(schoolyearid, educationallevelid) {
                 $("#Period").empty();
-
                 for (var i = 0; i < periodarray.length; i++) {
-
-                    if (periodarray[i].SchoolYearId == schoolyearid && periodarray[i].EducationalLevelId == educationallevelid) {
+                    if (periodarray[i].SchoolYearId == schoolyearid &&
+                        periodarray[i].EducationalLevelId == educationallevelid) {
                         var option = $("<option />");
                         option.attr("value", periodarray[i].PeriodId).text(periodarray[i].PeriodName);
                         $("#Period").append(option);
-
                     }
                 }
             }

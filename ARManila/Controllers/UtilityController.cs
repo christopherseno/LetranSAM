@@ -11,7 +11,8 @@ namespace ARManila.Controllers
     [Authorize(Roles = "Finance, IT")]
     public class UtilityController : Controller
     {
-        public ActionResult SetPeriod(string fromcontroller, string fromaction)
+        [HttpGet]
+        public ActionResult SetPeriod(string fromcontroller, string fromaction, bool toSet = false)
         {
             LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();            
             ViewBag.EducationalLevelId = new SelectList(db.EducationalLevel, "EducLevelId", "EducLevelName");
@@ -19,6 +20,7 @@ namespace ARManila.Controllers
             ViewBag.Period = db.Period.Select(m => new { PeriodId = m.PeriodID, PeriodName = m.Period1, SchoolYearId = m.SchoolYearID, EducationalLevelId = m.EducLevelID }).ToList();
             ViewBag.controller = fromcontroller;
             ViewBag.action = fromaction;
+            ViewBag.ToSet = toSet;
             return View();
         }
         [HttpPost]
@@ -30,8 +32,9 @@ namespace ARManila.Controllers
             periodwrapper.Department = period.EducationalLevel1.EducLevelName;
             periodwrapper.PeriodId = period.PeriodID;
             periodwrapper.PeriodName = period.SchoolYear.SchoolYearName + ", " + period.Period1;
-            HttpCookie cookie = new HttpCookie("PeriodId", period.PeriodID.ToString());           
+            HttpCookie cookie = new HttpCookie("PeriodId", period.PeriodID.ToString());
             cookie.Secure = true;
+            cookie.Expires = DateTime.Now.AddYears(1);
             HttpContext.Response.Cookies.Add(cookie);
             //Session["PeriodId"] = periodwrapper;
             return RedirectToAction(fromaction, fromcontroller);

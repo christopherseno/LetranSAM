@@ -18,7 +18,7 @@
             @period.FullName <input type="hidden" value="@periodid" id="PeriodId" />
             <ul class="list-inline mt-3 mb-0">
                 <li class="list-inline-item">
-                    @Html.ActionLink("Change Period", "SetPeriod", "Utility", new { fromcontroller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), fromaction = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString() }, new { @class = "d-block btn btn-primary" })
+                    @Html.ActionLink("Change Period", "SetPeriod", "Utility", new { fromcontroller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), fromaction = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), toSet=true }, new { @class = "d-block btn btn-primary" })
                 </li>
             </ul>
         </div>

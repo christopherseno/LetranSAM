@@ -5317,6 +5317,7 @@
     <Content Include="Views\FeeSetup\SupplementalFeeSetup.cshtml" />
     <Content Include="Views\FeeSetup\TuitionFeeSetup.cshtml" />
     <Content Include="Views\FeeSetup\VariousFeeSetup.cshtml" />
+    <Content Include="Views\ARQuery\ARHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

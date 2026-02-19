@@ -54,5 +54,43 @@ namespace ARManila.Controllers
             }
             return View(model);            
         }
+
+        [HttpGet]
+        public ActionResult ARHistory()
+        {
+            return View(new List<ARWrapper>());
+        }
+
+        [HttpPost]
+        public ActionResult ARHistory(string studentno)
+        {
+            if (string.IsNullOrWhiteSpace(studentno))
+                return View(new List<ARWrapper>());
+
+            var student = db.Student.FirstOrDefault(m => m.StudentNo.Equals(studentno));
+            if (student == null) throw new Exception("Invalid Student Number.");
+
+            // Get all distinct periods the student has a validated enrollment in, chronological order
+            var periodIds = db.Student_Section
+                .Where(m => m.StudentID == student.StudentID && m.ValidationDate != null)
+                .Select(m => m.Section.PeriodID)
+                .Distinct()
+                .OrderBy(m => m)
+                .ToList();
+
+            var apiController = new FinanceController();
+            var results = new List<ARWrapper>();
+
+            foreach (var periodId in periodIds)
+            {
+                var actionResult = apiController.GetARQueryByFinance(studentno, periodId);
+                var contentResult = actionResult as OkNegotiatedContentResult<ARWrapper>;
+                if (contentResult != null)
+                    results.Add(contentResult.Content);
+            }
+
+            ViewBag.StudentNo = studentno;
+            return View(results);
+        }
     }
 }
