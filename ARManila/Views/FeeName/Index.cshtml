@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ARManila.Models.FeeName>
+@model IEnumerable<ARManila.Models.FeeName>
 
 @{
     ViewBag.Title = "FeeName";
@@ -7,7 +7,7 @@
 <h2>Fee Name</h2>
 
 <p>
-    @Html.ActionLink("Create New", "CreateFeeName")
+    @Html.ActionLink("Create New", "Create", "FeeName")
 </p>
 <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
     <thead>
@@ -38,7 +38,7 @@
                     @Html.DisplayFor(modelItem => item.Amount)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "EditFeeName", new { id = item.FeeNameID }, new { @class = "btn btn-xs btn-primary" } ) 
+                    @Html.ActionLink("Edit", "Edit", new { id = item.FeeNameID }, new { @class = "btn btn-xs btn-primary" } ) 
                     <a href="#" class="btn btn-xs btn-danger" onclick="ConfirmDelete('@item.FeeNameID', '@item.FeeName1')">Delete</a>
                 </td>
             </tr>
@@ -67,9 +67,9 @@
 @section scripts{
     <script>
 
-        function ConfirmDelete(id, message) {
+n        function ConfirmDelete(id, message) {
             $("#modalmessage").html(message);
-            $("#modallink").html('<a href="/AccountSetup/DeleteFeeName/' + id + '" class="btn btn-primary">Confirm</a>');
+            $("#modallink").html('<a href="/FeeName/Delete/' + id + '" class="btn btn-primary">Confirm</a>');
             $("#confirmdelete").modal('show');
         }
     </script>

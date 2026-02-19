@@ -905,6 +905,16 @@
           <Property Name="EducLevelID" Type="int" />
           <Property Name="SequenceNo" Type="int" />
         </EntityType>
+        <EntityType Name="Permit">
+          <Key>
+            <PropertyRef Name="PermitID" />
+          </Key>
+          <Property Name="PermitID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PermitTypeID" Type="int" />
+          <Property Name="StudentID" Type="int" />
+          <Property Name="DateIssued" Type="datetime" />
+          <Property Name="PeriodID" Type="int" />
+        </EntityType>
         <EntityType Name="PermitType">
           <Key>
             <PropertyRef Name="PermitTypeID" />
@@ -2783,6 +2793,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Permit_Period">
+          <End Role="Period" Type="Self.Period" Multiplicity="0..1" />
+          <End Role="Permit" Type="Self.Permit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Period">
+              <PropertyRef Name="PeriodID" />
+            </Principal>
+            <Dependent Role="Permit">
+              <PropertyRef Name="PeriodID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Permit_PermitType">
+          <End Role="PermitType" Type="Self.PermitType" Multiplicity="0..1" />
+          <End Role="Permit" Type="Self.Permit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PermitType">
+              <PropertyRef Name="PermitTypeID" />
+            </Principal>
+            <Dependent Role="Permit">
+              <PropertyRef Name="PermitTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PostedQneJournal_JournalEntryType">
           <End Role="JournalEntryType" Type="Self.JournalEntryType" Multiplicity="1" />
           <End Role="PostedQneJournal" Type="Self.PostedQneJournal" Multiplicity="*" />
@@ -3896,6 +3930,7 @@
           <EntitySet Name="Paymode" EntityType="Self.Paymode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaySchedule" EntityType="Self.PaySchedule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Period" EntityType="Self.Period" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Permit" EntityType="Self.Permit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PermitType" EntityType="Self.PermitType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Progam" EntityType="Self.Progam" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProgamCurriculum" EntityType="Self.ProgamCurriculum" Schema="dbo" store:Type="Tables" />
@@ -4406,6 +4441,14 @@
           <AssociationSet Name="FK_Period_SchoolYear" Association="Self.FK_Period_SchoolYear">
             <End Role="SchoolYear" EntitySet="SchoolYear" />
             <End Role="Period" EntitySet="Period" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Permit_Period" Association="Self.FK_Permit_Period">
+            <End Role="Period" EntitySet="Period" />
+            <End Role="Permit" EntitySet="Permit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Permit_PermitType" Association="Self.FK_Permit_PermitType">
+            <End Role="PermitType" EntitySet="PermitType" />
+            <End Role="Permit" EntitySet="Permit" />
           </AssociationSet>
           <AssociationSet Name="FK_PostedQneJournal_JournalEntryType" Association="Self.FK_PostedQneJournal_JournalEntryType">
             <End Role="JournalEntryType" EntitySet="JournalEntryType" />
@@ -5642,6 +5685,7 @@
           <NavigationProperty Name="StudentMaxUnit" Relationship="Self.FK_StudentMaxUnit_Period" FromRole="Period" ToRole="StudentMaxUnit" />
           <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_EducationalLevel_Period" FromRole="Period" ToRole="EducationalLevel" />
           <NavigationProperty Name="EducationalLevel1" Relationship="LetranIntegratedSystemModel.FK_Period_EducationalLevel" FromRole="Period" ToRole="EducationalLevel" />
+          <NavigationProperty Name="Permit" Relationship="LetranIntegratedSystemModel.FK_Permit_Period" FromRole="Period" ToRole="Permit" />
         </EntityType>
         <EntityType Name="Progam">
           <Key>
@@ -9097,6 +9141,15 @@
             <End Role="FeeName" EntitySet="FeeName" />
             <End Role="Fee" EntitySet="Fee" />
           </AssociationSet>
+          <EntitySet Name="Permit" EntityType="LetranIntegratedSystemModel.Permit" />
+          <AssociationSet Name="FK_Permit_Period" Association="LetranIntegratedSystemModel.FK_Permit_Period">
+            <End Role="Period" EntitySet="Period" />
+            <End Role="Permit" EntitySet="Permit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Permit_PermitType" Association="LetranIntegratedSystemModel.FK_Permit_PermitType">
+            <End Role="PermitType" EntitySet="PermitType" />
+            <End Role="Permit" EntitySet="Permit" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="ArTrail2024_Result">
           <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
@@ -10239,6 +10292,7 @@
           </Key>
           <Property Name="PermitTypeID" Type="Int32" Nullable="false" />
           <Property Name="PermitName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Permit" Relationship="LetranIntegratedSystemModel.FK_Permit_PermitType" FromRole="PermitType" ToRole="Permit" />
         </EntityType>
         <Association Name="FK_Faculty_EducationalLevel">
           <End Type="LetranIntegratedSystemModel.EducationalLevel" Role="EducationalLevel" Multiplicity="0..1" />
@@ -10588,6 +10642,42 @@
             </Principal>
             <Dependent Role="Fee">
               <PropertyRef Name="FeeNameID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Permit">
+          <Key>
+            <PropertyRef Name="PermitID" />
+          </Key>
+          <Property Name="PermitID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PermitTypeID" Type="Int32" />
+          <Property Name="StudentID" Type="Int32" />
+          <Property Name="DateIssued" Type="DateTime" Precision="3" />
+          <Property Name="PeriodID" Type="Int32" />
+          <NavigationProperty Name="Period" Relationship="LetranIntegratedSystemModel.FK_Permit_Period" FromRole="Permit" ToRole="Period" />
+          <NavigationProperty Name="PermitType" Relationship="LetranIntegratedSystemModel.FK_Permit_PermitType" FromRole="Permit" ToRole="PermitType" />
+        </EntityType>
+        <Association Name="FK_Permit_Period">
+          <End Type="LetranIntegratedSystemModel.Period" Role="Period" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Permit" Role="Permit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Period">
+              <PropertyRef Name="PeriodID" />
+            </Principal>
+            <Dependent Role="Permit">
+              <PropertyRef Name="PeriodID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Permit_PermitType">
+          <End Type="LetranIntegratedSystemModel.PermitType" Role="PermitType" Multiplicity="0..1" />
+          <End Type="LetranIntegratedSystemModel.Permit" Role="Permit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PermitType">
+              <PropertyRef Name="PermitTypeID" />
+            </Principal>
+            <Dependent Role="Permit">
+              <PropertyRef Name="PermitTypeID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -13381,6 +13471,17 @@
                 <ScalarProperty Name="FeeCategory" ColumnName="FeeCategory" />
                 <ScalarProperty Name="FeeName1" ColumnName="FeeName" />
                 <ScalarProperty Name="FeeNameID" ColumnName="FeeNameID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Permit">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Permit">
+              <MappingFragment StoreEntitySet="Permit">
+                <ScalarProperty Name="PeriodID" ColumnName="PeriodID" />
+                <ScalarProperty Name="DateIssued" ColumnName="DateIssued" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="PermitTypeID" ColumnName="PermitTypeID" />
+                <ScalarProperty Name="PermitID" ColumnName="PermitID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

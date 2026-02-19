@@ -9,6 +9,7 @@ namespace ARManila.Models.OtherDTO
     {
         public Period Period { get; set; }
         public IEnumerable<Fee> Fees { get; set; }
+        public IEnumerable<FeeName> FeeNames { get; set; }
         public IEnumerable<Tuition> TuitionFees { get; set; }
         public IEnumerable<Miscellaneous> MiscFees { get; set; }
         public IEnumerable<Supplemental> SupplementalFees { get; set; }

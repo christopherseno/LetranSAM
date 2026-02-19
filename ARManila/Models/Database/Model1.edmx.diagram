@@ -267,6 +267,9 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DiscountTypeDetail_FeeName" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_FeeName" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.Permit" Width="1.5" PointX="16.625" PointY="16" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_Period" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_PermitType" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

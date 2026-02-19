@@ -1,0 +1,91 @@
+@model ARManila.Models.Supplemental
+
+@{
+    ViewBag.Title = "Add Supplemental Fee";
+}
+
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Add Supplemental Fee</h3>
+        </div>
+        <div class="block-content">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Fee Name</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.FeeNameId, (SelectList)ViewBag.feename, "-- Select Fee Name --", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(m => m.FeeNameId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Amount</label>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number", step = "any", min = "0" })
+                        @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Apply To</label>
+                    <div class="col-sm-6 pt-2">
+                        @Html.RadioButtonFor(m => m.NewStatus, "", new { @checked = "checked" }) All Students &nbsp;
+                        @Html.RadioButtonFor(m => m.NewStatus, "false") Old Students &nbsp;
+                        @Html.RadioButtonFor(m => m.NewStatus, "true") New Students
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Grade Level</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.YearLevel, (SelectList)ViewBag.gradelevel, "-- All Levels --", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">GL Account</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.GlAccount, (SelectList)ViewBag.coa, "-- None --", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Subaccount</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.SubAccount, (SelectList)ViewBag.sl, "-- None --", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">QNE GL Account</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.QneGlAccount, (SelectList)ViewBag.qne, "-- None --", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-9 offset-sm-3">
+                        <button type="submit" class="btn btn-primary me-2">Save</button>
+                        @Html.ActionLink("Cancel", "SupplementalFeeSetup", null, new { @class = "btn btn-secondary" })
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var feenamearray = @Html.Raw(Json.Encode(ViewBag.feenames));
+            $("#FeeNameId").change(function () {
+                LoadAmount($(this).val());
+            });
+            function LoadAmount(feenameid) {
+                for (var i = 0; i < feenamearray.length; i++) {
+                    if (feenamearray[i].FeeNameId == feenameid) {
+                        $("#Amount").val(Number(feenamearray[i].Amount).toFixed(2));
+                    }
+                }
+            }
+        });
+    </script>
+}

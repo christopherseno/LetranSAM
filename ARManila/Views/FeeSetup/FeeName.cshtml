@@ -1,0 +1,69 @@
+@model IEnumerable<ARManila.Models.FeeName>
+
+@{
+    ViewBag.Title = "Fee Names";
+}
+
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Fee Names</h3>
+            <div class="block-options">
+                @Html.ActionLink("Add Fee Name", "CreateFeeName", null, new { @class = "btn btn-sm btn-alt-primary" })
+            </div>
+        </div>
+        <div class="block-content">
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                <thead>
+                    <tr>
+                        <th>Fee Name</th>
+                        <th>Type</th>
+                        <th class="text-end">Default Amount</th>
+                        <th class="text-center" style="width:120px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.FeeName1)</td>
+                            <td>@Html.DisplayFor(modelItem => item.FeeCategory)</td>
+                            <td class="text-end">@(item.Amount.HasValue ? item.Amount.Value.ToString("#,##0.00") : "")</td>
+                            <td class="text-center">
+                                @Html.ActionLink("Edit", "EditFeeName", new { id = item.FeeNameID }, new { @class = "btn btn-sm btn-alt-primary me-1" })
+                                <a href="#" class="btn btn-sm btn-alt-danger" onclick="ConfirmDelete('@item.FeeNameID', '@item.FeeName1')">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="confirmdelete" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Delete fee name: <strong id="modalmessage"></strong>?</p>
+                <div id="modallink"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        function ConfirmDelete(id, message) {
+            document.getElementById("modalmessage").textContent = message;
+            document.getElementById("modallink").innerHTML =
+                '<a href="/FeeSetup/DeleteFeeName/' + id + '" class="btn btn-danger">Confirm Delete</a>' +
+                ' <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>';
+            $("#confirmdelete").modal('show');
+        }
+    </script>
+}

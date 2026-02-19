@@ -55,7 +55,7 @@
                         <tr>
                             @if (Model.Period.EducLevelID >= 3)
                             {
-                                <th>@fee.Progam.ProgramCode</th>
+                                <th>@(fee.ProgramID.HasValue ? fee.Progam.ProgramCode : "" )</th>
                             }
                             @if (Model.Period.EducLevelID <= 3)
                             {
@@ -81,48 +81,74 @@
     <div class="tab-pane fade" id="misc" role="tabpanel">
         @if (Model.MiscFees != null && Model.MiscFees.Any())
         {
+            // Check if any misc fee has a YearLevel value to conditionally show grade column
+            var hasYearLevel = Model.MiscFees.Any(m => m.YearLevel.HasValue);
+            var showGradeColumn = hasYearLevel || Model.Period.EducLevelID < 3;
+
+
             <table class="table table-bordered table-striped">
                 <thead class="table-light">
                     <tr>
                         <th>Description</th>
                         <th class="text-end">Fee Name</th>
                         <th>For New Student</th>
-                        @if (Model.Period.EducLevelID < 3)
+                        @if (showGradeColumn)
                         {
                             <th>Grade</th>
                         }
-                        @if (Model.Period.EducLevelID == 4)
-                        {
-                            <th>Exempted Curr</th>
-                        }
-                        @if (Model.Period.EducLevelID == 4)
-                        {
-                            <th>For this Curr Only</th>
-                        }
+                        <th>Account Code</th>
+                        <th>Account Name</th>
                         <th class="text-end">Amount</th>
-
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var fee in Model.MiscFees)
                     {
                         <tr>
-                            <th>@fee.Description</th>
-                            <th class="text-end">@(fee.Fee.FeeNameID.HasValue ? fee.Fee.FeeName.FeeName1 : "")</th>
-                            <th>For New Student</th>
-                            @if (Model.Period.EducLevelID < 3)
+                            <td>@fee.Description</td>
+                            <td class="text-end">@(fee.Fee != null && fee.Fee.FeeNameID.HasValue && fee.Fee.FeeName != null ? fee.Fee.FeeName.FeeName1 : "")</td>
+                            <td>@(fee.NewStatus.HasValue && fee.NewStatus.Value ? "Yes" : "No")</td>
+                            @if (showGradeColumn)
                             {
-                                <th>Grade</th>
+                                <td>@(fee.YearLevel.HasValue ? fee.YearLevel.Value.ToString() : "")</td>
                             }
-                            @if (Model.Period.EducLevelID == 4)
-                            {
-                                <th>Exempted Curr</th>
-                            }
-                            @if (Model.Period.EducLevelID == 4)
-                            {
-                                <th>For this Curr Only</th>
-                            }
-                            <th class="text-end">Amount</th>
+                            <td>
+                                @{
+                                    var accountCode = "";
+                                    if (fee.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (fee.Fee.SubAcctID.HasValue && fee.Fee.SubChartOfAccounts != null)
+                                        {
+                                            accountCode = fee.Fee.SubChartOfAccounts.SubAcctNo ?? "";
+                                        }
+                                        else if (fee.Fee.AcctID.HasValue && fee.Fee.ChartOfAccounts != null)
+                                        {
+                                            accountCode = fee.Fee.ChartOfAccounts.AcctNo ?? "";
+                                        }
+                                    }
+                                }
+                                @accountCode
+                            </td>
+                            <td>
+                                @{
+                                    var accountName = "";
+                                    if (fee.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (fee.Fee.SubAcctID.HasValue && fee.Fee.SubChartOfAccounts != null)
+                                        {
+                                            accountName = fee.Fee.SubChartOfAccounts.SubbAcctName ?? "";
+                                        }
+                                        else if (fee.Fee.AcctID.HasValue && fee.Fee.ChartOfAccounts != null)
+                                        {
+                                            accountName = fee.Fee.ChartOfAccounts.AcctName ?? "";
+                                        }
+                                    }
+                                }
+                                @accountName
+                            </td>
+                            <td class="text-end">@fee.Amount.ToString("#,##0.00")</td>
                         </tr>
                     }
                 </tbody>
@@ -135,39 +161,349 @@
     </div>
 
     <div class="tab-pane fade" id="supplemental" role="tabpanel">
-        @foreach (var item in Model.SupplementalFees)
+        @if (Model.SupplementalFees != null && Model.SupplementalFees.Any())
         {
-            <p>@item.Description - @item.Amount</p>
+
+            // Check if any supplemental fee has a YearLevel value to conditionally show grade column
+            var suppHasYearLevel = Model.SupplementalFees.Any(m => m.YearLevel.HasValue);
+            var suppShowGradeColumn = suppHasYearLevel || Model.Period.EducLevelID < 3;
+
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-end">Fee Name</th>
+                        <th>For New Student</th>
+                        @if (suppShowGradeColumn)
+                        {
+                            <th>Grade</th>
+                        }
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SupplementalFees)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td class="text-end">@(item.Fee != null && item.Fee.FeeNameID.HasValue && item.Fee.FeeName != null ? item.Fee.FeeName.FeeName1 : "")</td>
+                            <td>@(item.NewStatus.HasValue && item.NewStatus.Value ? "Yes" : "No")</td>
+                            @if (suppShowGradeColumn)
+                            {
+                                <td>@(item.YearLevel.HasValue ? item.YearLevel.Value.ToString() : "")</td>
+                            }
+                            <td>
+                                @{
+                                    var suppAccountCode = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            suppAccountCode = item.Fee.SubChartOfAccounts.SubAcctNo ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            suppAccountCode = item.Fee.ChartOfAccounts.AcctNo ?? "";
+                                        }
+                                    }
+                                }
+                                @suppAccountCode
+                            </td>
+                            <td>
+                                @{
+                                    var suppAccountName = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            suppAccountName = item.Fee.SubChartOfAccounts.SubbAcctName ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            suppAccountName = item.Fee.ChartOfAccounts.AcctName ?? "";
+                                        }
+                                    }
+                                }
+                                @suppAccountName
+                            </td>
+                            <td class="text-end">@item.Amount.ToString("#,##0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
         }
     </div>
 
     <div class="tab-pane fade" id="various" role="tabpanel">
-        @foreach (var item in Model.VariousFees)
+        @if (Model.VariousFees != null && Model.VariousFees.Any())
         {
-            <p>@item.Description - @item.Amount</p>
+
+            // Check if any various fee has a YearLevel value to conditionally show grade column
+            var varHasYearLevel = Model.VariousFees.Any(m => m.YearLevel.HasValue);
+            var varShowGradeColumn = varHasYearLevel || Model.Period.EducLevelID < 3;
+            // Check if any various fee has a ProgramID to conditionally show program column
+            var varHasProgram = Model.VariousFees.Any(m => m.ProgramID.HasValue);
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Description</th>
+                        @if (varHasProgram || Model.Period.EducLevelID >= 3)
+                        {
+                            <th>Program</th>
+                        }
+                        @if (varShowGradeColumn)
+                        {
+                            <th>Grade</th>
+                        }
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.VariousFees)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            @if (varHasProgram || Model.Period.EducLevelID >= 3)
+                            {
+                                <td>@(item.ProgramID.HasValue && item.Progam != null ? item.Progam.ProgramCode : "")</td>
+                            }
+                            @if (varShowGradeColumn)
+                            {
+                                <td>@(item.YearLevel.HasValue ? item.YearLevel.Value.ToString() : "")</td>
+                            }
+                            <td>
+                                @{
+                                    var varAccountCode = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            varAccountCode = item.Fee.SubChartOfAccounts.SubAcctNo ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            varAccountCode = item.Fee.ChartOfAccounts.AcctNo ?? "";
+                                        }
+                                    }
+                                }
+                                @varAccountCode
+                            </td>
+                            <td>
+                                @{
+                                    var varAccountName = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            varAccountName = item.Fee.SubChartOfAccounts.SubbAcctName ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            varAccountName = item.Fee.ChartOfAccounts.AcctName ?? "";
+                                        }
+                                    }
+                                }
+                                @varAccountName
+                            </td>
+                            <td class="text-end">@item.Amount.ToString("#,##0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
         }
     </div>
 
     <div class="tab-pane fade" id="others" role="tabpanel">
-        @foreach (var item in Model.OtherFees)
+        @if (Model.OtherFees != null && Model.OtherFees.Any())
         {
-            <p>@item.Description - @item.Amount</p>
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Description</th>
+                        <th>Subject</th>
+                        <th>Section</th>
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OtherFees)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td>@(item.Subject != null ? item.Subject.SubjectCode : "")</td>
+                            <td>@(item.Section != null ? item.Section.SectionName : "")</td>
+                            <td>
+                                @{
+                                    var otherAccountCode = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            otherAccountCode = item.Fee.SubChartOfAccounts.SubAcctNo ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            otherAccountCode = item.Fee.ChartOfAccounts.AcctNo ?? "";
+                                        }
+                                    }
+                                }
+                                @otherAccountCode
+                            </td>
+                            <td>
+                                @{
+                                    var otherAccountName = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            otherAccountName = item.Fee.SubChartOfAccounts.SubbAcctName ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            otherAccountName = item.Fee.ChartOfAccounts.AcctName ?? "";
+                                        }
+                                    }
+                                }
+                                @otherAccountName
+                            </td>
+                            <td class="text-end">@item.Amount.ToString("#,##0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
         }
     </div>
 
     <div class="tab-pane fade" id="lab" role="tabpanel">
-        @foreach (var item in Model.LabFees)
+        @if (Model.LabFees != null && Model.LabFees.Any())
         {
-            <p>@item.Description - @item.Amount</p>
+
+                // Check if any lab fee has a YearLevel value to conditionally show grade column
+                var labHasYearLevel = Model.LabFees.Any(m => m.YearLevel.HasValue);
+                var labShowGradeColumn = labHasYearLevel;
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Description</th>
+                        <th>Subject</th>
+                        @if (labShowGradeColumn)
+                        {
+                            <th>Year Level</th>
+                        }
+                        <th>Account Code</th>
+                        <th>Account Name</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LabFees)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td>@(item.Subject != null ? item.Subject.SubjectCode : "")</td>
+                            @if (labShowGradeColumn)
+                            {
+                                <td>@(item.YearLevel.HasValue ? item.YearLevel.Value.ToString() : "")</td>
+                            }
+                            <td>
+                                @{
+                                    var labAccountCode = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            labAccountCode = item.Fee.SubChartOfAccounts.SubAcctNo ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            labAccountCode = item.Fee.ChartOfAccounts.AcctNo ?? "";
+                                        }
+                                    }
+                                }
+                                @labAccountCode
+                            </td>
+                            <td>
+                                @{
+                                    var labAccountName = "";
+                                    if (item.Fee != null)
+                                    {
+                                        // Prefer SubChartOfAccounts, fallback to ChartOfAccounts
+                                        if (item.Fee.SubAcctID.HasValue && item.Fee.SubChartOfAccounts != null)
+                                        {
+                                            labAccountName = item.Fee.SubChartOfAccounts.SubbAcctName ?? "";
+                                        }
+                                        else if (item.Fee.AcctID.HasValue && item.Fee.ChartOfAccounts != null)
+                                        {
+                                            labAccountName = item.Fee.ChartOfAccounts.AcctName ?? "";
+                                        }
+                                    }
+                                }
+                                @labAccountName
+                            </td>
+                            <td class="text-end">@item.Amount.ToString("#,##0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
         }
     </div>
 
     <div class="tab-pane fade" id="aircon" role="tabpanel">
-        @foreach (var item in Model.AirconFees)
+        @if (Model.AirconFees != null && Model.AirconFees.Any())
         {
-            <p>@item.Description - @item.Amount</p>
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.AirconFees)
+                    {
+                        <tr>
+                            <td>Aircon</td>
+                            <td class="text-end">@(item.Amount.HasValue ? item.Amount.Value.ToString("#,##0.00") : "0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No records available.</p>
         }
     </div>
 </div>
-
-

@@ -1,10 +1,412 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@{
+    ViewBag.Title = "Dashboard";
 }
-<h2 class="content-heading">Enrollment-AR Module</h2>
-<div class="block block-rounded">
-    <div class="block-content">
-        <p class="lead">Make sure to enable two-factor authentication when using this system.</p>
-        <p>@Html.ActionLink("Manage Credentials", "Index", "Manage")</p>
+
+<div class="content">
+
+    
+    <nav class="breadcrumb push bg-body-extra-light rounded-pill px-4 py-2">
+        <span class="breadcrumb-item">Home</span>
+        <span class="breadcrumb-item active">Dashboard</span>
+    </nav>
+
+    
+    <div class="block block-rounded">
+        <div class="block-content block-content-full py-4">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-1 fw-bold">
+                        <i class="fa fa-university me-2 text-primary"></i>Student Accounts Management
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        Enrollment &ndash; Accounts Receivable Module &nbsp;&middot;&nbsp; Colegio de San Juan de Letran Manila
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    @if (ViewBag.PeriodName != null)
+                    {
+                        <span class="badge bg-primary fs-sm me-1">@ViewBag.EducLevelName</span>
+                        <span class="badge bg-success fs-sm">@ViewBag.PeriodName</span>
+                        <br />
+                    }
+                    <span class="text-muted fs-sm">
+                        <i class="fa fa-calendar-alt me-1"></i>@DateTime.Today.ToString("MMMM dd, yyyy")
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
+
+    
+    @if (ViewBag.EnrolledCount != null)
+    {
+        <h5 class="fw-semibold mb-3">
+            <i class="fa fa-chart-bar me-2 text-primary"></i>Current Period Statistics
+        </h5>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-sm-4 col-xl-2">
+                <a href="@Url.Action("OfficiallyEnrolled", "Enrollment")" class="text-decoration-none">
+                    <div class="block block-rounded text-center">
+                        <div class="block-content py-3 px-2">
+                            <div class="fs-1 fw-bold text-primary">@ViewBag.EnrolledCount</div>
+                            <div class="fs-sm fw-semibold text-muted">Officially Enrolled</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-sm-4 col-xl-2">
+                <a href="@Url.Action("UnvalidatedAssessment", "Enrollment")" class="text-decoration-none">
+                    <div class="block block-rounded text-center">
+                        <div class="block-content py-3 px-2">
+                            <div class="fs-1 fw-bold text-warning">@ViewBag.AssessedCount</div>
+                            <div class="fs-sm fw-semibold text-muted">Assessed</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-sm-4 col-xl-2">
+                <a href="@Url.Action("Enlisted", "Enrollment")" class="text-decoration-none">
+                    <div class="block block-rounded text-center">
+                        <div class="block-content py-3 px-2">
+                            <div class="fs-1 fw-bold text-info">@ViewBag.EnlistedCount</div>
+                            <div class="fs-sm fw-semibold text-muted">Enlisted</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-sm-4 col-xl-2">
+                <a href="@Url.Action("Index", "Payments")" class="text-decoration-none">
+                    <div class="block block-rounded text-center">
+                        <div class="block-content py-3 px-2">
+                            <div class="fs-1 fw-bold text-success">@ViewBag.TodayPaymentsCount</div>
+                            <div class="fs-sm fw-semibold text-muted">Today's Collections</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-sm-4 col-xl-2">
+                <a href="@Url.Action("FloatingPayment", "Backaccount")" class="text-decoration-none">
+                    <div class="block block-rounded text-center">
+                        <div class="block-content py-3 px-2">
+                            <div class="fs-1 fw-bold @(((int)ViewBag.FloatingPaymentsCount > 0) ? "text-danger" : "text-success")">@ViewBag.FloatingPaymentsCount</div>
+                            <div class="fs-sm fw-semibold text-muted">Floating Payments</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-sm-4 col-xl-2">
+                <a href="@Url.Action("FloatingDmcm", "Backaccount")" class="text-decoration-none">
+                    <div class="block block-rounded text-center">
+                        <div class="block-content py-3 px-2">
+                            <div class="fs-1 fw-bold @(((int)ViewBag.FloatingDMCMCount > 0) ? "text-danger" : "text-success")">@ViewBag.FloatingDMCMCount</div>
+                            <div class="fs-sm fw-semibold text-muted">Floating DMCM</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+
+    
+    <h5 class="fw-semibold mb-3">
+        <i class="fa fa-th-large me-2 text-primary"></i>Quick Access
+    </h5>
+    <div class="row g-3">
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-user-graduate me-2 text-primary"></i>Student
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Index2", "ARQuery")" class="btn btn-sm btn-alt-primary">
+                            <i class="fa fa-search me-1"></i>AR Query
+                        </a>
+                        <a href="@Url.Action("Index", "Enrollment")" class="btn btn-sm btn-alt-primary">
+                            <i class="fa fa-calculator me-1"></i>Assessment
+                        </a>
+                        <a href="@Url.Action("Index", "Reassessment")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-redo me-1"></i>Reassessment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-money-bill-wave me-2 text-success"></i>Payments
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Index", "Payments")" class="btn btn-sm btn-alt-success">
+                            <i class="fa fa-list me-1"></i>Collection Summary
+                        </a>
+                        <a href="@Url.Action("Create", "Payments")" class="btn btn-sm btn-alt-success">
+                            <i class="fa fa-plus me-1"></i>Post Payments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-users me-2 text-info"></i>Enrollment
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("OfficiallyEnrolled", "Enrollment")" class="btn btn-sm btn-alt-info">
+                            <i class="fa fa-check-circle me-1"></i>Officially Enrolled
+                        </a>
+                        <a href="@Url.Action("UnvalidatedAssessment", "Enrollment")" class="btn btn-sm btn-alt-info">
+                            <i class="fa fa-clipboard-list me-1"></i>Assessed Students
+                        </a>
+                        <a href="@Url.Action("Enlisted", "Enrollment")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-user-plus me-1"></i>Enlisted Students
+                        </a>
+                        <a href="@Url.Action("TransactionLog", "Enrollment")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-history me-1"></i>Transaction Logs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-exclamation-circle me-2 text-warning"></i>Backaccount
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Index", "Backaccount")" class="btn btn-sm btn-alt-warning">
+                            <i class="fa fa-search me-1"></i>Backaccount Query
+                        </a>
+                        <a href="@Url.Action("FromPeriod", "Backaccount")" class="btn btn-sm btn-alt-warning">
+                            <i class="fa fa-list me-1"></i>List of Backaccounts
+                        </a>
+                        <a href="@Url.Action("Forwarded", "Backaccount")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-forward me-1"></i>Forwarded
+                        </a>
+                        <a href="@Url.Action("FloatingPayment", "Backaccount")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-money-bill-alt me-1"></i>Floating Payment
+                        </a>
+                        <a href="@Url.Action("FloatingDmcm", "Backaccount")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-file-invoice me-1"></i>Floating DMCM
+                        </a>
+                        <a href="@Url.Action("TransactionLog", "Backaccount")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-history me-1"></i>Transaction Logs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-exchange-alt me-2 text-danger"></i>Adjustment &amp; DMCM
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Index", "Adjustment")" class="btn btn-sm btn-alt-danger">
+                            <i class="fa fa-sliders-h me-1"></i>View Adjustment
+                        </a>
+                        <a href="@Url.Action("Index", "DMCM")" class="btn btn-sm btn-alt-danger">
+                            <i class="fa fa-file-alt me-1"></i>View DMCM
+                        </a>
+                        <a href="@Url.Action("BatchDMCM", "DMCM")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-layer-group me-1"></i>Batch DMCM
+                        </a>
+                        <a href="@Url.Action("TransactionLog", "DMCM")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-history me-1"></i>DMCM Logs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-archive me-2 text-secondary"></i>Alpha4 Backaccount
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Detail", "Alpha4")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-search me-1"></i>Alpha4 Query
+                        </a>
+                        <a href="@Url.Action("Index", "Alpha4")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-list me-1"></i>List
+                        </a>
+                        <a href="@Url.Action("UnpostedAlpha4Payments", "Alpha4")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-money-bill-alt me-1"></i>Floating Payment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-chart-pie me-2 text-primary"></i>Reports
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("FeesSummary", "FinanceReports")" class="btn btn-sm btn-alt-primary">
+                            <i class="fa fa-file-invoice-dollar me-1"></i>Fees Summary
+                        </a>
+                        <a href="@Url.Action("ARTrail", "FinanceReports")" class="btn btn-sm btn-alt-primary">
+                            <i class="fa fa-route me-1"></i>AR Trail
+                        </a>
+                        <a href="@Url.Action("ARSetupSummary", "FinanceReports")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-cog me-1"></i>AR Set-up Summary
+                        </a>
+                        <a href="@Url.Action("BackaccountSummary", "FinanceReports")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-file-alt me-1"></i>Backaccount Summary
+                        </a>
+                        <a href="@Url.Action("ComparativeEndTermBalance", "FinanceReports")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-balance-scale me-1"></i>Comparative End-term
+                        </a>
+                        <a href="@Url.Action("DiscountSummaryConsolidated", "FinanceReports")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-percent me-1"></i>Consolidated Discounts
+                        </a>
+                        <a href="@Url.Action("EnrollmentStat", "FinanceReports")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-chart-bar me-1"></i>Enrollment Stat
+                        </a>
+                        <a href="@Url.Action("Index", "FinanceReports")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-book me-1"></i>Accounting
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-cogs me-2 text-secondary"></i>Settings
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("FeeName", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-tag me-1"></i>Fee Names
+                        </a>
+                        <a href="@Url.Action("MiscFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-clipboard me-1"></i>Misc Fees
+                        </a>
+                        <a href="@Url.Action("SupplementalFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-plus-square me-1"></i>Supplemental
+                        </a>
+                        <a href="@Url.Action("OtherFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-list-alt me-1"></i>Other Fees
+                        </a>
+                        <a href="@Url.Action("LabFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-flask me-1"></i>Lab Fees
+                        </a>
+                        <a href="@Url.Action("VariousFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-ellipsis-h me-1"></i>Various Fees
+                        </a>
+                        <a href="@Url.Action("AirconFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-snowflake me-1"></i>Aircon Fee
+                        </a>
+                        <a href="@Url.Action("TuitionFeeSetup", "FeeSetup")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-graduation-cap me-1"></i>Tuition Fee
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-6 col-xl-4">
+            <div class="block block-rounded h-100">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">
+                        <i class="fa fa-database me-2 text-dark"></i>QNE Integration
+                    </h3>
+                </div>
+                <div class="block-content">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("Index", "JournalEntry")" class="btn btn-sm btn-alt-dark">
+                            <i class="fa fa-code me-1"></i>GL Codes
+                        </a>
+                        <a href="@Url.Action("Departments", "JournalEntry")" class="btn btn-sm btn-alt-dark">
+                            <i class="fa fa-sitemap me-1"></i>Projects
+                        </a>
+                        <a href="@Url.Action("ChartOfAccountSetup", "JournalEntry")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-book me-1"></i>Chart of Accounts
+                        </a>
+                        <a href="@Url.Action("SubLedgerSetup", "JournalEntry")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-layer-group me-1"></i>Sub Ledger
+                        </a>
+                        <a href="@Url.Action("Index", "JournalEntryTypes")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-sliders-h me-1"></i>Entry Setting
+                        </a>
+                        <a href="@Url.Action("MiscJournalEntry", "JournalEntry")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-paper-plane me-1"></i>Post AR Journal
+                        </a>
+                        <a href="@Url.Action("PostedQneJournalEntry", "JournalEntry")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-history me-1"></i>Posting Logs
+                        </a>
+                        <a href="@Url.Action("DcrNonTuition", "JournalEntry")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-receipt me-1"></i>DCR-NT Journal
+                        </a>
+                        <a href="@Url.Action("ViewReceiptVoucher", "JournalEntry")" class="btn btn-sm btn-alt-secondary">
+                            <i class="fa fa-file-invoice me-1"></i>Receipt Voucher
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    
+    <div class="block block-rounded mt-3">
+        <div class="block-content py-3">
+            <div class="d-flex align-items-center">
+                <div class="me-3 fs-3 text-warning">
+                    <i class="fa fa-shield-alt"></i>
+                </div>
+                <div>
+                    <p class="mb-0 fw-semibold">Security Reminder</p>
+                    <p class="mb-0 text-muted fs-sm">
+                        Make sure to enable two-factor authentication when using this system.
+                        &nbsp;<a href="@Url.Action("Index", "Manage")">Manage Credentials &rarr;</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

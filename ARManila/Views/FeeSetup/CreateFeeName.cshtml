@@ -1,0 +1,48 @@
+@model ARManila.Models.FeeName
+
+@{
+    ViewBag.Title = "Add Fee Name";
+}
+
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Add Fee Name</h3>
+        </div>
+        <div class="block-content">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Fee Name</label>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.FeeName1, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.FeeName1, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Fee Category</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.FeeCategory, (SelectList)ViewBag.feetypes, "-- Select Category --", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(m => m.FeeCategory, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Default Amount</label>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number", step = "any", min = "0" })
+                        @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-9 offset-sm-3">
+                        <button type="submit" class="btn btn-primary me-2">Save</button>
+                        @Html.ActionLink("Cancel", "FeeName", null, new { @class = "btn btn-secondary" })
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

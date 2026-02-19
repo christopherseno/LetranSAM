@@ -255,6 +255,34 @@ namespace ARManila.Models
         [Required(ErrorMessage = "Description is required")]
         public int? FeeNameId { get; set; }
     }
+    public partial class Various
+    {
+        public int? GlAccount { get; set; }
+        public int? SubAccount { get; set; }
+        public string QneGlAccount { get; set; }
+        public int? FeeNameId { get; set; }
+    }
+    public partial class Lab
+    {
+        public int? GlAccount { get; set; }
+        public int? SubAccount { get; set; }
+        public string QneGlAccount { get; set; }
+        public int? FeeNameId { get; set; }
+    }
+    public partial class Aircon
+    {
+        public int? GlAccount { get; set; }
+        public int? SubAccount { get; set; }
+        public string QneGlAccount { get; set; }
+        public int? FeeNameId { get; set; }
+    }
+    public partial class Others
+    {
+        public int? GlAccount { get; set; }
+        public int? SubAccount { get; set; }
+        public string QneGlAccount { get; set; }
+        public int? FeeNameId { get; set; }
+    }
     public partial class SubChartOfAccounts
     {
         public string FullName

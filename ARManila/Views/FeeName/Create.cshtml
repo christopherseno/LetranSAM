@@ -1,4 +1,4 @@
-﻿@model ARManila.Models.FeeName
+@model ARManila.Models.FeeName
 
 @{
     ViewBag.Title = "CreateFeeName";
@@ -22,22 +22,22 @@
         @Html.DropDownListFor(model => model.FeeCategory, (List<SelectListItem>)ViewBag.feetypes, new { htmlAttributes = new { @class = "col-md-8" } })
         @Html.ValidationMessageFor(model => model.FeeCategory, "", new { @class = "text-danger" })
 
-    </div>
+n    </div>
 
-    <div class="form-group">
+n    <div class="form-group">
         <label for="Amount" class="col-md-2">Default Amount</label>
         @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "col-md-8" } })
         @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
 
-    </div>
+n    </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Save" class="btn btn-primary" />
         </div>
     </div>
 
-}
+n}
 
-<div>
-    @Html.ActionLink("Back to List", "FeeName")
+n<div>
+    @Html.ActionLink("Back to List", "Index", "FeeName")
 </div>

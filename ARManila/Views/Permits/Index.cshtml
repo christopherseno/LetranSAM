@@ -1,51 +1,116 @@
-﻿@model List<ARManila.Models.OtherDTO.StudentWithBalancesDTO>
+﻿@model dynamic
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Permit Module";
+    var sections = ViewBag.Sections as List<ARManila.Models.Section>;
+    var permits = ViewBag.PermitTypes as List<ARManila.Models.PermitType>;
+    var paymodes = ViewBag.PayModes as List<ARManila.Models.Paymode>;
 }
 
-<div class="p-3">
-    <h2>Permit Module</h2>
-    @using (Html.BeginForm("Index", "Adjustment", FormMethod.Post))
-    {
-        <input type="text" placeholder="Adjustment No" name="id" id="id" />
-        <input type="submit" value="Search" class="btn btn-primary" />
-    }
-    @if (Model != null)
-    {
-        <table class="table table-striped" id="table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Student No</th>
-                    <th>Student Name</th>
-                    <th>Amount</th>
-                    <th>Student CP</th>
-                    <th>Guardian CP</th>
-                    <th>E-mail</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @for(int i=0;i< Model.Count; i++)
-                {
-                <tr>
-                    <td></td>
-                    <td>
-                        @Html.CheckBoxFor(m => Model[i].IsSelected)
-                        @Html.HiddenFor(m => Model[i].StudentID)                        
-                        @Model[i].StudentNo
-                    </td>
-                    <td>@Model[i].StudentName</td>
-                    <td>@Model[i].Amount</td>
-                    <td>@Model[i].StudentContactNo</td>
-                    <td>@Model[i].GuardianContactNo</td>
-                    <td>@Model[i].Email</td>
-                    <td></td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    }
+<div class="container-fluid">
+    <h3 class="text-center">Permit Module</h3>
 
+    <div class="row">
+        <div class="col-md-4">
+            <label>Section</label>
+            <select id="cbsection" class="form-control">
+                <option value="">-- Select Section --</option>
+                @foreach (var s in sections)
+                {
+                    <option value="@s.SectionID">@s.SectionName</option>
+                }
+            </select>
+            <div class="form-check mt-2">
+                <input type="checkbox" id="chkall" class="form-check-input" />
+                <label class="form-check-label" for="chkall">All Sections</label>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label>Permit Type</label>
+            <select id="cbpermit" class="form-control">
+                <option value="">-- Select Permit --</option>
+                @foreach (var p in permits)
+                {
+                    <option value="@p.PermitTypeID">@p.PermitName</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label>Payment Mode</label>
+            <select id="cbpaymode" class="form-control">
+                <option value="">-- Select Paymode --</option>
+                @foreach (var pm in paymodes)
+                {
+                    <option value="@pm.PaymodeID">@pm.Description</option>
+                }
+            </select>
+        </div>
     </div>
 
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label>Date</label>
+            <input type="date" id="dpdate" class="form-control" />
+        </div>
+        <div class="col-md-8 text-right">
+            <button id="btnprint" class="btn btn-primary">Print Permit Bulk</button>
+            <button id="btnprintbalance" class="btn btn-info">Print Balances Setup</button>
+            <button id="btnprintbilling" class="btn btn-warning">Print Billing Bulk</button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12">
+            <h5>List of Students with Balance</h5>
+            <input type="date" id="dpduedate" class="form-control mb-2" />
+            <button id="btnviewlist" class="btn btn-secondary">Load</button>
+
+            <table class="table table-bordered mt-2" id="gridbalancelist">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" /></th>
+                        <th>Stud No</th>
+                        <th>Student Name</th>
+                        <th>Amount</th>
+                        <th>Student CP</th>
+                        <th>Guardian CP</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    $('#btnviewlist').click(function () {
+        const sectionId = $('#chkall').is(':checked') ? 0 : $('#cbsection').val();       
+        const dueDate = $('#dpduedate').val();
+
+        $.post('@Url.Action("LoadBalanceList")', { sectionId, dueDate }, function (data) {
+            const tbody = $('#gridbalancelist tbody');
+            tbody.empty();
+            data.forEach(row => {
+                tbody.append(`<tr>
+                    <td><input type="checkbox" class="row-check" /></td>
+                    <td>${row.StudentNo}</td>
+                    <td>${row.StudentName}</td>
+                    <td class="text-right">${row.Amount}</td>
+                    <td>${row.StudentCP}</td>
+                    <td>${row.GuardianCP}</td>
+                    <td>${row.Email}</td>
+                </tr>`);
+            });
+        });
+    });
+
+    $('#selectAll').on('change', function () {
+        $('.row-check').prop('checked', this.checked);
+    });
+    </script>
+}

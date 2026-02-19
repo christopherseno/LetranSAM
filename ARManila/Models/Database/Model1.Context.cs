@@ -117,6 +117,7 @@ namespace ARManila.Models
         public virtual DbSet<PermitType> PermitType { get; set; }
         public virtual DbSet<Others> Others { get; set; }
         public virtual DbSet<FeeName> FeeName { get; set; }
+        public virtual DbSet<Permit> Permit { get; set; }
     
         public virtual ObjectResult<ArTrail2024_Result> ArTrail2024(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
         {

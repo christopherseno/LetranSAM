@@ -260,6 +260,7 @@
     <Compile Include="Controllers\DMCMController.cs" />
     <Compile Include="Controllers\EnrollmentController.cs" />
     <Compile Include="Controllers\EnrollmentStatController.cs" />
+    <Compile Include="Controllers\FeeNameController.cs" />
     <Compile Include="Controllers\FeeSetupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JournalEntryController_Dcr.cs" />
@@ -275,7 +276,6 @@
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\PeriodAttribute.cs" />
     <Compile Include="Controllers\FinanceReportsController.cs" />
-    <Compile Include="Controllers\AccountSetupController.cs" />
     <Compile Include="Controllers\PermitsController.cs" />
     <Compile Include="Controllers\ReassessmentController.cs" />
     <Compile Include="Controllers\ReassessmentRefactor.cs" />
@@ -735,6 +735,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\Period.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Database\Permit.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Database\PermitType.cs">
@@ -5225,20 +5228,11 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\JournalEntry\Index.cshtml" />
-    <Content Include="Views\AccountSetup\Index.cshtml" />
-    <Content Include="Views\AccountSetup\CreateFeeName.cshtml" />
-    <Content Include="Views\AccountSetup\EditFeeName.cshtml" />
-    <Content Include="Views\AccountSetup\MiscFeeSetup.cshtml" />
-    <Content Include="Views\AccountSetup\CreateMiscFeeSetup.cshtml" />
-    <Content Include="Views\AccountSetup\EditMiscFeeSetup.cshtml" />
     <Content Include="Views\JournalEntry\SchoolYearARSetup.cshtml" />
     <Content Include="Views\JournalEntry\EditSchoolYearARSetup.cshtml" />
     <Content Include="Views\JournalEntry\MiscJournalEntryAr.cshtml" />
     <Content Include="Views\ARQuery\Index2.cshtml" />
     <Content Include="Views\Permits\Index.cshtml" />
-    <Content Include="Views\AccountSetup\CreateSupplementalFeeSetup.cshtml" />
-    <Content Include="Views\AccountSetup\EditSupplementalFeeSetup.cshtml" />
-    <Content Include="Views\AccountSetup\SupplementalFeeSetup.cshtml" />
     <Content Include="Views\JournalEntry\DepartmentSetup.cshtml" />
     <Content Include="Views\JournalEntry\Departments.cshtml" />
     <Content Include="Views\JournalEntry\EditDepartmentSetup.cshtml" />
@@ -5296,6 +5290,33 @@
     <Content Include="Views\Maintenance\EncryptedStudentInfo.cshtml" />
     <Content Include="Views\FinanceReports\ARTrail.cshtml" />
     <Content Include="Views\FeeSetup\Index.cshtml" />
+    <Content Include="Views\FeeName\Create.cshtml" />
+    <Content Include="Views\FeeName\Edit.cshtml" />
+    <Content Include="Views\FeeName\Index.cshtml" />
+    <Content Include="Views\FeeSetup\template.cshtml" />
+    <Content Include="Views\FeeSetup\CreateTuition.cshtml" />
+    <Content Include="Views\FeeSetup\AirconFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\CreateAirconFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\CreateFeeName.cshtml" />
+    <Content Include="Views\FeeSetup\CreateLabFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\CreateMiscFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\CreateOtherFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\CreateSupplementalFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\CreateVariousFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\EditAirconFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\EditFeeName.cshtml" />
+    <Content Include="Views\FeeSetup\EditLabFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\EditMiscFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\EditOtherFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\EditSupplementalFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\EditVariousFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\FeeName.cshtml" />
+    <Content Include="Views\FeeSetup\LabFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\MiscFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\OtherFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\SupplementalFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\TuitionFeeSetup.cshtml" />
+    <Content Include="Views\FeeSetup\VariousFeeSetup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

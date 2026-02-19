@@ -1,0 +1,77 @@
+@model IEnumerable<ARManila.Models.Lab>
+
+@{
+    ViewBag.Title = "Lab Fee Setup";
+}
+
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Lab Fees</h3>
+            <div class="block-options">
+                @Html.ActionLink("Add Lab Fee", "CreateLabFeeSetup", null, new { @class = "btn btn-sm btn-alt-primary" })
+            </div>
+        </div>
+        <div class="block-content">
+            <table class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Fee Name</th>
+                        <th class="text-end">Amount</th>
+                        <th>Subject</th>
+                        <th>Year Level</th>
+                        <th>GL Account</th>
+                        <th>QNE GL</th>
+                        <th class="text-center" style="width:120px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Description</td>
+                            <td>@(item.Fee.FeeNameID.HasValue ? item.Fee.FeeName.FeeName1 : "")</td>
+                            <td class="text-end">@item.Amount.ToString("#,##0.00")</td>
+                            <td>@(item.SubjectID.HasValue ? item.Subject.SubjectCode : "")</td>
+                            <td>@item.YearLevel</td>
+                            <td>@(item.Fee.AcctID != null ? item.Fee.ChartOfAccounts.AcctNo + " - " + item.Fee.ChartOfAccounts.AcctName : "")</td>
+                            <td>@(item.Fee.QneAccountCode != null ? item.Fee.QneAccountCode + " - " + item.Fee.QNEGLAccount.Description : "")</td>
+                            <td class="text-center">
+                                @Html.ActionLink("Edit", "EditLabFeeSetup", new { id = item.FeeID }, new { @class = "btn btn-sm btn-alt-primary me-1" })
+                                <a href="#" class="btn btn-sm btn-alt-danger" onclick="ConfirmDelete('@item.FeeID', '@item.Description')">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="confirmdelete" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Delete: <strong id="modalmessage"></strong>?</p>
+                <div id="modallink"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        function ConfirmDelete(id, message) {
+            document.getElementById("modalmessage").textContent = message;
+            document.getElementById("modallink").innerHTML =
+                '<a href="/FeeSetup/DeleteLabFeeSetup/' + id + '" class="btn btn-danger">Confirm Delete</a>' +
+                ' <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>';
+            $("#confirmdelete").modal('show');
+        }
+    </script>
+}

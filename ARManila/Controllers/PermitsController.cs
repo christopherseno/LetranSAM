@@ -10,6 +10,7 @@ namespace ARManila.Controllers
     public class PermitsController : BaseController
     {
         LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities();
+        /*
         public ActionResult Index()
         {
             var periodid =Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
@@ -49,5 +50,99 @@ namespace ARManila.Controllers
             }
             return View(studentswithbalances);
         }
+        */
+       
+        public ActionResult Index()
+        {
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");          
+            ViewBag.EducLevel = period.EducLevelID;
+
+            ViewBag.Sections = db.Section.Where(m => m.PeriodID == periodid).ToList();
+            ViewBag.PermitTypes = db.PermitType.OrderBy(m => m.PermitName).ToList();
+            ViewBag.PayModes = db.Paymode.ToList();
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult PrintPermit(int sectionId, int permitTypeId, int educLevel)
+        {
+            // Logic to generate permit
+            return RedirectToAction("PermitPreview", new { sectionId, permitTypeId, educLevel });
+        }
+
+        [HttpPost]
+        public JsonResult LoadBalanceList(int sectionId, DateTime dueDate)
+        {
+            var periodId = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodId);
+            if (period == null) throw new Exception("Invalid period id.");
+            var balances = db.GetTotalBalanceByDueDate(sectionId, periodId, dueDate)
+                             .Where(i => i.AmountDue > 1)
+                             .Select(i => new {
+                                 i.StudentID,
+                                 i.StudentNo,
+                                 i.StudentName,
+                                 i.StudentCP,
+                                 i.GuardianCP,
+                                 i.Email,
+                                 Amount = i.AmountDue.Value.ToString("#,##0.00")
+                             }).ToList();
+
+            return Json(balances);
+        }
+        [HttpPost]
+        public JsonResult SendSMS(List<string> studentIds, string message)
+        {
+            foreach (var id in studentIds)
+            {
+                var student = db.Student.Find(id);
+                if (student != null && !string.IsNullOrEmpty(student.MobileNo))
+                {
+                    // Send SMS via SendGrid or other service
+                    //SendSMSHelper.Send(student.StudentCP, message);
+                }
+            }
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult SendEmail(List<string> studentIds, string subject, string body)
+        {
+            foreach (var id in studentIds)
+            {
+                var student = db.Student.Find(id);
+                if (student != null && !string.IsNullOrEmpty(student.EmailAddress))
+                {
+                    //SendGridHelper.Send(student.Email, subject, body);
+                }
+            }
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public ActionResult PrintBillingBulk(List<string> studentIds, int sectionId, DateTime dueDate)
+        {
+            // Logic to generate billing documents
+            return View("BillingPreview", studentIds); // or redirect to PDF generation
+        }
+
+        [HttpPost]
+        public JsonResult SetUpPermit(List<string> studentIds, int permitTypeId, DateTime dateIssued)
+        {
+            foreach (var id in studentIds)
+            {
+                db.Permit.Add(new Permit
+                {
+                    StudentID = Convert.ToInt32(id),
+                    PermitTypeID = permitTypeId,
+                    DateIssued = dateIssued
+                });
+            }
+            db.SaveChanges();
+            return Json(new { success = true });
+        }
+
     }
 }
