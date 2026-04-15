@@ -92,5 +92,17 @@ namespace ARManila.Controllers
             ViewBag.StudentNo = studentno;
             return View(results);
         }
+
+        [HttpGet]
+        public ActionResult Assessment()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        public ActionResult Assessment(string studentno)
+        {
+            return View();
+        }
     }
 }

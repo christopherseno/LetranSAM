@@ -254,7 +254,7 @@
     <Compile Include="Controllers\API\PeriodSelectorController.cs" />
     <Compile Include="Controllers\API\SMSController.cs" />
     <Compile Include="Controllers\API\UtilityAPIController.cs" />
-    <Compile Include="Controllers\ARQueryController.cs" />
+    <Compile Include="Controllers\ARQueryController.cs" />    
     <Compile Include="Controllers\BackaccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DMCMController.cs" />
@@ -5318,6 +5318,8 @@
     <Content Include="Views\FeeSetup\TuitionFeeSetup.cshtml" />
     <Content Include="Views\FeeSetup\VariousFeeSetup.cshtml" />
     <Content Include="Views\ARQuery\ARHistory.cshtml" />
+    <Content Include="Views\AssessmentFAD\Assess.cshtml" />
+    <Content Include="Views\AssessmentFAD\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
