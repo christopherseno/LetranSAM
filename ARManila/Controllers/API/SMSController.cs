@@ -153,9 +153,47 @@ namespace ARManila.Controllers
                 email.Body = message;
                 SmtpServer.Port = 587;
                 SmtpServer.UseDefaultCredentials = false;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp"); //April 30 2025, New Auth for google Email SMTP
+                SmtpServer.Credentials = new System.Net.NetworkCredential("letranmailing@letran.edu.ph", "ovrq nplx fjas qfmt"); //April 30 2025, New Auth for google Email SMTP
                 SmtpServer.EnableSsl = true;
                 await SmtpServer.SendMailAsync(email);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("EmailWithAttachment")]
+        public async Task<IHttpActionResult> SendEmailWithAttachmentAsync(string recipient, string sender, string subject, string message, System.Web.HttpPostedFileBase attachment)
+        {
+            try
+            {
+                MailMessage email = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                email.From = new MailAddress("admin@letran.edu.ph", "System Admin");
+                email.To.Add(new MailAddress(recipient));
+                if (sender != null && sender.Length > 0)
+                    email.CC.Add(sender);
+                email.Subject = subject;
+                email.IsBodyHtml = true;
+                email.Body = message;
+
+                if (attachment != null && attachment.ContentLength > 0)
+                {
+                    var mailAttachment = new Attachment(attachment.InputStream, attachment.FileName);
+                    email.Attachments.Add(mailAttachment);
+                }
+
+                SmtpServer.Port = 587;
+                SmtpServer.UseDefaultCredentials = false;
+                SmtpServer.Credentials = new System.Net.NetworkCredential("letranmailing@letran.edu.ph", "ovrq nplx fjas qfmt"); //April 30 2025, New Auth for google Email SMTP
+                SmtpServer.EnableSsl = true;
+                await SmtpServer.SendMailAsync(email);
+
+                email.Dispose();
+
                 return Ok();
             }
             catch (Exception ex)
