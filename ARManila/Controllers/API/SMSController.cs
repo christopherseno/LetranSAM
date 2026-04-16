@@ -138,13 +138,13 @@ namespace ARManila.Controllers
 
         [HttpGet]
         [Route("Email")]
-        public async Task<IHttpActionResult> SendEmailAsync(string recipient, string? sender, string subject, string message)
+        public async Task<IHttpActionResult> SendEmailAsync(string recipient, string sender, string fromname, string subject, string message)
         {
             try
             {
                 MailMessage email = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-                email.From = new MailAddress("admin@letran.edu.ph", "System Admin");
+                email.From = new MailAddress("letranmailing@letran.edu.ph", fromname);
                 email.To.Add(new MailAddress(recipient));
                 if (sender != null && sender.Length > 0)
                     email.CC.Add(sender);
