@@ -492,6 +492,7 @@ namespace ARManila.Controllers
             var periodids = new List<Period>();
             Dictionary<int, List<Period>> consolidatedperiodids = new Dictionary<int, List<Period>>();
             ViewBag.asofdate = asofdate.ToString("yyyy-MM-dd");
+            //isconsolidated = "on" means all educational levels, all periods for the school year will be included in the report. 
             if (isconsolidated != null && isconsolidated.Equals("on"))
             {
                 summary.Subheader2 = "1st Term";
@@ -522,6 +523,7 @@ namespace ARManila.Controllers
                 thirdsetperiodids.Add(doctoral3);
                 consolidatedperiodids.Add(2, thirdsetperiodids);
             }
+            //isschoolyear = "on" means all periods for the selected educational level and school year will be included in the report.
             else if (isschoolyear != null && isschoolyear.Equals("on"))
             {
                 periodids = db.Period.Where(m => m.EducLevelID == Period.EducLevelID && m.SchoolYearID == Period.SchoolYearID).ToList();
@@ -555,6 +557,7 @@ namespace ARManila.Controllers
 
                 }
             }
+            //this is a useless else statement
             else
             {
                 switch (Period.EducLevelID)
