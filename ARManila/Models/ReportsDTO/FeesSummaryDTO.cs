@@ -31,6 +31,7 @@ namespace ARManila.Models.ReportsDTO
     {
         public bool IsBeginningBalance { get; set; }
         public bool IsARTotalUsingBeginningBalance { get; set; }
+        public decimal? SchoolYearTotal { get; set; }
         public string Item { get; set; }
         public decimal Amount1 { get; set; } = 0;
         public decimal Amount2 { get; set; } = 0;
@@ -44,6 +45,13 @@ namespace ARManila.Models.ReportsDTO
         {
             get
             {
+                // When a school-year total has been supplied, display it instead of the per-term
+                // sum/reconstruction. It is computed directly from GetArTrailBySchoolYear (one
+                // consolidated row per student for the whole school year) -- the same source the
+                // isconsolidated report uses -- so isschoolyear totals tie out to the consolidated
+                // per-educ-level figures rather than drifting via the fragile per-term math.
+                if (this.SchoolYearTotal.HasValue)
+                    return this.SchoolYearTotal.Value;
                 return this.IsBeginningBalance ? this.Amount1 : (
                     this.IsARTotalUsingBeginningBalance ? this.Amount1 + this.Amount2 + this.Amount3 + this.Amount4 - this.AmountB2 - this.AmountB3 - this.AmountB4
                     : this.Amount1 + this.Amount2 + this.Amount3 + this.Amount4);

@@ -778,6 +778,12 @@ namespace ARManila.Controllers
 
                 summary.ARBalance.BeginningBalanceTotal = allarschoolyear.Sum(m => m.EndBalance);
                 summary.BeginningBalance.BeginningBalanceTotal = allarschoolyear.Sum(m => m.BegBalance);
+                // Display the school-year totals so the consolidated grand total foots to the sum of
+                // the per-educ-level figures. Otherwise BeginningBalance.Total shows only the first
+                // term's beginning balance, and ARBalance.Total double-counts (Amount4 holds the full
+                // school-year end balance while Amount1-3 already hold the per-term reconstruction).
+                summary.BeginningBalance.SchoolYearTotal = allarschoolyear.Sum(m => m.BegBalance);
+                summary.ARBalance.SchoolYearTotal = allarschoolyear.Sum(m => m.EndBalance);
                 var arsetuptotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARFeesSetup);
                 var arbalancetotal = summary.ARSetupSummaryConsolidatedItems.Sum(m => m.Value.ARBalance);
                 var totalsetup = summary.Adjustment.Total + summary.BeginningBalance.BeginningBalanceTotal + summary.TotalFees.Total + summary.Voucher.Total + summary.Discount.Total;
@@ -813,6 +819,18 @@ namespace ARManila.Controllers
                     var arschoolyear = db.GetArTrailBySchoolYear(schoolyearid, educlevelid, asofdate.ToString("MM-dd-yyyy")).ToList();
                     summary.ARBalance.BeginningBalanceTotal = arschoolyear.Sum(m => m.EndBalance);
                     summary.BeginningBalance.BeginningBalanceTotal = arschoolyear.Sum(m => m.BegBalance);
+                    // Tie the isschoolyear column totals to the isconsolidated per-educ-level figures by
+                    // computing each from the same GetArTrailBySchoolYear source (one consolidated row
+                    // per student for the whole school year), using the same formulas/signs as
+                    // SumARSetupData -- instead of summing the per-term ArTrail2024 columns, which drifts
+                    // for College/GS (balance carry-over) and need not tie out to consolidated otherwise.
+                    summary.TotalFees.SchoolYearTotal = arschoolyear.Sum(m => m.Assessment);
+                    summary.BeginningBalance.SchoolYearTotal = arschoolyear.Sum(m => m.BegBalance);
+                    summary.Collection.SchoolYearTotal = -(arschoolyear.Sum(m => m.Processing) + arschoolyear.Sum(m => m.Payment));
+                    summary.Adjustment.SchoolYearTotal = arschoolyear.Sum(m => m.DNForm) + arschoolyear.Sum(m => m.CMForm) + arschoolyear.Sum(m => m.DebitMemo) - arschoolyear.Sum(m => m.CreditMemo);
+                    summary.Voucher.SchoolYearTotal = -arschoolyear.Sum(m => m.Voucher);
+                    summary.Discount.SchoolYearTotal = -(arschoolyear.Sum(m => m.Discount) + arschoolyear.Sum(m => m.AdjDiscount));
+                    summary.ARBalance.SchoolYearTotal = arschoolyear.Sum(m => m.EndBalance);
                     summary.TotalStudent.TotalRW = arschoolyear.Count();
                     summary.TotalStudentsWithBalance.TotalRW = arschoolyear.Where(m => m.EndBalance >= 1m).Count();
                     summary.ARBalancePercent1.TotalRW = summary.TotalStudent.TotalRW == 0 ? 0 : summary.TotalStudentsWithBalance.TotalRW / summary.TotalStudent.TotalRW;
