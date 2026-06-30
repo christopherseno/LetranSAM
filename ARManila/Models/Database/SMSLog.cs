@@ -22,5 +22,6 @@ namespace ARManila.Models
         public Nullable<int> ApplicationNo { get; set; }
         public Nullable<int> EmployeeID { get; set; }
         public Nullable<int> StudentID { get; set; }
+        public string Response { get; set; }
     }
 }

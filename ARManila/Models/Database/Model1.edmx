@@ -1324,6 +1324,7 @@
           <Property Name="ApplicationNo" Type="int" />
           <Property Name="EmployeeID" Type="int" />
           <Property Name="StudentID" Type="int" />
+          <Property Name="Response" Type="nvarchar(max)" />
         </EntityType>
         <Association Name="FK:Adjustment_PaymentID|Payment_PaymentID">
           <End Role="Payment" Type="Self.Payment" Multiplicity="0..1" />
@@ -10210,6 +10211,7 @@
           <Property Name="ApplicationNo" Type="Int32" />
           <Property Name="EmployeeID" Type="Int32" />
           <Property Name="StudentID" Type="Int32" />
+          <Property Name="Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Miscellaneous">
           <Key>
@@ -13113,6 +13115,7 @@
           <EntitySetMapping Name="SMSLog">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.SMSLog">
               <MappingFragment StoreEntitySet="SMSLog">
+                <ScalarProperty Name="Response" ColumnName="Response" />
                 <ScalarProperty Name="StudentID" ColumnName="StudentID" />
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="ApplicationNo" ColumnName="ApplicationNo" />

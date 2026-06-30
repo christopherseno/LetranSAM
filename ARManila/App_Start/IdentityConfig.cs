@@ -33,7 +33,7 @@ namespace ARManila
                 //email.Bcc.Add("admin@letranbataan.edu.ph");
                 SmtpServer.Port = 587;
                 SmtpServer.UseDefaultCredentials = false;
-                SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp");
+                SmtpServer.Credentials = new System.Net.NetworkCredential("letranmailing@letran.edu.ph", "ovrq nplx fjas qfmt");
                 //SmtpServer.Credentials = new System.Net.NetworkCredential("itms@letranbataan.edu.ph", "1T3@mWoRk0");
                 //SmtpServer.Credentials = new System.Net.NetworkCredential("christopher.seno@letran.edu.ph", "-951Han5");
                 SmtpServer.EnableSsl = true;

@@ -13,39 +13,6 @@ namespace ARManila.Controllers
 {
     public class SMSController : ApiController
     {
-
-        
-        [HttpGet]
-        public IHttpActionResult SendSMS(string id, string message)
-        {
-            var db = new ARManila.Models.LetranIntegratedSystemEntities();            
-            if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
-            {
-                id = "09494923258";
-            }
-            using (HttpClient client = new HttpClient())
-            {
-                var sms = new SMS
-                {
-                    address = id,
-                    ClientCorrelator = "21589458",
-                    outboundSMSMessageRequest = new SMSMessage { message = message },
-                    senderAddress = "LETRAN"
-                };
-                var response = client.PostAsJsonAsync<SMS>("https://api.m360.com.ph/v3/api/globelabs/mt/A9undLLc2Q", sms);
-                var result = response.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return InternalServerError();
-                }
-            }
-
-        }
-
         [HttpGet]
         [Route("SMS/{id}")]
         public async Task<IHttpActionResult> SendSMSAsync(string id, string message)
@@ -54,20 +21,28 @@ namespace ARManila.Controllers
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("https://devapi.globelabs.com.ph/smsmessaging/v1/outbound/21589099/requests");
+                    client.BaseAddress = new Uri("https://api.m360.com.ph/v4/sms/send");
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var smsLog = new outboundSMSMessageRequest
+                    var smsLog = new SMSMessageRequest
                     {
-                        message = message,
-                        address = id.TrimStart('0'),
-                        passphrase = "A9undLLc2Q",
-                        app_id = "6859HrGyoGhRdcAEy4TyMXhR98dRHyaG",
-                        app_secret = "6347762b8166232702b40faa4b99f9222928f163c7cd9987b957cc88d9feffe9"
+                        from = "CSJL-ACCTS",
+                        to = new string[] { id },
+                        dcs = 0,
+                        content = new SMSContent { text = message },
+                        request_id = "LOCALSMS12345",
+                        app_key = "ZBV00SwA5HgU356n",
+                        app_secret = "9iFiaSGAMMiuXEiC7P5jSkWJvucB5YS7"
                     };
                     var response = await client.PostAsJsonAsync("", smsLog);
+
+                    // Read as bytes and decode manually: M360's response Content-Type
+                    // carries an invalid charset, which makes ReadAsStringAsync() throw
+                    // System.NotSupportedException ("The character set provided in ContentType is invalid").
+                    var bytes = await response.Content.ReadAsByteArrayAsync();
+                    var result = System.Text.Encoding.UTF8.GetString(bytes);
+
                     if(response.IsSuccessStatusCode)
                     {
-                        var result = await response.Content.ReadAsStringAsync();
                         using (LetranIntegratedSystemEntities db = new LetranIntegratedSystemEntities())
                         {
                             SMSLog log = new SMSLog();
@@ -76,6 +51,7 @@ namespace ARManila.Controllers
                             log.Message = message;
                             log.MobileNo = id.TrimStart('0');
                             log.TypeofSystem = "twofactorauthentication";
+                            log.Response = result;
                             db.SMSLog.Add(log);
                             db.SaveChanges();
                         }
@@ -83,7 +59,9 @@ namespace ARManila.Controllers
                     }
                     else
                     {
-                        return InternalServerError();
+                        // Surface M360's failure reason (e.g. invalid sender mask, bad number)
+                        // instead of a blank 500.
+                        return Content(response.StatusCode, result);
                     }
                 }
                
@@ -94,48 +72,7 @@ namespace ARManila.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("OldEmail")]
-        public IHttpActionResult SendEmail(string recipient, string? sender, string subject, string message)
-        {
-            try
-            {
-                var db = new ARManila.Models.LetranIntegratedSystemEntities();                
-                if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
-                {
-                    recipient = "christopher.seno@letran.edu.ph";
-                }
-                var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
-                const string fromPassword = "Boo18!<3";
-
-                SmtpClient smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                };
-                MailMessage mail = new MailMessage();
-                mail.IsBodyHtml = true;
-                mail.From = fromAddress;                
-                mail.To.Add(recipient);
-                if(sender != null && sender.Length > 0)
-                    mail.CC.Add(sender);
-                mail.CC.Add("arletran@letran.edu.ph");
-                mail.Subject = subject;
-                mail.Body = message;
-                smtp.Send(mail);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
-
-        }
-
+        
         [HttpGet]
         [Route("Email")]
         public async Task<IHttpActionResult> SendEmailAsync(string recipient, string sender, string fromname, string subject, string message)

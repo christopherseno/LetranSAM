@@ -243,13 +243,28 @@ namespace ARManila.Models
         }
     }
     public class outboundSMSMessageRequest
-    {
+    {        
         public string message { get; set; }
         public string address { get; set; }
         public string passphrase { get; set; }
         public string app_id { get; set; }
         public string app_secret { get; set; }
 
+    }
+    public class SMSMessageRequest
+    {
+        public SMSContent content { get; set; }
+        public string[] to { get; set; }
+        public string from { get; set; }
+        public string request_id { get; set; }
+        public int dcs { get; set; }
+        public string app_key { get; set; }
+        public string app_secret { get; set; }
+
+    }
+    public class SMSContent
+    {
+        public string text { get; set; }
     }
     public class MyEmail
     {
