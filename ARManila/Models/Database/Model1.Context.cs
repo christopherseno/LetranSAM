@@ -118,6 +118,8 @@ namespace ARManila.Models
         public virtual DbSet<Others> Others { get; set; }
         public virtual DbSet<FeeName> FeeName { get; set; }
         public virtual DbSet<Permit> Permit { get; set; }
+        public virtual DbSet<DeferredIncome> DeferredIncome { get; set; }
+        public virtual DbSet<DeferredIncomeFee> DeferredIncomeFee { get; set; }
     
         public virtual ObjectResult<ArTrail2024_Result> ArTrail2024(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
         {

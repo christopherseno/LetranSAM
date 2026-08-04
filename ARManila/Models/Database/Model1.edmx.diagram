@@ -270,7 +270,14 @@
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Permit" Width="1.5" PointX="16.625" PointY="16" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_Period" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_PermitType" />
-      </Diagram>
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.DeferredIncome" Width="1.5" PointX="13.25" PointY="18.625" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.DeferredIncomeFee" Width="1.5" PointX="12" PointY="65.375" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncome_AcademicDepartment" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncome_Employee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncome_Period" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncomeFee_DeferredIncome" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncomeFee_Fee" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

@@ -21,6 +21,7 @@ namespace ARManila.Models
             this.DiscountCategory = new HashSet<DiscountCategory>();
             this.DMCM = new HashSet<DMCM>();
             this.Employee = new HashSet<Employee>();
+            this.DeferredIncome = new HashSet<DeferredIncome>();
         }
     
         public int AcaDeptID { get; set; }
@@ -45,5 +46,7 @@ namespace ARManila.Models
         public virtual ICollection<DMCM> DMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Employee> Employee { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DeferredIncome> DeferredIncome { get; set; }
     }
 }

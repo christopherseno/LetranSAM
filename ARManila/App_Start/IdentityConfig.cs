@@ -40,6 +40,15 @@ namespace ARManila
                 SmtpServer.Send(email);
             });
         }
+
+        public void Send(MailMessage mail)
+        {
+            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+            SmtpServer.Port = 587;
+            SmtpServer.Credentials = new System.Net.NetworkCredential("letranmailing@letran.edu.ph", "ovrq nplx fjas qfmt");
+            SmtpServer.EnableSsl = true;
+            SmtpServer.Send(mail);
+        }
     }
 
     public class SmsService : IIdentityMessageService

@@ -34,6 +34,7 @@ namespace ARManila.Models
             this.StudentMaxUnit = new HashSet<StudentMaxUnit>();
             this.EducationalLevel = new HashSet<EducationalLevel>();
             this.Permit = new HashSet<Permit>();
+            this.DeferredIncome = new HashSet<DeferredIncome>();
         }
     
         public int PeriodID { get; set; }
@@ -78,5 +79,7 @@ namespace ARManila.Models
         public virtual EducationalLevel EducationalLevel1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Permit> Permit { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DeferredIncome> DeferredIncome { get; set; }
     }
 }

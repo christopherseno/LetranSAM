@@ -20,6 +20,10 @@ namespace ARManila.Models
         public Nullable<int> PeriodID { get; set; }
         public Nullable<int> PaycodeID { get; set; }
         public Nullable<int> PaymodeID { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<System.DateTime> UpdatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
     
         public virtual Paycode Paycode { get; set; }
         public virtual Paymode Paymode { get; set; }

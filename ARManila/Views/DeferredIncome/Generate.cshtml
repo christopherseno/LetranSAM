@@ -1,0 +1,64 @@
+@model ARManila.Models.OtherDTO.DeferredIncomeQueryDTO
+@{
+    ViewBag.Title = "Generate Deferred Income";
+}
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item"><a href="@Url.Action("Index")">Deferred Income</a></span>
+    <span class="breadcrumb-item active">Generate</span>
+</nav>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+@using (Html.BeginForm("Generate", "DeferredIncome", FormMethod.Post))
+{
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label>Validation Date As Of</label>
+            <input type="date" value="@(Model != null ? Model.AsOfDate.ToString("yyyy-MM-dd") : "")" id="asofdate" name="asofdate" class="form-control" required />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Nth Month</label>
+            <input type="number" min="1" value="@(Model != null ? Model.NthMonth : 1)" id="nthmonth" name="nthmonth" class="form-control" required />
+        </div>
+        <div class="form-group col-md-2">
+            <label>No. of Months</label>
+            <input type="number" min="1" value="@(Model != null ? Model.NoOfMonths : 1)" id="noofmonths" name="noofmonths" class="form-control" required />
+        </div>
+        <div class="form-group col-md-2">
+            <label>&nbsp;</label>
+            <input type="submit" value="Load" class="form-control btn btn-primary" />
+        </div>
+    </div>
+}
+
+@if (Model != null)
+{
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">@Model.PeriodName &mdash; Validated As Of @Model.AsOfDate.ToString("MMMM dd, yyyy")</h3>
+        </div>
+        <div class="block-content">
+            @if (Model.Columns.Count == 0)
+            {
+                <p class="text-muted">No assessment data found for the selected period and date.</p>
+            }
+            else
+            {
+                @Html.Partial("_DeferredIncomeMatrix", Model)
+
+                using (Html.BeginForm("Save", "DeferredIncome", FormMethod.Post))
+                {
+                    <input type="hidden" name="asofdate" value="@Model.AsOfDate.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" name="nthmonth" value="@Model.NthMonth" />
+                    <input type="hidden" name="noofmonths" value="@Model.NoOfMonths" />
+                    <div class="form-group push">
+                        <input type="submit" value="Save Deferred Income" class="btn btn-success" onclick="return confirm('Save deferred income for all departments shown? Existing non-final records for the same date will be overridden.');" />
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}

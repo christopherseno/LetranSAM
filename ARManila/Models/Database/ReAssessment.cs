@@ -29,6 +29,9 @@ namespace ARManila.Models
         public Nullable<decimal> TotalUnits { get; set; }
         public Nullable<decimal> MaxUnit { get; set; }
         public Nullable<decimal> TuitionForDiscount { get; set; }
+        public Nullable<int> OldPaymodeId { get; set; }
+        public Nullable<int> OldCurriculumId { get; set; }
+        public Nullable<int> OldAcadDeptId { get; set; }
     
         public virtual Fee Fee { get; set; }
         public virtual StudentSectionReAssessment StudentSectionReAssessment { get; set; }

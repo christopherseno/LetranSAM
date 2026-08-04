@@ -23,6 +23,7 @@ namespace ARManila.Models
             this.StudentFeeAttachment = new HashSet<StudentFeeAttachment>();
             this.AdjustmentDetailFees = new HashSet<AdjustmentDetailFees>();
             this.Assessment = new HashSet<Assessment>();
+            this.DeferredIncomeFee = new HashSet<DeferredIncomeFee>();
         }
     
         public int FeeID { get; set; }
@@ -57,5 +58,7 @@ namespace ARManila.Models
         public virtual Miscellaneous Miscellaneous { get; set; }
         public virtual Others Others { get; set; }
         public virtual FeeName FeeName { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DeferredIncomeFee> DeferredIncomeFee { get; set; }
     }
 }

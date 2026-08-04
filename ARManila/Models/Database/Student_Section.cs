@@ -61,6 +61,10 @@ namespace ARManila.Models
         public Nullable<bool> WillAvailModule { get; set; }
         public Nullable<int> DiscountTypeId { get; set; }
         public Nullable<int> ProgramId { get; set; }
+        public Nullable<int> SectionID3 { get; set; }
+        public string SettlementPlan { get; set; }
+        public Nullable<int> OldPaymodeId { get; set; }
+        public Nullable<int> OldCurriculumId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OriginalStudentSchedule> OriginalStudentSchedule { get; set; }

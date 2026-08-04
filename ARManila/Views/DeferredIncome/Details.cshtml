@@ -1,0 +1,81 @@
+@model ARManila.Models.OtherDTO.DeferredIncomeQueryDTO
+@{
+    ViewBag.Title = "Deferred Income Details";
+}
+
+<style>
+    @@media print {
+        body * { visibility: hidden; }
+        #di-print, #di-print * { visibility: visible; }
+        #di-print { position: absolute; left: 0; top: 0; width: 100%; }
+        .no-print { display: none !important; }
+        .table { font-size: 11px; }
+    }
+</style>
+
+<nav class="breadcrumb push bg-body-extra-light rounded-pill no-print">
+    <span class="breadcrumb-item"><a href="@Url.Action("Index")">Deferred Income</a></span>
+    <span class="breadcrumb-item active">Details</span>
+</nav>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
+
+@if (Model == null)
+{
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Back to list</a>
+}
+else
+{
+    bool allFinal = Model.Columns.All(c => c.IsFinal);
+    bool anyDraft = Model.Columns.Any(c => !c.IsFinal);
+
+    <div id="di-print" class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">
+                @Model.PeriodName &mdash; @Model.AsOfDate.ToString("MMMM dd, yyyy")
+                @if (allFinal)
+                {
+                    <span class="badge bg-danger">Final</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Draft</span>
+                }
+            </h3>
+            <div class="block-options no-print">
+                <a href="@Url.Action("Index")" class="btn btn-sm btn-alt-secondary" title="Back to list">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+                <a href="@Url.Action("DetailsGL", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-secondary" title="GL account view">
+                    <i class="fa fa-book"></i>
+                </a>
+                <button type="button" class="btn btn-sm btn-alt-secondary" title="Print (browser)" onclick="window.print()">
+                    <i class="fa fa-print"></i>
+                </button>
+                <a href="@Url.Action("Print", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-primary" title="Print PDF" target="_blank">
+                    <i class="fa fa-file-pdf"></i>
+                </a>
+                @if (anyDraft)
+                {
+                    using (Html.BeginForm("Finalize", "DeferredIncome", FormMethod.Post, new { @class = "d-inline-block" }))
+                    {
+                        <input type="hidden" name="date" value="@Model.AsOfDate.ToString("yyyy-MM-dd")" />
+                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Mark as Final" onclick="return confirm('Mark all draft records for this date as FINAL? Final records are no longer overridden, and their posted amounts are deducted from later months.');">
+                            <i class="fa fa-lock"></i>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+        <div class="block-content">
+            @Html.Partial("_DeferredIncomeMatrix", Model)
+        </div>
+    </div>
+}

@@ -56,6 +56,32 @@
           <Property Name="Remarks" Type="varchar(max)" Nullable="false" />
           <Property Name="StudentNo" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="DeferredIncome">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PeriodId" Type="int" Nullable="false" />
+          <Property Name="AcademicDepartmentId" Type="int" Nullable="false" />
+          <Property Name="DateGenerated" Type="date" Nullable="false" />
+          <Property Name="PostingDate" Type="date" Nullable="false" />
+          <Property Name="GeneratedBy" Type="int" Nullable="false" />
+          <Property Name="Timestamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="IsFinal" Type="bit" Nullable="false" />
+          <Property Name="NthMonth" Type="int" Nullable="false" />
+          <Property Name="NoOfMonths" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DeferredIncomeFee">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FeeId" Type="int" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="DeferredIncomeId" Type="int" Nullable="false" />
+          <Property Name="PostedAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Timestamp" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
         <EntityType Name="DmcmDiscountDetail">
           <Key>
             <PropertyRef Name="Id" />
@@ -231,6 +257,9 @@
           <Property Name="TotalUnits" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MaxUnit" Type="decimal" Precision="18" Scale="2" />
           <Property Name="TuitionForDiscount" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="OldPaymodeId" Type="int" />
+          <Property Name="OldCurriculumId" Type="int" />
+          <Property Name="OldAcadDeptId" Type="int" />
         </EntityType>
         <EntityType Name="ReportName">
           <Key>
@@ -414,6 +443,10 @@
           <Property Name="TotalUnits" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MaxUnit" Type="decimal" Precision="18" Scale="2" />
           <Property Name="TuitionForDiscount" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="AssessmentPaymentDate">
           <Key>
@@ -425,6 +458,10 @@
           <Property Name="PaymentDate" Type="date" />
           <Property Name="Amount" Type="money" />
           <Property Name="PaymodeID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="AssessmentSchedule">
           <Key>
@@ -894,6 +931,10 @@
           <Property Name="PeriodID" Type="int" />
           <Property Name="PaycodeID" Type="int" />
           <Property Name="PaymodeID" Type="int" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdatedBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Period">
           <Key>
@@ -1197,6 +1238,10 @@
           <Property Name="WillAvailModule" Type="bit" />
           <Property Name="DiscountTypeId" Type="int" />
           <Property Name="ProgramId" Type="int" />
+          <Property Name="SectionID3" Type="int" />
+          <Property Name="SettlementPlan" Type="nchar" MaxLength="10" />
+          <Property Name="OldPaymodeId" Type="int" />
+          <Property Name="OldCurriculumId" Type="int" />
         </EntityType>
         <EntityType Name="StudentClearance">
           <Key>
@@ -2011,6 +2056,66 @@
             </Principal>
             <Dependent Role="AspNetUserRoles">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncome_AcademicDepartment">
+          <End Role="AcademicDepartment" Type="Self.AcademicDepartment" Multiplicity="1" />
+          <End Role="DeferredIncome" Type="Self.DeferredIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AcademicDepartment">
+              <PropertyRef Name="AcaDeptID" />
+            </Principal>
+            <Dependent Role="DeferredIncome">
+              <PropertyRef Name="AcademicDepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncome_Employee">
+          <End Role="Employee" Type="Self.Employee" Multiplicity="1" />
+          <End Role="DeferredIncome" Type="Self.DeferredIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="DeferredIncome">
+              <PropertyRef Name="GeneratedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncome_Period">
+          <End Role="Period" Type="Self.Period" Multiplicity="1" />
+          <End Role="DeferredIncome" Type="Self.DeferredIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Period">
+              <PropertyRef Name="PeriodID" />
+            </Principal>
+            <Dependent Role="DeferredIncome">
+              <PropertyRef Name="PeriodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncomeFee_DeferredIncome">
+          <End Role="DeferredIncome" Type="Self.DeferredIncome" Multiplicity="1" />
+          <End Role="DeferredIncomeFee" Type="Self.DeferredIncomeFee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DeferredIncome">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DeferredIncomeFee">
+              <PropertyRef Name="DeferredIncomeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncomeFee_Fee">
+          <End Role="Fee" Type="Self.Fee" Multiplicity="1" />
+          <End Role="DeferredIncomeFee" Type="Self.DeferredIncomeFee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fee">
+              <PropertyRef Name="FeeID" />
+            </Principal>
+            <Dependent Role="DeferredIncomeFee">
+              <PropertyRef Name="FeeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3868,6 +3973,8 @@
           <EntitySet Name="Alpha4Payment" EntityType="Self.Alpha4Payment" Schema="AR" store:Type="Tables" />
           <EntitySet Name="ARSMSLog" EntityType="Self.ARSMSLog" Schema="AR" store:Type="Tables" />
           <EntitySet Name="BackaccountTransactionLog" EntityType="Self.BackaccountTransactionLog" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="DeferredIncome" EntityType="Self.DeferredIncome" Schema="AR" store:Type="Tables" />
+          <EntitySet Name="DeferredIncomeFee" EntityType="Self.DeferredIncomeFee" Schema="AR" store:Type="Tables" />
           <EntitySet Name="DmcmDiscountDetail" EntityType="Self.DmcmDiscountDetail" Schema="AR" store:Type="Tables" />
           <EntitySet Name="DMCMPreselectedList" EntityType="Self.DMCMPreselectedList" Schema="AR" store:Type="Tables" />
           <EntitySet Name="DmcmTransactionLog" EntityType="Self.DmcmTransactionLog" Schema="AR" store:Type="Tables" />
@@ -4182,6 +4289,26 @@
           <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncome_AcademicDepartment" Association="Self.FK_DeferredIncome_AcademicDepartment">
+            <End Role="AcademicDepartment" EntitySet="AcademicDepartment" />
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncome_Employee" Association="Self.FK_DeferredIncome_Employee">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncome_Period" Association="Self.FK_DeferredIncome_Period">
+            <End Role="Period" EntitySet="Period" />
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncomeFee_DeferredIncome" Association="Self.FK_DeferredIncomeFee_DeferredIncome">
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+            <End Role="DeferredIncomeFee" EntitySet="DeferredIncomeFee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncomeFee_Fee" Association="Self.FK_DeferredIncomeFee_Fee">
+            <End Role="Fee" EntitySet="Fee" />
+            <End Role="DeferredIncomeFee" EntitySet="DeferredIncomeFee" />
           </AssociationSet>
           <AssociationSet Name="FK_Discount_DiscountCategory" Association="Self.FK_Discount_DiscountCategory">
             <End Role="DiscountCategory" EntitySet="DiscountCategory" />
@@ -4915,6 +5042,9 @@
           <Property Name="TuitionForDiscount" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Fee" Relationship="Self.FK_ReAssessment_Fee" FromRole="ReAssessment" ToRole="Fee" />
           <NavigationProperty Name="StudentSectionReAssessment" Relationship="Self.FK_ReAssessment_Student_Section" FromRole="ReAssessment" ToRole="StudentSectionReAssessment" />
+          <Property Name="OldPaymodeId" Type="Int32" />
+          <Property Name="OldCurriculumId" Type="Int32" />
+          <Property Name="OldAcadDeptId" Type="Int32" />
         </EntityType>
         <EntityType Name="SpecificFee">
           <Key>
@@ -4990,6 +5120,7 @@
           <NavigationProperty Name="DiscountCategory" Relationship="Self.FK_DiscountCategory_AcademicDepartment" FromRole="AcademicDepartment" ToRole="DiscountCategory" />
           <NavigationProperty Name="DMCM" Relationship="Self.FK_DMCM_AcademicDepartment" FromRole="AcademicDepartment" ToRole="DMCM" />
           <NavigationProperty Name="Employee" Relationship="Self.FK_Employee_AcademicDepartment" FromRole="AcademicDepartment" ToRole="Employee" />
+          <NavigationProperty Name="DeferredIncome" Relationship="LetranIntegratedSystemModel.FK_DeferredIncome_AcademicDepartment" FromRole="AcademicDepartment" ToRole="DeferredIncome" />
         </EntityType>
         <EntityType Name="Adjustment">
           <Key>
@@ -5125,6 +5256,10 @@
           <Property Name="TuitionForDiscount" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Fee" Relationship="Self.FK_Assessment_Fee" FromRole="Assessment" ToRole="Fee" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_Assessment_Student_Section" FromRole="Assessment" ToRole="Student_Section" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AssessmentPaymentDate">
           <Key>
@@ -5139,6 +5274,10 @@
           <NavigationProperty Name="Paycode" Relationship="Self.FK_AssessmentPaymentDate_Paycode" FromRole="AssessmentPaymentDate" ToRole="Paycode" />
           <NavigationProperty Name="Paymode" Relationship="Self.FK_AssessmentPaymentDate_Paymode" FromRole="AssessmentPaymentDate" ToRole="Paymode" />
           <NavigationProperty Name="Student_Section" Relationship="Self.FK_AssessmentPaymentDate_Student_Section" FromRole="AssessmentPaymentDate" ToRole="Student_Section" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AssessmentSchedule">
           <Key>
@@ -5461,6 +5600,7 @@
           <NavigationProperty Name="Payment1" Relationship="Self.FK_Payment_Employee1" FromRole="Employee" ToRole="Payment" />
           <NavigationProperty Name="Payment2" Relationship="Self.FK_Payment_Employee2" FromRole="Employee" ToRole="Payment" />
           <NavigationProperty Name="Faculty" Relationship="LetranIntegratedSystemModel.FK_Faculty_Employee" FromRole="Employee" ToRole="Faculty" />
+          <NavigationProperty Name="DeferredIncome" Relationship="LetranIntegratedSystemModel.FK_DeferredIncome_Employee" FromRole="Employee" ToRole="DeferredIncome" />
         </EntityType>
         <EntityType Name="Fee">
           <Key>
@@ -5491,6 +5631,7 @@
           <NavigationProperty Name="Miscellaneous" Relationship="LetranIntegratedSystemModel.FK_Miscellaneous_Fee" FromRole="Fee" ToRole="Miscellaneous" />
           <NavigationProperty Name="Others" Relationship="LetranIntegratedSystemModel.FK_Others_Fee" FromRole="Fee" ToRole="Others" />
           <NavigationProperty Name="FeeName" Relationship="LetranIntegratedSystemModel.FK_Fee_FeeName" FromRole="Fee" ToRole="FeeName" />
+          <NavigationProperty Name="DeferredIncomeFee" Relationship="LetranIntegratedSystemModel.FK_DeferredIncomeFee_Fee" FromRole="Fee" ToRole="DeferredIncomeFee" />
         </EntityType>
         <EntityType Name="FeeExemption">
           <Key>
@@ -5658,6 +5799,10 @@
           <NavigationProperty Name="Paymode" Relationship="Self.FK_PaySchedule_Paymode" FromRole="PaySchedule" ToRole="Paymode" />
           <NavigationProperty Name="Period" Relationship="Self.FK_PaySchedule_Period" FromRole="PaySchedule" ToRole="Period" />
           <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_PaySchedule_EducationalLevel" FromRole="PaySchedule" ToRole="EducationalLevel" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Period">
           <Key>
@@ -5687,6 +5832,7 @@
           <NavigationProperty Name="EducationalLevel" Relationship="LetranIntegratedSystemModel.FK_EducationalLevel_Period" FromRole="Period" ToRole="EducationalLevel" />
           <NavigationProperty Name="EducationalLevel1" Relationship="LetranIntegratedSystemModel.FK_Period_EducationalLevel" FromRole="Period" ToRole="EducationalLevel" />
           <NavigationProperty Name="Permit" Relationship="LetranIntegratedSystemModel.FK_Permit_Period" FromRole="Period" ToRole="Permit" />
+          <NavigationProperty Name="DeferredIncome" Relationship="LetranIntegratedSystemModel.FK_DeferredIncome_Period" FromRole="Period" ToRole="DeferredIncome" />
         </EntityType>
         <EntityType Name="Progam">
           <Key>
@@ -6029,6 +6175,10 @@
           <NavigationProperty Name="StudentSchedule" Relationship="Self.FK_StudentSchedule_Student_Section" FromRole="Student_Section" ToRole="StudentSchedule" />
           <Property Name="DiscountTypeId" Type="Int32" />
           <Property Name="ProgramId" Type="Int32" />
+          <Property Name="SectionID3" Type="Int32" />
+          <Property Name="SettlementPlan" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="OldPaymodeId" Type="Int32" />
+          <Property Name="OldCurriculumId" Type="Int32" />
         </EntityType>
         <EntityType Name="StudentClearance">
           <Key>
@@ -9151,7 +9301,29 @@
             <End Role="PermitType" EntitySet="PermitType" />
             <End Role="Permit" EntitySet="Permit" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="DeferredIncome" EntityType="LetranIntegratedSystemModel.DeferredIncome" />
+          <EntitySet Name="DeferredIncomeFee" EntityType="LetranIntegratedSystemModel.DeferredIncomeFee" />
+          <AssociationSet Name="FK_DeferredIncome_AcademicDepartment" Association="LetranIntegratedSystemModel.FK_DeferredIncome_AcademicDepartment">
+            <End Role="AcademicDepartment" EntitySet="AcademicDepartment" />
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncome_Employee" Association="LetranIntegratedSystemModel.FK_DeferredIncome_Employee">
+            <End Role="Employee" EntitySet="Employee" />
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncome_Period" Association="LetranIntegratedSystemModel.FK_DeferredIncome_Period">
+            <End Role="Period" EntitySet="Period" />
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncomeFee_DeferredIncome" Association="LetranIntegratedSystemModel.FK_DeferredIncomeFee_DeferredIncome">
+            <End Role="DeferredIncome" EntitySet="DeferredIncome" />
+            <End Role="DeferredIncomeFee" EntitySet="DeferredIncomeFee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeferredIncomeFee_Fee" Association="LetranIntegratedSystemModel.FK_DeferredIncomeFee_Fee">
+            <End Role="Fee" EntitySet="Fee" />
+            <End Role="DeferredIncomeFee" EntitySet="DeferredIncomeFee" />
+          </AssociationSet>
+          </EntityContainer>
         <ComplexType Name="ArTrail2024_Result">
           <Property Type="String" Name="StudentNo" Nullable="false" MaxLength="20" />
           <Property Type="Double" Name="Assessment" Nullable="false" />
@@ -10683,7 +10855,99 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="DeferredIncome">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PeriodId" Type="Int32" Nullable="false" />
+          <Property Name="AcademicDepartmentId" Type="Int32" Nullable="false" />
+          <Property Name="DateGenerated" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="PostingDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="GeneratedBy" Type="Int32" Nullable="false" />
+          <Property Name="Timestamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="IsFinal" Type="Boolean" Nullable="false" />
+          <Property Name="NthMonth" Type="Int32" Nullable="false" />
+          <Property Name="NoOfMonths" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AcademicDepartment" Relationship="LetranIntegratedSystemModel.FK_DeferredIncome_AcademicDepartment" FromRole="DeferredIncome" ToRole="AcademicDepartment" />
+          <NavigationProperty Name="Employee" Relationship="LetranIntegratedSystemModel.FK_DeferredIncome_Employee" FromRole="DeferredIncome" ToRole="Employee" />
+          <NavigationProperty Name="Period" Relationship="LetranIntegratedSystemModel.FK_DeferredIncome_Period" FromRole="DeferredIncome" ToRole="Period" />
+          <NavigationProperty Name="DeferredIncomeFee" Relationship="LetranIntegratedSystemModel.FK_DeferredIncomeFee_DeferredIncome" FromRole="DeferredIncome" ToRole="DeferredIncomeFee" />
+        </EntityType>
+        <EntityType Name="DeferredIncomeFee">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FeeId" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="DeferredIncomeId" Type="Int32" Nullable="false" />
+          <Property Name="PostedAmount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Timestamp" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <NavigationProperty Name="DeferredIncome" Relationship="LetranIntegratedSystemModel.FK_DeferredIncomeFee_DeferredIncome" FromRole="DeferredIncomeFee" ToRole="DeferredIncome" />
+          <NavigationProperty Name="Fee" Relationship="LetranIntegratedSystemModel.FK_DeferredIncomeFee_Fee" FromRole="DeferredIncomeFee" ToRole="Fee" />
+        </EntityType>
+        <Association Name="FK_DeferredIncome_AcademicDepartment">
+          <End Type="LetranIntegratedSystemModel.AcademicDepartment" Role="AcademicDepartment" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.DeferredIncome" Role="DeferredIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AcademicDepartment">
+              <PropertyRef Name="AcaDeptID" />
+            </Principal>
+            <Dependent Role="DeferredIncome">
+              <PropertyRef Name="AcademicDepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncome_Employee">
+          <End Type="LetranIntegratedSystemModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.DeferredIncome" Role="DeferredIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EmployeeID" />
+            </Principal>
+            <Dependent Role="DeferredIncome">
+              <PropertyRef Name="GeneratedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncome_Period">
+          <End Type="LetranIntegratedSystemModel.Period" Role="Period" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.DeferredIncome" Role="DeferredIncome" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Period">
+              <PropertyRef Name="PeriodID" />
+            </Principal>
+            <Dependent Role="DeferredIncome">
+              <PropertyRef Name="PeriodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncomeFee_DeferredIncome">
+          <End Type="LetranIntegratedSystemModel.DeferredIncome" Role="DeferredIncome" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.DeferredIncomeFee" Role="DeferredIncomeFee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DeferredIncome">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DeferredIncomeFee">
+              <PropertyRef Name="DeferredIncomeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeferredIncomeFee_Fee">
+          <End Type="LetranIntegratedSystemModel.Fee" Role="Fee" Multiplicity="1" />
+          <End Type="LetranIntegratedSystemModel.DeferredIncomeFee" Role="DeferredIncomeFee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Fee">
+              <PropertyRef Name="FeeID" />
+            </Principal>
+            <Dependent Role="DeferredIncomeFee">
+              <PropertyRef Name="FeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -10917,6 +11181,9 @@
           <EntitySetMapping Name="ReAssessment">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.ReAssessment">
               <MappingFragment StoreEntitySet="ReAssessment">
+                <ScalarProperty Name="OldAcadDeptId" ColumnName="OldAcadDeptId" />
+                <ScalarProperty Name="OldCurriculumId" ColumnName="OldCurriculumId" />
+                <ScalarProperty Name="OldPaymodeId" ColumnName="OldPaymodeId" />
                 <ScalarProperty Name="ReAssessmentID" ColumnName="ReAssessmentID" />
                 <ScalarProperty Name="StudentSectionReAssessmentID" ColumnName="StudentSectionReAssessmentID" />
                 <ScalarProperty Name="FeeID" ColumnName="FeeID" />
@@ -11105,6 +11372,10 @@
           <EntitySetMapping Name="Assessment">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Assessment">
               <MappingFragment StoreEntitySet="Assessment">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="AssessmentID" ColumnName="AssessmentID" />
                 <ScalarProperty Name="Student_SectionID" ColumnName="Student_SectionID" />
                 <ScalarProperty Name="FeeID" ColumnName="FeeID" />
@@ -11126,6 +11397,10 @@
           <EntitySetMapping Name="AssessmentPaymentDate">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.AssessmentPaymentDate">
               <MappingFragment StoreEntitySet="AssessmentPaymentDate">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="AssessmentPaymentDateID" ColumnName="AssessmentPaymentDateID" />
                 <ScalarProperty Name="StudentSectionID" ColumnName="StudentSectionID" />
                 <ScalarProperty Name="PaycodeID" ColumnName="PaycodeID" />
@@ -11536,6 +11811,10 @@
           <EntitySetMapping Name="PaySchedule">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.PaySchedule">
               <MappingFragment StoreEntitySet="PaySchedule">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="PaySchedule1" ColumnName="PaySchedule" />
                 <ScalarProperty Name="DueDate" ColumnName="DueDate" />
                 <ScalarProperty Name="EducLevelID" ColumnName="EducLevelID" />
@@ -11808,6 +12087,10 @@
           <EntitySetMapping Name="Student_Section">
             <EntityTypeMapping TypeName="LetranIntegratedSystemModel.Student_Section">
               <MappingFragment StoreEntitySet="Student_Section">
+                <ScalarProperty Name="OldCurriculumId" ColumnName="OldCurriculumId" />
+                <ScalarProperty Name="OldPaymodeId" ColumnName="OldPaymodeId" />
+                <ScalarProperty Name="SettlementPlan" ColumnName="SettlementPlan" />
+                <ScalarProperty Name="SectionID3" ColumnName="SectionID3" />
                 <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
                 <ScalarProperty Name="DiscountTypeId" ColumnName="DiscountTypeId" />
                 <ScalarProperty Name="Student_SectionID" ColumnName="Student_SectionID" />
@@ -13485,6 +13768,34 @@
                 <ScalarProperty Name="StudentID" ColumnName="StudentID" />
                 <ScalarProperty Name="PermitTypeID" ColumnName="PermitTypeID" />
                 <ScalarProperty Name="PermitID" ColumnName="PermitID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DeferredIncome">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.DeferredIncome">
+              <MappingFragment StoreEntitySet="DeferredIncome">
+                <ScalarProperty Name="NoOfMonths" ColumnName="NoOfMonths" />
+                <ScalarProperty Name="NthMonth" ColumnName="NthMonth" />
+                <ScalarProperty Name="IsFinal" ColumnName="IsFinal" />
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="GeneratedBy" ColumnName="GeneratedBy" />
+                <ScalarProperty Name="PostingDate" ColumnName="PostingDate" />
+                <ScalarProperty Name="DateGenerated" ColumnName="DateGenerated" />
+                <ScalarProperty Name="AcademicDepartmentId" ColumnName="AcademicDepartmentId" />
+                <ScalarProperty Name="PeriodId" ColumnName="PeriodId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DeferredIncomeFee">
+            <EntityTypeMapping TypeName="LetranIntegratedSystemModel.DeferredIncomeFee">
+              <MappingFragment StoreEntitySet="DeferredIncomeFee">
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="PostedAmount" ColumnName="PostedAmount" />
+                <ScalarProperty Name="DeferredIncomeId" ColumnName="DeferredIncomeId" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="FeeId" ColumnName="FeeId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

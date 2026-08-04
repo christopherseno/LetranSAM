@@ -22,6 +22,7 @@ namespace ARManila.Models
             this.Payment1 = new HashSet<Payment>();
             this.Payment2 = new HashSet<Payment>();
             this.Faculty = new HashSet<Faculty>();
+            this.DeferredIncome = new HashSet<DeferredIncome>();
         }
     
         public int EmployeeID { get; set; }
@@ -142,5 +143,7 @@ namespace ARManila.Models
         public virtual ICollection<Payment> Payment2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Faculty> Faculty { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DeferredIncome> DeferredIncome { get; set; }
     }
 }

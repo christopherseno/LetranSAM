@@ -1,0 +1,93 @@
+@model ARManila.Models.OtherDTO.DeferredIncomeQueryDTO
+@{
+    int deptCount = Model.Columns.Count;
+    int fullCols = deptCount * 2 + 3; // description + (actual, deferred) per dept + (total actual, total deferred)
+}
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+        <caption style="caption-side: top; text-align: center; font-weight: 600; color: inherit; font-size: 1rem;">
+            Month @Model.NthMonth of @Model.NoOfMonths
+        </caption>
+        <thead>
+            <tr class="bg-gray-light text-center">
+                <th rowspan="2" style="vertical-align: middle;">Fee</th>
+                @foreach (var col in Model.Columns)
+                {
+                    <th colspan="2">
+                        @col.Header
+                        @if (col.IsFinal)
+                        {
+                            <span class="badge bg-danger" title="Final">F</span>
+                        }
+                        else if (col.HasExistingRecord)
+                        {
+                            <span class="badge bg-warning" title="Draft">O</span>
+                        }
+                    </th>
+                }
+                <th colspan="2">Total</th>
+            </tr>
+            <tr class="bg-gray-light text-center">
+                @foreach (var col in Model.Columns)
+                {
+                    <th>Actual</th>
+                    <th>Deferred</th>
+                }
+                <th>Actual</th>
+                <th>Deferred</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model.Categories)
+            {
+                if (category.IsSectionHeader)
+                {
+                    <tr class="subtotal">
+                        <td colspan="@fullCols">@category.Name</td>
+                    </tr>
+                }
+                foreach (var row in category.Rows)
+                {
+                    <tr class="@(category.IsSectionHeader ? "" : "subtotal")">
+                        <td>@row.Description</td>
+                        @foreach (var col in Model.Columns)
+                        {
+                            <td align="right">@(row.AmountFor(col.AcademicDepartmentId).ToString("#,##0.00"))</td>
+                            <td align="right">@(row.PostedFor(col.AcademicDepartmentId).ToString("#,##0.00"))</td>
+                        }
+                        <td align="right">@(row.TotalAmount.ToString("#,##0.00"))</td>
+                        <td align="right">@(row.TotalPosted.ToString("#,##0.00"))</td>
+                    </tr>
+                }
+                if (category.ShowSubtotal && category.Subtotal != null)
+                {
+                    <tr class="subtotal">
+                        <td>Subtotal</td>
+                        @foreach (var col in Model.Columns)
+                        {
+                            <td align="right">@(category.Subtotal.AmountFor(col.AcademicDepartmentId).ToString("#,##0.00"))</td>
+                            <td align="right">@(category.Subtotal.PostedFor(col.AcademicDepartmentId).ToString("#,##0.00"))</td>
+                        }
+                        <td align="right">@(category.Subtotal.TotalAmount.ToString("#,##0.00"))</td>
+                        <td align="right">@(category.Subtotal.TotalPosted.ToString("#,##0.00"))</td>
+                    </tr>
+                }
+            }
+            @if (Model.TotalAssessment != null)
+            {
+                <tr class="subtotal">
+                    <td><strong>@Model.TotalAssessment.Description</strong></td>
+                    @foreach (var col in Model.Columns)
+                    {
+                        <td align="right"><strong>@(Model.TotalAssessment.AmountFor(col.AcademicDepartmentId).ToString("#,##0.00"))</strong></td>
+                        <td align="right"><strong>@(Model.TotalAssessment.PostedFor(col.AcademicDepartmentId).ToString("#,##0.00"))</strong></td>
+                    }
+                    <td align="right"><strong>@(Model.TotalAssessment.TotalAmount.ToString("#,##0.00"))</strong></td>
+                    <td align="right"><strong>@(Model.TotalAssessment.TotalPosted.ToString("#,##0.00"))</strong></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<p class="text-muted no-print mb-0"><small>Actual = assessed fee &nbsp;&bull;&nbsp; Deferred = computed posted amount &nbsp;&bull;&nbsp; <span class="badge bg-warning">O</span> draft &nbsp; <span class="badge bg-danger">F</span> final</small></p>

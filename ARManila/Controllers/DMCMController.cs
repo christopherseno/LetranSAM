@@ -283,10 +283,7 @@ namespace ARManila.Controllers
                     var student = db.Student.Where(m => m.StudentID == dmcm.StudentID).FirstOrDefault();
                     var studentemail = db.AspNetUsers.Where(m => m.UserName == student.StudentNo).FirstOrDefault();
                     MailMessage mail = new MailMessage();
-                    SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-                    var fromAddress = new MailAddress("admin@letran.edu.ph", "System Admin");
-                    const string fromPassword = "Boo18!<3";
-                    mail.From = fromAddress;
+                    mail.From = new MailAddress("letranmailing@letran.edu.ph", "System Admin");
                     mail.CC.Add(new MailAddress(user.Email));
                     if (db.Database.Connection.ConnectionString.Contains("172.20.0.10"))
                     {
@@ -306,12 +303,7 @@ namespace ARManila.Controllers
                     document.SetDataSource(reportdata);
                     mail.Attachments.Add(new Attachment(document.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat), "Dmcm.pdf"));
 
-                    mail.IsBodyHtml = true;
-                    SmtpServer.Port = 587;
-                    //SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", fromPassword);
-                    SmtpServer.Credentials = new System.Net.NetworkCredential("admin@letran.edu.ph", "dfws xjjr tmng ekkp");
-                    SmtpServer.EnableSsl = true;
-                    SmtpServer.Send(mail);
+                    new EmailService().Send(mail);
                     IQueryable<DMCM> dmcms = GetStudentDMCM(dmcm.Student.StudentNo);
                     return id;
                 }
