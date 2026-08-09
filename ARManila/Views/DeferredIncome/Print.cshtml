@@ -1,0 +1,252 @@
+@model ARManila.Models.OtherDTO.DeferredIncomeQueryDTO
+@using ARManila.Models.OtherDTO
+@{
+    Layout = null;
+    int deptCount = Model.Columns.Count;
+    int fullCols = deptCount * 2 + 3;
+    bool allFinal = Model.Columns.All(c => c.IsFinal);
+    string preparedBy = ViewBag.PreparedBy as string;
+    string logo = ViewBag.LogoDataUri as string;
+    DateTime printedOn = ViewBag.PrintedOn == null ? DateTime.Now : (DateTime)ViewBag.PrintedOn;
+}
+@functions {
+    static string Fmt(decimal v) { return v.ToString("#,##0.00"); }
+}
+@helper ColBadge(DeferredIncomeColumnDTO col)
+{
+    if (col.IsFinal)
+    {
+        <span class="colbadge cb-f" title="Final">F</span>
+    }
+    else if (col.HasExistingRecord)
+    {
+        <span class="colbadge cb-o" title="Draft">O</span>
+    }
+}
+@helper AmountCells(DeferredIncomeQueryDTO model, DeferredIncomeRowDTO row)
+{
+    bool first = true;
+    foreach (var col in model.Columns)
+    {
+        <td class="num @(first ? "sep" : "")">@Fmt(row.AmountFor(col.AcademicDepartmentId))</td>
+        first = false;
+    }
+    <td class="num grp-total">@Fmt(row.TotalAmount)</td>
+    first = true;
+    foreach (var col in model.Columns)
+    {
+        <td class="num def @(first ? "sep" : "")">@Fmt(row.PostedFor(col.AcademicDepartmentId))</td>
+        first = false;
+    }
+    <td class="num def grp-total">@Fmt(row.TotalPosted)</td>
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Deferred Income</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            color: #1f2733; font-size: 9.5px; -webkit-print-color-adjust: exact;
+        }
+
+        /* ---------- Letterhead ---------- */
+        .lh { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+        .lh td { vertical-align: middle; border: none; padding: 0; }
+        .lh-seal { width: 62px; }
+        .lh-seal img { width: 58px; height: 58px; object-fit: contain; }
+        .lh-inst { font-family: "Old English Text MT", "Times New Roman", serif; font-size: 20px; font-weight: 700; color: #1d4ed8; line-height: 1.1; }
+        .lh-addr { font-size: 9px; color: #6c757d; letter-spacing: .3px; }
+        .lh-report { margin-top: 3px; font-size: 12.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #1f2733; }
+
+        .rule { border: none; border-top: 2px solid #1d4ed8; margin: 4px 0 8px; }
+
+        /* ---------- Meta line ---------- */
+        .meta { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 9.5px; }
+        .meta td { border: none; padding: 0; }
+        .meta .r { text-align: right; }
+        .meta .k { color: #6c757d; }
+        .meta .v { font-weight: 600; }
+        .status { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 8.5px; font-weight: 700; letter-spacing: .5px; }
+        .status.final { background: #1d4ed8; color: #fff; }
+        .status.draft { background: #e9ecef; color: #495057; }
+
+        /* ---------- Matrix table ---------- */
+        table.mx { width: 100%; border-collapse: collapse; }
+        table.mx th, table.mx td { border: 1px solid #cfd6dd; padding: 3px 6px; }
+
+        table.mx thead .grp th {
+            background: #1d4ed8; color: #fff; text-align: center; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase; font-size: 10px; padding: 4px 6px;
+        }
+        table.mx thead .grp .fee-col { background: #1e3a8a; text-align: left; vertical-align: middle; }
+        table.mx thead .cols th {
+            background: #f0f2f4; color: #33404d; text-align: center; font-weight: 700; font-size: 9px;
+            text-transform: uppercase; letter-spacing: .3px;
+        }
+        table.mx thead .cols .grp-total { background: #e2e6ea; }
+        .colbadge { display: inline-block; min-width: 12px; padding: 0 3px; border-radius: 7px; color: #fff; font-size: 7.5px; font-weight: 700; line-height: 12px; vertical-align: middle; }
+        .colbadge.cb-f { background: #1d4ed8; }
+        .colbadge.cb-o { background: #b8860b; }
+
+        table.mx tbody td { background: #fff; }
+        table.mx tbody td.num { text-align: right; white-space: nowrap; }
+        table.mx tbody td.desc { padding-left: 10px; }
+        table.mx tbody tr.row-item:nth-child(even) td { background: #f8f9fa; }
+
+        /* group divider + subtle tint to separate Actual from Deferred */
+        table.mx .sep { border-left: 2px solid #9aa4ad; }
+        table.mx td.def { background: #fbfcfd; }
+        table.mx tbody tr.row-item:nth-child(even) td.def { background: #f4f6f8; }
+        table.mx td.grp-total { font-weight: 700; }
+
+        /* row variants */
+        table.mx tr.row-section td { background: #eef1f4 !important; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #33404d; }
+        table.mx tr.row-emph td { background: #f2f4f6 !important; font-weight: 700; }
+        table.mx tr.row-subtotal td { background: #e9edf1 !important; font-weight: 700; }
+        table.mx tr.row-subtotal td.desc { font-style: italic; }
+        table.mx tr.row-grand td { background: #1d4ed8 !important; color: #fff; font-weight: 700; font-size: 10.5px; border-color: #1d4ed8; }
+
+        table.mx caption { caption-side: top; text-align: center; font-weight: 600; font-size: 10px; padding-bottom: 5px; color: #6c757d; }
+
+        tr { page-break-inside: avoid; }
+        thead { display: table-header-group; } /* repeat header on every page */
+
+        /* ---------- Signatures ---------- */
+        .sign { width: 100%; border-collapse: collapse; margin-top: 26px; }
+        .sign td { border: none; width: 33%; font-size: 9.5px; vertical-align: bottom; padding: 0 10px; }
+        .sign .line { border-top: 1px solid #33404d; padding-top: 3px; text-align: center; }
+        .sign .name { font-weight: 700; text-transform: uppercase; }
+        .sign .role { color: #6c757d; font-size: 8.5px; }
+
+        .legend { margin-top: 14px; font-size: 8.5px; color: #8a939b; }
+        .legend .badge { display: inline-block; padding: 0 5px; border-radius: 8px; color: #fff; font-weight: 700; }
+        .legend .b-f { background: #1d4ed8; }
+        .legend .b-o { background: #b8860b; }
+    </style>
+</head>
+<body>
+    <!-- Letterhead -->
+    <table class="lh">
+        <tr>
+            @if (!string.IsNullOrEmpty(logo))
+            {
+                <td class="lh-seal"><img src="@logo" alt="" /></td>
+            }
+            <td>
+                <div class="lh-inst">Colegio de San Juan de Letran</div>
+                <div class="lh-addr">Intramuros, Manila &bull; Accounting / Finance Office</div>
+                <div class="lh-report">Deferred Income Report</div>
+            </td>
+        </tr>
+    </table>
+    <hr class="rule" />
+
+    <!-- Meta -->
+    <table class="meta">
+        <tr>
+            <td>
+                <span class="k">Period:</span> <span class="v">@Model.PeriodName</span><br />
+                <span class="k">As of:</span> <span class="v">@Model.AsOfDate.ToString("MMMM dd, yyyy")</span>
+            </td>
+            <td class="r">
+                <span class="k">Month:</span> <span class="v">@Model.NthMonth of @Model.NoOfMonths</span><br />
+                @if (allFinal)
+                {
+                    <span class="status final">FINAL</span>
+                }
+                else
+                {
+                    <span class="status draft">DRAFT</span>
+                }
+            </td>
+        </tr>
+    </table>
+
+    <!-- Matrix -->
+    <table class="mx">
+        <thead>
+            <tr class="grp">
+                <th rowspan="2" class="fee-col">Fee</th>
+                <th colspan="@(deptCount + 1)">Actual</th>
+                <th colspan="@(deptCount + 1)">Deferred</th>
+            </tr>
+            <tr class="cols">
+                @foreach (var col in Model.Columns)
+                {
+                    <th class="@(col == Model.Columns.First() ? "sep" : "")">@col.Header @ColBadge(col)</th>
+                }
+                <th class="grp-total">Total</th>
+                @foreach (var col in Model.Columns)
+                {
+                    <th class="@(col == Model.Columns.First() ? "sep" : "")">@col.Header @ColBadge(col)</th>
+                }
+                <th class="grp-total">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model.Categories)
+            {
+                if (category.IsSectionHeader)
+                {
+                    <tr class="row-section"><td colspan="@fullCols">@category.Name</td></tr>
+                }
+                foreach (var row in category.Rows)
+                {
+                    <tr class="@(category.IsSectionHeader ? "row-item" : "row-emph")">
+                        <td class="desc">@row.Description</td>
+                        @AmountCells(Model, row)
+                    </tr>
+                }
+                if (category.ShowSubtotal && category.Subtotal != null)
+                {
+                    <tr class="row-subtotal">
+                        <td class="desc">Subtotal &mdash; @category.Name</td>
+                        @AmountCells(Model, category.Subtotal)
+                    </tr>
+                }
+            }
+            @if (Model.TotalAssessment != null)
+            {
+                <tr class="row-grand">
+                    <td class="desc">@Model.TotalAssessment.Description</td>
+                    @AmountCells(Model, Model.TotalAssessment)
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Signatures -->
+    <table class="sign">
+        <tr>
+            <td>
+                <div class="line">
+                    <span class="name">@(string.IsNullOrWhiteSpace(preparedBy) ? "&nbsp;" : preparedBy)</span><br />
+                    <span class="role">Prepared by</span>
+                </div>
+            </td>
+            <td>
+                <div class="line">
+                    <span class="name">&nbsp;</span><br />
+                    <span class="role">Checked by</span>
+                </div>
+            </td>
+            <td>
+                <div class="line">
+                    <span class="name">&nbsp;</span><br />
+                    <span class="role">Approved by</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="legend">
+        Actual = assessed fee &nbsp;&bull;&nbsp; Deferred = computed posted amount &nbsp;&bull;&nbsp;
+        <span class="badge b-f">F</span> final &nbsp; <span class="badge b-o">O</span> draft
+        &nbsp;&bull;&nbsp; Printed @printedOn.ToString("MMM dd, yyyy h:mm tt")
+    </div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+@model ARManila.Models.OtherDTO.JournalEntryReportDTO
+@{
+    Layout = null;
+    DateTime monthStart = new DateTime(Model.AsOfDate.Year, Model.AsOfDate.Month, 1);
+    string periodCovered = monthStart.ToString("M/d/yyyy") + " - " + Model.AsOfDate.ToString("M/d/yyyy");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Journal Entries - Revenue Recognition</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: "Times New Roman", Georgia, serif; color: #000; font-size: 11px; -webkit-print-color-adjust: exact; }
+
+        .je-title { font-size: 22px; font-weight: 400; margin: 0 0 6px; }
+        .je-head { font-size: 11px; line-height: 1.35; margin-bottom: 2px; }
+        .je-head .b { font-weight: 700; }
+
+        .dept { margin-top: 22px; }
+        .dept-name { font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+
+        table.je { width: 100%; border-collapse: collapse; font-size: 11px; }
+        table.je th, table.je td { padding: 2px 6px; vertical-align: top; }
+        table.je thead th { font-weight: 700; text-align: left; border-bottom: 0; }
+        table.je th.r, table.je td.r { text-align: right; white-space: nowrap; }
+
+        .col-code { width: 110px; }
+        .col-dept { width: 40px; }
+        .col-amt  { width: 120px; }
+
+        table.je tr.total td { border-top: 1px solid #000; font-weight: 400; padding-top: 3px; }
+        table.je tr.total td.r { border-bottom: 1px solid #000; }
+
+        .je-desc { margin-top: 10px; font-size: 11px; }
+
+        .dept { page-break-inside: avoid; }
+    </style>
+</head>
+<body>
+    <div class="je-title">Colegio de San Juan de Letran - Manila</div>
+    <div class="je-head b">Financial Affairs Division</div>
+    <div class="je-head b">Comptrollership Department</div>
+    <div class="je-head b">@Model.EducLevel</div>
+    <div class="je-head b">@Model.PeriodName</div>
+    <div class="je-head b">Journal Entries &ndash; Revenue Recognition (Regular)</div>
+    <div class="je-head">For the period: @periodCovered</div>
+    <div class="je-head">Account codes: @Model.CodeSourceLabel</div>
+
+    @foreach (var dept in Model.Departments)
+    {
+        <div class="dept">
+            <div class="dept-name">@dept.Acronym (@dept.GLCode)</div>
+            <table class="je">
+                <thead>
+                    <tr>
+                        <th class="col-code">Account Code</th>
+                        <th class="col-dept"></th>
+                        <th>Account Name</th>
+                        <th class="r col-amt">Debit</th>
+                        <th class="r col-amt">Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var line in dept.Lines)
+                    {
+                        <tr>
+                            <td class="col-code">@line.AcctNo</td>
+                            <td class="col-dept">@line.GLCode</td>
+                            <td>@line.AccountName</td>
+                            <td class="r col-amt">@(line.Debit == 0 ? "" : line.Debit.ToString("#,##0.00"))</td>
+                            <td class="r col-amt">@(line.Credit == 0 ? "" : line.Credit.ToString("#,##0.00"))</td>
+                        </tr>
+                    }
+                    <tr class="total">
+                        <td colspan="3"></td>
+                        <td class="r col-amt">@dept.TotalDebit.ToString("#,##0.00")</td>
+                        <td class="r col-amt">@dept.TotalCredit.ToString("#,##0.00")</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="je-desc">@Model.Description</div>
+        </div>
+    }
+</body>
+</html>

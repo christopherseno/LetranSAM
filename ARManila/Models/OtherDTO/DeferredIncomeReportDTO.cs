@@ -63,6 +63,48 @@ namespace ARManila.Models.OtherDTO
         public decimal PostedAmount { get; set; }
     }
 
+    // ---- Revenue-recognition journal entry (per academic department) ----
+
+    public class JournalEntryReportDTO
+    {
+        public JournalEntryReportDTO()
+        {
+            Departments = new List<JeDeptDTO>();
+        }
+        public string PeriodName { get; set; }
+        public string EducLevel { get; set; }
+        public DateTime AsOfDate { get; set; }
+        public int NthMonth { get; set; }
+        public int NoOfMonths { get; set; }
+        public bool IsFinal { get; set; }
+        public string Description { get; set; }        // "To record revenue recognition ..."
+        public string CodeSourceLabel { get; set; }    // "Internal account codes" | "QNE account codes"
+        public List<JeDeptDTO> Departments { get; set; }
+    }
+
+    public class JeDeptDTO
+    {
+        public JeDeptDTO()
+        {
+            Lines = new List<JeLineDTO>();
+        }
+        public string Acronym { get; set; }
+        public string DepartmentName { get; set; }
+        public string GLCode { get; set; }
+        public List<JeLineDTO> Lines { get; set; }
+        public decimal TotalDebit { get; set; }
+        public decimal TotalCredit { get; set; }
+    }
+
+    public class JeLineDTO
+    {
+        public string AcctNo { get; set; }             // "Account Code" column (e.g. L831, A104.26)
+        public string GLCode { get; set; }             // department GL / project code column
+        public string AccountName { get; set; }
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
+    }
+
     // ---- GL account view of a saved posting date ----
 
     public class DeferredIncomeGLDTO

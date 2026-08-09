@@ -62,12 +62,18 @@ else
                 <a href="@Url.Action("Print", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-primary" title="Print PDF" target="_blank">
                     <i class="fa fa-file-pdf"></i>
                 </a>
+                <a href="@Url.Action("JournalEntry", new { date = Model.AsOfDate.ToString("yyyy-MM-dd"), code = "local" })" class="btn btn-sm btn-alt-primary" title="Revenue Recognition JE — internal account codes (PDF)" target="_blank">
+                    <i class="fa fa-file-invoice-dollar"></i>
+                </a>
+                <a href="@Url.Action("JournalEntry", new { date = Model.AsOfDate.ToString("yyyy-MM-dd"), code = "qne" })" class="btn btn-sm btn-alt-secondary" title="Revenue Recognition JE — QNE account codes (PDF)" target="_blank">
+                    <i class="fa fa-file-invoice"></i>
+                </a>
                 @if (anyDraft)
                 {
                     using (Html.BeginForm("Finalize", "DeferredIncome", FormMethod.Post, new { @class = "d-inline-block" }))
                     {
                         <input type="hidden" name="date" value="@Model.AsOfDate.ToString("yyyy-MM-dd")" />
-                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Mark as Final" onclick="return confirm('Mark all draft records for this date as FINAL? Final records are no longer overridden, and their posted amounts are deducted from later months.');">
+                        <button type="submit" class="btn btn-sm btn-alt-danger" title="Mark as Final" onclick="return confirm('Mark all draft records for this date as FINAL? Final postings are sent to the accounting system and can no longer be changed or deleted. Any later removal or correction must be made through a separate adjustment.');">
                             <i class="fa fa-lock"></i>
                         </button>
                     }

@@ -1,0 +1,204 @@
+@model ARManila.Models.OtherDTO.MemoAdjustmentQueryDTO
+@using ARManila.Models.OtherDTO
+@{
+    Layout = null;
+    int deptCount = Model.Columns.Count;
+    int groupCols = deptCount + 1;
+    int fullCols = groupCols * 2 + 3;
+    string preparedBy = ViewBag.PreparedBy as string;
+    string logo = ViewBag.LogoDataUri as string;
+    DateTime printedOn = ViewBag.PrintedOn == null ? DateTime.Now : (DateTime)ViewBag.PrintedOn;
+}
+@functions {
+    static string Fmt(decimal v) { return v.ToString("#,##0.00"); }
+}
+@helper GroupCells(MemoAdjustmentQueryDTO model, MemoRowDTO row, bool posted, bool strong)
+{
+    bool first = true;
+    foreach (var col in model.Columns)
+    {
+        var v = posted ? row.PostedFor(col.AcademicDepartmentId) : row.AmountFor(col.AcademicDepartmentId);
+        if (strong)
+        {
+            <td class="num@(first ? " gsep" : "")"><strong>@Fmt(v)</strong></td>
+        }
+        else
+        {
+            <td class="num@(first ? " gsep" : "")">@Fmt(v)</td>
+        }
+        first = false;
+    }
+    var tot = posted ? row.TotalPosted : row.TotalAmount;
+    if (strong)
+    {
+        <td class="num grp-total"><strong>@Fmt(tot)</strong></td>
+    }
+    else
+    {
+        <td class="num grp-total">@Fmt(tot)</td>
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Adjustment Discounts</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif; color:#1f2733; font-size:9px; -webkit-print-color-adjust:exact; }
+
+        .lh { width:100%; border-collapse:collapse; margin-bottom:6px; }
+        .lh td { vertical-align:middle; border:none; padding:0; }
+        .lh-seal { width:62px; }
+        .lh-seal img { width:58px; height:58px; object-fit:contain; }
+        .lh-inst { font-family:"Old English Text MT","Times New Roman",serif; font-size:20px; font-weight:700; color:#1d4ed8; line-height:1.1; }
+        .lh-addr { font-size:9px; color:#6c757d; letter-spacing:.3px; }
+        .lh-report { margin-top:3px; font-size:12.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#1f2733; }
+        .rule { border:none; border-top:2px solid #1d4ed8; margin:4px 0 8px; }
+
+        .meta { width:100%; border-collapse:collapse; margin-bottom:8px; font-size:9.5px; }
+        .meta td { border:none; padding:0; }
+        .meta .r { text-align:right; }
+        .meta .k { color:#6c757d; }
+        .meta .v { font-weight:600; }
+        .status { display:inline-block; padding:1px 8px; border-radius:10px; font-size:8.5px; font-weight:700; letter-spacing:.5px; }
+        .status.final { background:#1d4ed8; color:#fff; }
+        .status.draft { background:#e9ecef; color:#495057; }
+
+        table.mx { width:100%; border-collapse:collapse; }
+        table.mx th, table.mx td { border:1px solid #cfd6dd; padding:2px 5px; }
+        table.mx thead th {
+            background:#1d4ed8; color:#fff; text-align:center; font-weight:700;
+            text-transform:uppercase; letter-spacing:.2px; font-size:8.5px; padding:3px 5px;
+        }
+        table.mx thead th.lead { text-align:left; }
+        table.mx tbody td { background:#fff; }
+        table.mx tbody td.num { text-align:right; white-space:nowrap; }
+        table.mx tbody tr.row-item:nth-child(even) td { background:#f8f9fa; }
+        table.mx td.grp-total { font-weight:700; }
+        table.mx .gsep { border-left:2px solid #9aa4ad; }
+
+        table.mx tr.row-section td { background:#eef1f4 !important; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:#33404d; }
+        table.mx tr.row-subtotal td { background:#e9edf1 !important; font-weight:700; }
+        table.mx tr.row-subtotal td.lead { font-style:italic; }
+        table.mx tr.row-grand td { background:#1d4ed8 !important; color:#fff; font-weight:700; font-size:9.5px; border-color:#1d4ed8; }
+
+        tr { page-break-inside: avoid; }
+        thead { display: table-header-group; }
+
+        .sign { width:100%; border-collapse:collapse; margin-top:24px; }
+        .sign td { border:none; width:33%; font-size:9.5px; vertical-align:bottom; padding:0 10px; }
+        .sign .line { border-top:1px solid #33404d; padding-top:3px; text-align:center; }
+        .sign .name { font-weight:700; text-transform:uppercase; }
+        .sign .role { color:#6c757d; font-size:8.5px; }
+
+        .legend { margin-top:14px; font-size:8.5px; color:#8a939b; }
+    </style>
+</head>
+<body>
+    <table class="lh">
+        <tr>
+            @if (!string.IsNullOrEmpty(logo))
+            {
+                <td class="lh-seal"><img src="@logo" alt="" /></td>
+            }
+            <td>
+                <div class="lh-inst">Colegio de San Juan de Letran</div>
+                <div class="lh-addr">Intramuros, Manila &bull; Accounting / Finance Office</div>
+                <div class="lh-report">Adjustment Discounts</div>
+            </td>
+        </tr>
+    </table>
+    <hr class="rule" />
+
+    <table class="meta">
+        <tr>
+            <td>
+                <span class="k">Period:</span> <span class="v">@Model.PeriodName</span><br />
+                <span class="k">As of:</span> <span class="v">@Model.AsOfDate.ToString("MMMM dd, yyyy")</span>
+            </td>
+            <td class="r">
+                <span class="k">Month:</span> <span class="v">@Model.NthMonth of @Model.NoOfMonths</span><br />
+                @if (Model.IsFinal)
+                {
+                    <span class="status final">FINAL</span>
+                }
+                else
+                {
+                    <span class="status draft">DRAFT</span>
+                }
+            </td>
+        </tr>
+    </table>
+
+    <table class="mx">
+        <thead>
+            <tr>
+                <th class="lead" rowspan="2">Particular</th>
+                <th class="lead" rowspan="2">Chart of Account</th>
+                <th rowspan="2">QNE Code</th>
+                <th class="gsep" colspan="@groupCols">Amount</th>
+                <th class="gsep" colspan="@groupCols">Posted</th>
+            </tr>
+            <tr>
+                @foreach (var col in Model.Columns)
+                {
+                    <th class="@(col == Model.Columns.First() ? "gsep" : "")">@col.Header</th>
+                }
+                <th>Total</th>
+                @foreach (var col in Model.Columns)
+                {
+                    <th class="@(col == Model.Columns.First() ? "gsep" : "")">@col.Header</th>
+                }
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sec in Model.Sections)
+            {
+                <tr class="row-section"><td colspan="@fullCols">@sec.Title</td></tr>
+                foreach (var row in sec.Rows)
+                {
+                    <tr class="row-item">
+                        <td>@row.Particular</td>
+                        <td>@row.ChartOfAccount</td>
+                        <td>@row.QNECode</td>
+                        @GroupCells(Model, row, false, false)
+                        @GroupCells(Model, row, true, false)
+                    </tr>
+                }
+                if (sec.Subtotal != null)
+                {
+                    <tr class="row-subtotal">
+                        <td class="lead" colspan="3">Subtotal &mdash; @sec.Title</td>
+                        @GroupCells(Model, sec.Subtotal, false, true)
+                        @GroupCells(Model, sec.Subtotal, true, true)
+                    </tr>
+                }
+            }
+            @if (Model.GrandTotal != null)
+            {
+                <tr class="row-grand">
+                    <td colspan="3">@Model.GrandTotal.Particular</td>
+                    @GroupCells(Model, Model.GrandTotal, false, true)
+                    @GroupCells(Model, Model.GrandTotal, true, true)
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <table class="sign">
+        <tr>
+            <td><div class="line"><span class="name">@(string.IsNullOrWhiteSpace(preparedBy) ? "&nbsp;" : preparedBy)</span><br /><span class="role">Prepared by</span></div></td>
+            <td><div class="line"><span class="name">&nbsp;</span><br /><span class="role">Checked by</span></div></td>
+            <td><div class="line"><span class="name">&nbsp;</span><br /><span class="role">Approved by</span></div></td>
+        </tr>
+    </table>
+
+    <div class="legend">
+        Amount = full adjustment discount as of date &nbsp;&bull;&nbsp; Posted = recognized for month @Model.NthMonth of @Model.NoOfMonths
+        &nbsp;&bull;&nbsp; Printed @printedOn.ToString("MMM dd, yyyy h:mm tt")
+    </div>
+</body>
+</html>

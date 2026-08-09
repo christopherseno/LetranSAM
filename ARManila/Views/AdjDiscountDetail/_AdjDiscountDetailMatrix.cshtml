@@ -1,0 +1,101 @@
+@model ARManila.Models.OtherDTO.MemoAdjustmentQueryDTO
+@{
+    int deptCount = Model.Columns.Count;
+    int groupCols = deptCount + 1;          // depts + group total
+    int fullCols = groupCols * 2 + 3;       // Particular + COA + QNE + Amount group + Posted group
+}
+
+<style>
+    .ad-group-sep { border-left: 2px solid #adb5bd !important; }
+</style>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+        <caption style="caption-side: top; text-align: center; font-weight: 600; color: inherit; font-size: 1rem;">
+            As of @Model.AsOfDate.ToString("MMMM dd, yyyy") &mdash; Month @Model.NthMonth of @Model.NoOfMonths
+        </caption>
+        <thead>
+            <tr class="bg-gray-light text-center">
+                <th rowspan="2" style="vertical-align: middle;">Particular</th>
+                <th rowspan="2" style="vertical-align: middle;">Chart of Account</th>
+                <th rowspan="2" style="vertical-align: middle;">QNE Code</th>
+                <th colspan="@groupCols" class="ad-group-sep">Amount</th>
+                <th colspan="@groupCols" class="ad-group-sep">Posted</th>
+            </tr>
+            <tr class="bg-gray-light text-center">
+                @foreach (var col in Model.Columns)
+                {
+                    <th class="@(col == Model.Columns.First() ? "ad-group-sep" : "")" title="@col.DepartmentName">@col.Header</th>
+                }
+                <th>Total</th>
+                @foreach (var col in Model.Columns)
+                {
+                    <th class="@(col == Model.Columns.First() ? "ad-group-sep" : "")" title="@col.DepartmentName">@col.Header</th>
+                }
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sec in Model.Sections)
+            {
+                <tr class="subtotal">
+                    <td colspan="@fullCols"><strong>@sec.Title</strong></td>
+                </tr>
+                foreach (var row in sec.Rows)
+                {
+                    <tr>
+                        <td>@row.Particular</td>
+                        <td>@row.ChartOfAccount</td>
+                        <td>@row.QNECode</td>
+                        @foreach (var col in Model.Columns)
+                        {
+                            <td align="right" class="@(col == Model.Columns.First() ? "ad-group-sep" : "")">@(row.AmountFor(col.AcademicDepartmentId).ToString("#,##0.00"))</td>
+                        }
+                        <td align="right">@(row.TotalAmount.ToString("#,##0.00"))</td>
+                        @foreach (var col in Model.Columns)
+                        {
+                            <td align="right" class="@(col == Model.Columns.First() ? "ad-group-sep" : "")">@(row.PostedFor(col.AcademicDepartmentId).ToString("#,##0.00"))</td>
+                        }
+                        <td align="right">@(row.TotalPosted.ToString("#,##0.00"))</td>
+                    </tr>
+                }
+                if (sec.Subtotal != null)
+                {
+                    <tr class="subtotal">
+                        <td colspan="3"><em>Subtotal &mdash; @sec.Title</em></td>
+                        @foreach (var col in Model.Columns)
+                        {
+                            <td align="right" class="@(col == Model.Columns.First() ? "ad-group-sep" : "")"><strong>@(sec.Subtotal.AmountFor(col.AcademicDepartmentId).ToString("#,##0.00"))</strong></td>
+                        }
+                        <td align="right"><strong>@(sec.Subtotal.TotalAmount.ToString("#,##0.00"))</strong></td>
+                        @foreach (var col in Model.Columns)
+                        {
+                            <td align="right" class="@(col == Model.Columns.First() ? "ad-group-sep" : "")"><strong>@(sec.Subtotal.PostedFor(col.AcademicDepartmentId).ToString("#,##0.00"))</strong></td>
+                        }
+                        <td align="right"><strong>@(sec.Subtotal.TotalPosted.ToString("#,##0.00"))</strong></td>
+                    </tr>
+                }
+            }
+            @if (Model.GrandTotal != null)
+            {
+                <tr class="subtotal">
+                    <td colspan="3"><strong>@Model.GrandTotal.Particular</strong></td>
+                    @foreach (var col in Model.Columns)
+                    {
+                        <td align="right" class="@(col == Model.Columns.First() ? "ad-group-sep" : "")"><strong>@(Model.GrandTotal.AmountFor(col.AcademicDepartmentId).ToString("#,##0.00"))</strong></td>
+                    }
+                    <td align="right"><strong>@(Model.GrandTotal.TotalAmount.ToString("#,##0.00"))</strong></td>
+                    @foreach (var col in Model.Columns)
+                    {
+                        <td align="right" class="@(col == Model.Columns.First() ? "ad-group-sep" : "")"><strong>@(Model.GrandTotal.PostedFor(col.AcademicDepartmentId).ToString("#,##0.00"))</strong></td>
+                    }
+                    <td align="right"><strong>@(Model.GrandTotal.TotalPosted.ToString("#,##0.00"))</strong></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<p class="text-muted no-print mb-0"><small>
+    Amount = full adjustment discount as of date &nbsp;&bull;&nbsp;
+    Posted = this month's share (Amount &divide; @Model.NoOfMonths) recognized as of this date.
+</small></p>

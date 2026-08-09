@@ -117,23 +117,11 @@ namespace ARManila.Controllers
             DateTime postingdate = asofdate.Date;
             List<string> saved = new List<string>();
             List<string> skipped = new List<string>();
-            List<string> blocked = new List<string>();
 
             foreach (var dept in model.Departments)
             {
-                // An earlier, still-draft posting for this department would not be deducted (only
-                // finalized months are), so generating a later month on top of it double-counts.
-                // Require earlier dates to be finalized first.
-                bool hasEarlierDraft = db.DeferredIncome.Any(m => m.PeriodId == periodid
-                    && m.AcademicDepartmentId == dept.AcademicDepartmentId
-                    && m.PostingDate < postingdate
-                    && !m.IsFinal);
-                if (hasEarlierDraft)
-                {
-                    blocked.Add(dept.DepartmentName);
-                    continue;
-                }
-
+                // Flat per-month posting: each date is an independent snapshot, so there is no
+                // ordering dependency between months. A finalized department is still immutable below.
                 var existing = db.DeferredIncome.FirstOrDefault(m => m.PostingDate == postingdate && m.PeriodId == periodid && m.AcademicDepartmentId == dept.AcademicDepartmentId);
                 DeferredIncome target;
                 if (existing != null)
@@ -187,20 +175,8 @@ namespace ARManila.Controllers
             {
                 message += " Skipped (already final): " + string.Join(", ", skipped) + ".";
             }
-            if (blocked.Count > 0)
-            {
-                message += " Blocked (an earlier date is not yet finalized — finalize it first): " + string.Join(", ", blocked) + ".";
-            }
             TempData["Message"] = message;
 
-            // If nothing was saved for this date because every department was blocked, land back on
-            // the generate page with the reason rather than an empty Details view.
-            if (saved.Count == 0 && blocked.Count > 0)
-            {
-                TempData["Error"] = "Cannot generate: an earlier posting date is still a draft for " +
-                    string.Join(", ", blocked) + ". Finalize the earlier date(s) first.";
-                return RedirectToAction("Index");
-            }
             return RedirectToAction("Details", new { date = postingdate.ToString("yyyy-MM-dd") });
         }
 
@@ -243,8 +219,9 @@ namespace ARManila.Controllers
             return View(model);
         }
 
-        // Separate process to lock the saved postings for a date. Once final they are no longer
-        // overridden on save, and their posted amounts are deducted from later months.
+        // Separate process to lock the saved postings for a date. Once final they are posted to the
+        // accounting system and are immutable -- never overridden on save nor deletable. Corrections
+        // are made through a separate adjustment.
         [HttpPost]
         public ActionResult Finalize(string date)
         {
@@ -313,7 +290,195 @@ namespace ARManila.Controllers
             return RedirectToAction("Index");
         }
 
-        // ---- Crystal PDF ----
+        // GL revenue account that recognized deferred income is credited to (one per department,
+        // same code across departments; the department GL/project code distinguishes them).
+        // TODO: set these to the institution's actual revenue account code and name.
+        private const string RecognitionIncomeAcctNo = "I-REV";
+        private const string RecognitionIncomeAcctName = "Tuition & Other Fees Income";
+        // QNE equivalent of the revenue account; blank shows as "N/A" when the QNE coding is selected.
+        private const string RecognitionIncomeQneCode = "";
+
+        // ---- Revenue-recognition journal entry (PDF, per department) ----
+
+        // code = "qne" uses each account's QNEAccountCode ("N/A" when none); anything else (default)
+        // uses the internal AcctNo (+ ".SubAcctNo" when the fee has a sub-account).
+        public ActionResult JournalEntry(string date, string code)
+        {
+            DateTime postingdate;
+            if (!DateTime.TryParse(date, out postingdate))
+            {
+                return Content("Invalid date.");
+            }
+            bool useQne = string.Equals(code, "qne", StringComparison.OrdinalIgnoreCase);
+            JournalEntryReportDTO model = BuildJournalEntry(postingdate, useQne);
+            if (model == null)
+            {
+                return Content("No deferred income records found for " + postingdate.ToShortDateString() + ".");
+            }
+
+            ViewBag.PreparedBy = employee == null ? "" : employee.FullName;
+            ViewBag.PrintedOn = DateTime.Now;
+
+            return new Rotativa.ViewAsPdf("JournalEntry", model)
+            {
+                FileName = "DeferredIncome_JE_" + (useQne ? "QNE_" : "") + postingdate.ToString("dd-MMMM-yyyy") + ".pdf",
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                PageSize = Rotativa.Options.Size.A4,
+                PageMargins = new Rotativa.Options.Margins(12, 12, 14, 12),
+                CustomSwitches =
+                    "--footer-center \"Page [page] of [topage]\" --footer-font-size 8 --footer-spacing 3"
+            };
+        }
+
+        // Builds the recognition JE from the saved posting: per department, debit each deferred-income
+        // account (fee's chart of account + sub-account) by the month's posted amount, and credit a
+        // single revenue account for the department's total. Debits equal credits per department.
+        // useQne: show each account's QNEAccountCode ("N/A" when none) instead of the internal AcctNo.
+        private JournalEntryReportDTO BuildJournalEntry(DateTime postingdate, bool useQne)
+        {
+            int periodid = Period.PeriodID;
+            DateTime pdate = postingdate.Date;
+
+            var records = db.DeferredIncome.Where(m => m.PostingDate == pdate && m.PeriodId == periodid).ToList();
+            if (records.Count == 0)
+            {
+                return null;
+            }
+
+            var recIds = records.Select(r => r.Id).ToList();
+            var fees = db.DeferredIncomeFee.Where(f => recIds.Contains(f.DeferredIncomeId)).ToList();
+
+            // Resolve each fee's chart of account + sub-account (with QNE codes) once.
+            var feeIds = fees.Select(f => f.FeeId).Distinct().ToList();
+            var feeAcct = db.Fee.Where(f => feeIds.Contains(f.FeeID))
+                            .Select(f => new { f.FeeID, f.AcctID, f.SubAcctID }).ToList();
+
+            var acctIds = feeAcct.Where(f => f.AcctID.HasValue).Select(f => f.AcctID.Value).Distinct().ToList();
+            var accts = db.ChartOfAccounts.Where(c => acctIds.Contains(c.AcctID)).ToList()
+                          .ToDictionary(c => c.AcctID, c => new { c.AcctNo, c.AcctName, c.QNEAccountCode });
+
+            var subIds = feeAcct.Where(f => f.SubAcctID.HasValue).Select(f => f.SubAcctID.Value).Distinct().ToList();
+            var subs = db.SubChartOfAccounts.Where(s => subIds.Contains(s.SubAcctID)).ToList()
+                          .ToDictionary(s => s.SubAcctID, s => new { s.SubAcctNo, s.QNEAccountCode });
+
+            var acctByFee = feeAcct.ToDictionary(f => f.FeeID, f => new { f.AcctID, f.SubAcctID });
+
+            var deptIds = records.Select(r => r.AcademicDepartmentId).Distinct().ToList();
+            var departments = db.AcademicDepartment.Where(d => deptIds.Contains(d.AcaDeptID)).ToList();
+            var first = records.OrderByDescending(r => r.DateGenerated).First();
+
+            var model = new JournalEntryReportDTO
+            {
+                PeriodName = Period.FullName,
+                EducLevel = Period.EducationalLevel1 != null ? Period.EducationalLevel1.EducLevelName : "",
+                AsOfDate = pdate,
+                NthMonth = first.NthMonth,
+                NoOfMonths = first.NoOfMonths,
+                IsFinal = records.All(r => r.IsFinal),
+                CodeSourceLabel = useQne ? "QNE account codes" : "Internal account codes",
+                Description = BuildRecognitionDescription(pdate, first.NthMonth, first.NoOfMonths)
+            };
+
+            foreach (var department in departments.OrderBy(d => d.AcaDepartmentName))
+            {
+                var deptRecIds = records.Where(r => r.AcademicDepartmentId == department.AcaDeptID).Select(r => r.Id).ToList();
+
+                // Group this department's posted amounts by deferred-income account + sub-account.
+                var byAccount = fees.Where(f => deptRecIds.Contains(f.DeferredIncomeId))
+                    .Select(f =>
+                    {
+                        int? acctId = null, subId = null;
+                        if (acctByFee.ContainsKey(f.FeeId))
+                        {
+                            acctId = acctByFee[f.FeeId].AcctID;
+                            subId = acctByFee[f.FeeId].SubAcctID;
+                        }
+                        string acctNo = null, acctName = null, acctQne = null, subNo = null, subQne = null;
+                        if (acctId.HasValue && accts.ContainsKey(acctId.Value))
+                        {
+                            acctNo = accts[acctId.Value].AcctNo;
+                            acctName = accts[acctId.Value].AcctName;
+                            acctQne = accts[acctId.Value].QNEAccountCode;
+                        }
+                        if (subId.HasValue && subs.ContainsKey(subId.Value))
+                        {
+                            subNo = subs[subId.Value].SubAcctNo;
+                            subQne = subs[subId.Value].QNEAccountCode;
+                        }
+                        return new { acctNo, acctName, acctQne, subNo, subQne, f.PostedAmount };
+                    })
+                    .GroupBy(x => new { x.acctNo, x.acctName, x.acctQne, x.subNo, x.subQne })
+                    .Select(g => new { g.Key.acctNo, g.Key.acctName, g.Key.acctQne, g.Key.subNo, g.Key.subQne, Posted = g.Sum(x => x.PostedAmount) })
+                    .Where(x => x.Posted != 0m)
+                    .OrderBy(x => x.acctNo)
+                    .ToList();
+
+                if (byAccount.Count == 0)
+                {
+                    continue;
+                }
+
+                var jeDept = new JeDeptDTO
+                {
+                    Acronym = string.IsNullOrWhiteSpace(department.AcaAcronym) ? department.AcaDepartmentName : department.AcaAcronym,
+                    DepartmentName = department.AcaDepartmentName,
+                    GLCode = department.GLCode
+                };
+
+                decimal totalDebit = 0m;
+                foreach (var a in byAccount)
+                {
+                    bool hasSub = !string.IsNullOrWhiteSpace(a.subNo);
+                    string code;
+                    if (useQne)
+                    {
+                        string mainQ = string.IsNullOrWhiteSpace(a.acctQne) ? "N/A" : a.acctQne;
+                        code = hasSub ? mainQ + "." + (string.IsNullOrWhiteSpace(a.subQne) ? "N/A" : a.subQne) : mainQ;
+                    }
+                    else
+                    {
+                        code = string.IsNullOrWhiteSpace(a.acctNo) ? "(unmapped)" : a.acctNo;
+                        if (hasSub) { code += "." + a.subNo; }
+                    }
+
+                    jeDept.Lines.Add(new JeLineDTO
+                    {
+                        AcctNo = code,
+                        GLCode = department.GLCode,
+                        AccountName = string.IsNullOrWhiteSpace(a.acctName) ? "(unmapped account)" : a.acctName,
+                        Debit = a.Posted,
+                        Credit = 0m
+                    });
+                    totalDebit += a.Posted;
+                }
+
+                // Single revenue credit line for the department's total.
+                jeDept.Lines.Add(new JeLineDTO
+                {
+                    AcctNo = useQne ? (string.IsNullOrWhiteSpace(RecognitionIncomeQneCode) ? "N/A" : RecognitionIncomeQneCode) : RecognitionIncomeAcctNo,
+                    GLCode = department.GLCode,
+                    AccountName = RecognitionIncomeAcctName,
+                    Debit = 0m,
+                    Credit = totalDebit
+                });
+
+                jeDept.TotalDebit = totalDebit;
+                jeDept.TotalCredit = totalDebit;
+                model.Departments.Add(jeDept);
+            }
+
+            return model.Departments.Count == 0 ? null : model;
+        }
+
+        private string BuildRecognitionDescription(DateTime pdate, int nth, int noof)
+        {
+            DateTime start = new DateTime(pdate.Year, pdate.Month, 1);
+            string range = start.ToString("MMMM") + " " + start.Day + "-" + pdate.Day + ", " + pdate.Year;
+            return "To record revenue recognition for the period covered " + range +
+                   " (" + nth + "/" + noof + "), " + Period.FullName + ".";
+        }
+
+        // ---- PDF (rendered from the same HTML as the Details screen, via Rotativa/wkhtmltopdf) ----
 
         public ActionResult Print(string date)
         {
@@ -328,36 +493,40 @@ namespace ARManila.Controllers
                 return Content("No deferred income records found for " + postingdate.ToShortDateString() + ".");
             }
 
-            bool isCollege = Period.EducLevelID == 4;
-            string template = isCollege ? "DeferredIncomeCollegeReport.rpt" : "DeferredIncomeReport.rpt";
-            string path = Server.MapPath("~/Reports/" + template);
-            if (!System.IO.File.Exists(path))
-            {
-                return Content("Report template not found: /Reports/" + template +
-                    ". Create it in the Crystal designer (bound to the report DTO) and add it to the Reports folder.");
-            }
+            ViewBag.PreparedBy = employee == null ? "" : employee.FullName;
+            ViewBag.PrintedOn = DateTime.Now;
+            // Embed the seal as a data URI; wkhtmltopdf can't resolve root-relative image URLs.
+            ViewBag.LogoDataUri = ImageDataUri("~/Images/letranseal.jpg");
 
-            ReportDocument report = new ReportDocument();
-            report.Load(path);
-            if (isCollege)
+            // Renders Views/DeferredIncome/Print.cshtml, which is built from the same model as the
+            // Details screen (same columns, same Actual-then-Deferred grouping), so the two stay in sync.
+            return new Rotativa.ViewAsPdf("Print", model)
             {
-                BindReportRows(report, BuildCollegeReportRows(model));
-                for (int i = 0; i < 4; i++)
-                {
-                    TrySetParameter(report, "ColHeader" + (i + 1), i < model.Columns.Count ? model.Columns[i].Header : "");
-                }
-            }
-            else
+                FileName = "DeferredIncome_" + postingdate.ToString("dd-MMMM-yyyy") + ".pdf",
+                PageOrientation = Rotativa.Options.Orientation.Landscape,
+                PageSize = Rotativa.Options.Size.A4,
+                PageMargins = new Rotativa.Options.Margins(10, 8, 14, 8),
+                CustomSwitches =
+                    "--footer-center \"Page [page] of [topage]\" --footer-font-size 8 --footer-spacing 3"
+            };
+        }
+
+        // Reads an app image and returns it as a base64 data URI (or null if missing) so it can be
+        // inlined into a Rotativa/wkhtmltopdf view, which cannot fetch root-relative image URLs.
+        private string ImageDataUri(string virtualPath)
+        {
+            try
             {
-                BindReportRows(report, BuildGenericReportRows(model));
+                string path = Server.MapPath(virtualPath);
+                if (!System.IO.File.Exists(path)) { return null; }
+                string ext = System.IO.Path.GetExtension(path).TrimStart('.').ToLowerInvariant();
+                string mime = ext == "png" ? "image/png"
+                            : (ext == "jpg" || ext == "jpeg") ? "image/jpeg"
+                            : (ext == "gif" ? "image/gif" : "application/octet-stream");
+                byte[] bytes = System.IO.File.ReadAllBytes(path);
+                return "data:" + mime + ";base64," + Convert.ToBase64String(bytes);
             }
-
-            TrySetParameter(report, "PeriodName", model.PeriodName);
-            TrySetParameter(report, "AsOfDate", "As Of " + postingdate.ToString("MMMM dd, yyyy"));
-            TrySetParameter(report, "MonthInfo", "Month " + model.NthMonth + " of " + model.NoOfMonths);
-            TrySetParameter(report, "PreparedBy", employee == null ? "" : (employee.FirstName + " " + employee.LastName).Trim());
-
-            return ExportType(1, "DeferredIncome_" + postingdate.ToString("dd-MMMM-yyyy"), report);
+            catch { return null; }
         }
 
         private static void TrySetParameter(ReportDocument report, string name, object value)
@@ -567,11 +736,6 @@ namespace ARManila.Controllers
             var departments = db.AcademicDepartment.Where(m => deptids.Contains(m.AcaDeptID)).ToList();
             var existingrecords = db.DeferredIncome.Where(m => m.PostingDate == postingdate && m.PeriodId == periodid).ToList();
 
-            // Amounts already recognized in finalized (IsFinal) postings for this period, keyed by
-            // department + fee. The new posted amount is the cumulative target for NthMonth minus
-            // whatever earlier months have already posted.
-            var priorPosted = FinalizedPostedLookup(periodid);
-
             foreach (var department in departments.OrderBy(m => m.AcaDepartmentName))
             {
                 var existing = existingrecords.FirstOrDefault(m => m.AcademicDepartmentId == department.AcaDeptID);
@@ -586,16 +750,17 @@ namespace ARManila.Controllers
                 foreach (var item in raw.Where(m => m.AcaDeptId == department.AcaDeptID).OrderBy(m => m.FeeType).ThenBy(m => m.Description))
                 {
                     decimal amount = item.Amount.HasValue ? (decimal)item.Amount.Value : 0;
-                    decimal target = Math.Round(amount / noofmonths * nthmonth, 2);
-                    decimal prior;
-                    priorPosted.TryGetValue(department.AcaDeptID + "_" + item.FeeId, out prior);
+                    // Flat per-month: recognize this month's own 1/NoOfMonths of the amount as of this
+                    // date. No cumulative catch-up, so a later/backdated amount is never back-attributed
+                    // to an earlier (already-posted) month.
+                    decimal postedThisMonth = Math.Round(amount / noofmonths, 2);
                     dept.Fees.Add(new DeferredIncomeFeeDTO
                     {
                         FeeId = item.FeeId,
                         Description = item.Description,
                         FeeType = item.FeeType,
                         Amount = amount,
-                        PostedAmount = target - prior
+                        PostedAmount = postedThisMonth
                     });
                 }
                 model.Departments.Add(dept);
@@ -749,17 +914,6 @@ namespace ARManila.Controllers
                 gl.Departments.Add(gdept);
             }
             return gl;
-        }
-
-        private Dictionary<string, decimal> FinalizedPostedLookup(int periodid)
-        {
-            return (from f in db.DeferredIncomeFee
-                    join di in db.DeferredIncome on f.DeferredIncomeId equals di.Id
-                    where di.PeriodId == periodid && di.IsFinal
-                    group f by new { di.AcademicDepartmentId, f.FeeId } into g
-                    select new { g.Key.AcademicDepartmentId, g.Key.FeeId, Posted = g.Sum(x => x.PostedAmount) })
-                   .ToList()
-                   .ToDictionary(x => x.AcademicDepartmentId + "_" + x.FeeId, x => x.Posted);
         }
 
         // Fee-category grouping used by the Summary of Fees report.

@@ -90,6 +90,9 @@
       <HintPath>..\packages\Newtonsoft.Json.Bson.1.0.2\lib\net45\Newtonsoft.Json.Bson.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="Rotativa, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rotativa.1.7.3\lib\net461\Rotativa.dll</HintPath>
+    </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
@@ -262,6 +265,9 @@
     <Compile Include="Controllers\BackaccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DeferredIncomeController.cs" />
+    <Compile Include="Controllers\MemoAdjustmentController.cs" />
+    <Compile Include="Controllers\DiscountDetailController.cs" />
+    <Compile Include="Controllers\AdjDiscountDetailController.cs" />
     <Compile Include="Controllers\DMCMController.cs" />
     <Compile Include="Controllers\EnrollmentController.cs" />
     <Compile Include="Controllers\EnrollmentStatController.cs" />
@@ -856,6 +862,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\OtherDTO\ARTrail.cs" />
     <Compile Include="Models\OtherDTO\DeferredIncomeDTO.cs" />
+    <Compile Include="Models\OtherDTO\MemoAdjustmentDTO.cs" />
     <Compile Include="Models\OtherDTO\DeferredIncomeReportDTO.cs" />
     <Compile Include="Models\OtherDTO\FeeDTO.cs" />
     <Compile Include="Models\OtherDTO\PartialContext.cs" />
@@ -4957,6 +4964,10 @@
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </Content>
+    <Content Include="Rotativa\help-wkhtmltoimage.txt" />
+    <Content Include="Rotativa\help-wkhtmltopdf.txt" />
+    <Content Include="Rotativa\wkhtmltoimage.exe" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Assets\fonts\fontawesome\fa-brands-400.ttf" />
@@ -5225,6 +5236,7 @@
     <Content Include="Models\Database\Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
+    <Content Include="App_Browsers\qt.browser" />
     <None Include="Properties\PublishProfiles\.2.pubxml" />
     <None Include="Properties\PublishProfiles\.5.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
@@ -5286,6 +5298,26 @@
     <Content Include="Views\DeferredIncome\Details.cshtml" />
     <Content Include="Views\DeferredIncome\DetailsGL.cshtml" />
     <Content Include="Views\DeferredIncome\_DeferredIncomeMatrix.cshtml" />
+    <Content Include="Views\DeferredIncome\Print.cshtml" />
+    <Content Include="Views\DeferredIncome\JournalEntry.cshtml" />
+    <Content Include="Views\MemoAdjustment\Index.cshtml" />
+    <Content Include="Views\MemoAdjustment\Generate.cshtml" />
+    <Content Include="Views\MemoAdjustment\Details.cshtml" />
+    <Content Include="Views\MemoAdjustment\DetailsGL.cshtml" />
+    <Content Include="Views\MemoAdjustment\_MemoAdjustmentMatrix.cshtml" />
+    <Content Include="Views\MemoAdjustment\Print.cshtml" />
+    <Content Include="Views\DiscountDetail\Index.cshtml" />
+    <Content Include="Views\DiscountDetail\Generate.cshtml" />
+    <Content Include="Views\DiscountDetail\Details.cshtml" />
+    <Content Include="Views\DiscountDetail\DetailsGL.cshtml" />
+    <Content Include="Views\DiscountDetail\_DiscountDetailMatrix.cshtml" />
+    <Content Include="Views\DiscountDetail\Print.cshtml" />
+    <Content Include="Views\AdjDiscountDetail\Index.cshtml" />
+    <Content Include="Views\AdjDiscountDetail\Generate.cshtml" />
+    <Content Include="Views\AdjDiscountDetail\Details.cshtml" />
+    <Content Include="Views\AdjDiscountDetail\DetailsGL.cshtml" />
+    <Content Include="Views\AdjDiscountDetail\_AdjDiscountDetailMatrix.cshtml" />
+    <Content Include="Views\AdjDiscountDetail\Print.cshtml" />
     <Content Include="Views\FinanceReports\FeesSummary.cshtml" />
     <Content Include="Views\FinanceReports\FeesSummaryJHS.cshtml" />
     <Content Include="Views\FinanceReports\FeesSummarySHS.cshtml" />
