@@ -34,7 +34,7 @@ namespace ARManila.Models
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
     
-        public virtual Fee Fee { get; set; }
         public virtual Student_Section Student_Section { get; set; }
+        public virtual Fee Fee { get; set; }
     }
 }

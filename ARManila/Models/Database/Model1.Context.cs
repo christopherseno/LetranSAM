@@ -74,7 +74,6 @@ namespace ARManila.Models
         public virtual DbSet<DiscountTypeDetail> DiscountTypeDetail { get; set; }
         public virtual DbSet<DMCM> DMCM { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
-        public virtual DbSet<Fee> Fee { get; set; }
         public virtual DbSet<FeeExemption> FeeExemption { get; set; }
         public virtual DbSet<FeeInclusion> FeeInclusion { get; set; }
         public virtual DbSet<IssuedSOA> IssuedSOA { get; set; }
@@ -120,6 +119,7 @@ namespace ARManila.Models
         public virtual DbSet<Permit> Permit { get; set; }
         public virtual DbSet<DeferredIncome> DeferredIncome { get; set; }
         public virtual DbSet<DeferredIncomeFee> DeferredIncomeFee { get; set; }
+        public virtual DbSet<Fee> Fee { get; set; }
     
         public virtual ObjectResult<ArTrail2024_Result> ArTrail2024(Nullable<int> periodid, Nullable<System.DateTime> asofdate)
         {

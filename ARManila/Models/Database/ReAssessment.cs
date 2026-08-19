@@ -33,7 +33,7 @@ namespace ARManila.Models
         public Nullable<int> OldCurriculumId { get; set; }
         public Nullable<int> OldAcadDeptId { get; set; }
     
-        public virtual Fee Fee { get; set; }
         public virtual StudentSectionReAssessment StudentSectionReAssessment { get; set; }
+        public virtual Fee Fee { get; set; }
     }
 }

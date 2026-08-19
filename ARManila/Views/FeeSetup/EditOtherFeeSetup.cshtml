@@ -55,6 +55,18 @@
                     </div>
                 </div>
                 <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Amortized GL Account</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.AmortizedGlAccount, (SelectList)ViewBag.coa, "-- None --", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Amortized Subaccount</label>
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.AmortizedSubAccount, (SelectList)ViewBag.sl, "-- None --", new { @class = "form-select" })
+                    </div>
+                </div>
+                <div class="row mb-3">
                     <label class="col-sm-3 col-form-label">QNE GL Account</label>
                     <div class="col-sm-6">
                         @Html.DropDownListFor(m => m.QneGlAccount, (SelectList)ViewBag.qne, "-- None --", new { @class = "form-select" })

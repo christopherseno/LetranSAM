@@ -20,8 +20,8 @@ namespace ARManila.Models
         public int SubjectID { get; set; }
         public Nullable<int> SectionID { get; set; }
     
-        public virtual Fee Fee { get; set; }
         public virtual Section Section { get; set; }
         public virtual Subject Subject { get; set; }
+        public virtual Fee Fee { get; set; }
     }
 }

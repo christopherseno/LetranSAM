@@ -1,0 +1,52 @@
+@{
+    ViewBag.Title = "Copy Fees From";
+    string category = ViewBag.Category as string;
+    string categoryLabel = ViewBag.CategoryLabel as string;
+    var sourcePeriods = ViewBag.SourcePeriods as IEnumerable<System.Web.Mvc.SelectListItem>;
+    string backAction = category == "S" ? "SupplementalFeeSetup" : (category == "T" ? "TuitionFeeSetup" : "MiscFeeSetup");
+}
+
+<div class="content">
+    <div class="block block-rounded">
+        <div class="block-header block-header-default">
+            <h3 class="block-title">Copy @categoryLabel Fees From&hellip;</h3>
+            <div class="block-options">
+                @Html.ActionLink("Back", backAction, null, new { @class = "btn btn-sm btn-alt-secondary" })
+            </div>
+        </div>
+        <div class="block-content">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+
+            <p class="text-muted">
+                Bulk-copies @categoryLabel fees from a chosen source period (same educational level)
+                into the current period. Only fees not already present in the current period are copied
+                @(category == "T"
+                    ? "(matched by Program + Year Level + Payment Mode)."
+                    : "(matched by Fee Name).")
+            </p>
+
+            @using (Html.BeginForm("CopyFrom", "FeeSetup", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="category" value="@category" />
+
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label" for="sourcePeriodId">Copy from period</label>
+                        @Html.DropDownList("sourcePeriodId", sourcePeriods, "-- Select source period --",
+                            new { @class = "form-select", required = "required" })
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary"
+                                onclick="return confirm('Continue with bulk copy of @categoryLabel fees?');">
+                            <i class="fa fa-copy me-1"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

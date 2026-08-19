@@ -220,6 +220,18 @@ namespace ARManila.Controllers
             return View(model);
         }
 
+        public ActionResult Excel(string date)
+        {
+            DateTime postingdate;
+            if (!DateTime.TryParse(date, out postingdate)) { return Content("Invalid date."); }
+            MemoAdjustmentQueryDTO model = BuildFromSaved(postingdate);
+            if (model == null) { return Content("No saved adjustment-discount posting found for " + postingdate.ToShortDateString() + "."); }
+
+            byte[] bytes = ReportExcel.MemoMatrix(model, "Adjustment Discounts");
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "AdjustmentDiscounts_" + postingdate.ToString("dd-MMMM-yyyy") + ".xlsx");
+        }
+
         public ActionResult Print(string date)
         {
             DateTime postingdate;

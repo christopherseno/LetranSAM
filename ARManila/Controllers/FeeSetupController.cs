@@ -182,12 +182,17 @@ namespace ARManila.Controllers
         public ActionResult CreateTuition()
         {
             var periodid = int.Parse(HttpContext.Request.Cookies["PeriodId"].Value.ToString());
+            var period = db.Period.Find(periodid);
+            // Program is used for higher education (educ level > 3); year/grade level is used for
+            // educ level <= 3. Curriculum is no longer used.
+            ViewBag.ShowProgram = period != null && (period.EducLevelID ?? 0) > 3;
 
             ViewBag.PaymodeID = new SelectList(db.Paymode, "PaymodeID", "Description");
             ViewBag.ProgramID = new SelectList(db.Progam, "ProgramID", "ProgramCode");
-            ViewBag.CurriculumID = new SelectList(db.Curriculum, "CurriculumID", "Curriculum1");
             ViewBag.AcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo");
             ViewBag.SubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo");
+            ViewBag.AmortizedAcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo");
+            ViewBag.AmortizedSubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo");
             ViewBag.FeeNameID = new SelectList(db.FeeName, "FeeNameID", "FeeName1");
 
             return View();
@@ -195,8 +200,22 @@ namespace ARManila.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateTuition(Tuition tuition, int? AcctID, int? SubAcctID, int? FeeNameID)
+        public ActionResult CreateTuition(Tuition tuition, int? AcctID, int? SubAcctID, int? FeeNameID, int? AmortizedAcctID, int? AmortizedSubAcctID)
         {
+            // Curriculum is unused; Program applies only to educ level > 3, else year/grade level.
+            var curPeriod = db.Period.Find(int.Parse(HttpContext.Request.Cookies["PeriodId"].Value.ToString()));
+            bool showProgram = curPeriod != null && (curPeriod.EducLevelID ?? 0) > 3;
+            ViewBag.ShowProgram = showProgram;
+            tuition.CurriculumID = null;
+            if (showProgram)
+            {
+                tuition.YearLevel = 0;    // college / post-grad (educ level > 3): year level defaults to 0
+            }
+            else
+            {
+                tuition.ProgramID = null; // basic ed (educ level <= 3): keyed by year/grade level, not program
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -210,6 +229,8 @@ namespace ARManila.Controllers
                         FeeCategory = "Tuition",
                         AcctID = AcctID,
                         SubAcctID = SubAcctID,
+                        AmortizedAcctId = AmortizedAcctID,
+                        AmortizedSubAcctId = AmortizedSubAcctID,
                         FeeNameID = FeeNameID
                     };
 
@@ -232,9 +253,10 @@ namespace ARManila.Controllers
 
             ViewBag.PaymodeID = new SelectList(db.Paymode, "PaymodeID", "Description", tuition.PaymodeID);
             ViewBag.ProgramID = new SelectList(db.Progam, "ProgramID", "ProgramCode", tuition.ProgramID);
-            ViewBag.CurriculumID = new SelectList(db.Curriculum, "CurriculumID", "Curriculum1", tuition.CurriculumID);
             ViewBag.AcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo", AcctID);
             ViewBag.SubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo", SubAcctID);
+            ViewBag.AmortizedAcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo", AmortizedAcctID);
+            ViewBag.AmortizedSubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo", AmortizedSubAcctID);
             ViewBag.FeeNameID = new SelectList(db.FeeName, "FeeNameID", "FeeName1", FeeNameID);
 
             return View(tuition);
@@ -246,11 +268,15 @@ namespace ARManila.Controllers
             if (tuition == null)
                 return HttpNotFound();
 
+            var curPeriod = db.Period.Find(int.Parse(HttpContext.Request.Cookies["PeriodId"].Value.ToString()));
+            ViewBag.ShowProgram = curPeriod != null && (curPeriod.EducLevelID ?? 0) > 3;
+
             ViewBag.PaymodeID = new SelectList(db.Paymode, "PaymodeID", "Description", tuition.PaymodeID);
             ViewBag.ProgramID = new SelectList(db.Progam, "ProgramID", "ProgramCode", tuition.ProgramID);
-            ViewBag.CurriculumID = new SelectList(db.Curriculum, "CurriculumID", "CurriculumCode", tuition.CurriculumID);
-            ViewBag.AcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctCode", tuition.Fee.AcctID);
-            ViewBag.SubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctCode", tuition.Fee.SubAcctID);
+            ViewBag.AcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo", tuition.Fee.AcctID);
+            ViewBag.SubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo", tuition.Fee.SubAcctID);
+            ViewBag.AmortizedAcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo", tuition.Fee.AmortizedAcctId);
+            ViewBag.AmortizedSubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo", tuition.Fee.AmortizedSubAcctId);
             ViewBag.FeeNameID = new SelectList(db.FeeName, "FeeNameID", "FeeName1", tuition.Fee.FeeNameID);
 
             return View(tuition);
@@ -258,8 +284,13 @@ namespace ARManila.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditTuition(Tuition tuition, int? AcctID, int? SubAcctID, int? FeeNameID)
+        public ActionResult EditTuition(Tuition tuition, int? AcctID, int? SubAcctID, int? FeeNameID, int? AmortizedAcctID, int? AmortizedSubAcctID)
         {
+            // Curriculum is unused; Program applies only to educ level > 3, else year/grade level.
+            var curPeriod = db.Period.Find(int.Parse(HttpContext.Request.Cookies["PeriodId"].Value.ToString()));
+            bool showProgram = curPeriod != null && (curPeriod.EducLevelID ?? 0) > 3;
+            ViewBag.ShowProgram = showProgram;
+
             if (ModelState.IsValid)
             {
                 try
@@ -269,16 +300,18 @@ namespace ARManila.Controllers
                         return HttpNotFound();
 
                     // Update Tuition properties
-                    existingTuition.YearLevel = tuition.YearLevel;
+                    existingTuition.YearLevel = showProgram ? (byte)0 : tuition.YearLevel;
                     existingTuition.Amount = tuition.Amount;
                     existingTuition.PaymodeID = tuition.PaymodeID;
-                    existingTuition.CurriculumID = tuition.CurriculumID;
-                    existingTuition.ProgramID = tuition.ProgramID;
+                    existingTuition.CurriculumID = null;
+                    existingTuition.ProgramID = showProgram ? tuition.ProgramID : (int?)null;
                     existingTuition.Downpayment = tuition.Downpayment;
 
                     // Update Fee properties
                     existingTuition.Fee.AcctID = AcctID;
                     existingTuition.Fee.SubAcctID = SubAcctID;
+                    existingTuition.Fee.AmortizedAcctId = AmortizedAcctID;
+                    existingTuition.Fee.AmortizedSubAcctId = AmortizedSubAcctID;
                     existingTuition.Fee.FeeNameID = FeeNameID;
 
                     db.Entry(existingTuition).State = EntityState.Modified;
@@ -295,9 +328,10 @@ namespace ARManila.Controllers
 
             ViewBag.PaymodeID = new SelectList(db.Paymode, "PaymodeID", "Description", tuition.PaymodeID);
             ViewBag.ProgramID = new SelectList(db.Progam, "ProgramID", "ProgramCode", tuition.ProgramID);
-            ViewBag.CurriculumID = new SelectList(db.Curriculum, "CurriculumID", "CurriculumCode", tuition.CurriculumID);
-            ViewBag.AcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctCode", AcctID);
-            ViewBag.SubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctCode", SubAcctID);
+            ViewBag.AcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo", AcctID);
+            ViewBag.SubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo", SubAcctID);
+            ViewBag.AmortizedAcctID = new SelectList(db.ChartOfAccounts, "AcctID", "AcctNo", AmortizedAcctID);
+            ViewBag.AmortizedSubAcctID = new SelectList(db.SubChartOfAccounts, "SubAcctID", "SubAcctNo", AmortizedSubAcctID);
             ViewBag.FeeNameID = new SelectList(db.FeeName, "FeeNameID", "FeeName1", FeeNameID);
 
             return View(tuition);
@@ -1175,6 +1209,8 @@ namespace ARManila.Controllers
                 fee.FeeCategory = "M";
                 fee.AcctID = model.GlAccount;
                 fee.SubAcctID = model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 fee.PeriodID = periodid;
                 db.Fee.Add(fee);
@@ -1206,6 +1242,8 @@ namespace ARManila.Controllers
             miscellaneous.FeeNameId = miscellaneous.Fee.FeeNameID;
             miscellaneous.GlAccount = miscellaneous.Fee.AcctID;
             miscellaneous.SubAccount = miscellaneous.Fee.SubAcctID;
+            miscellaneous.AmortizedGlAccount = miscellaneous.Fee.AmortizedAcctId;
+            miscellaneous.AmortizedSubAccount = miscellaneous.Fee.AmortizedSubAcctId;
             miscellaneous.QneGlAccount = miscellaneous.Fee.QneAccountCode;
             return View(miscellaneous);
         }
@@ -1224,6 +1262,8 @@ namespace ARManila.Controllers
                 fee.FeeNameID = model.FeeNameId;
                 fee.AcctID = model.GlAccount == 0 ? (int?)null : model.GlAccount;
                 fee.SubAcctID = model.SubAccount == 0 ? (int?)null : model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount == 0 ? (int?)null : model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount == 0 ? (int?)null : model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 db.SaveChanges();
 
@@ -1293,6 +1333,8 @@ namespace ARManila.Controllers
                 fee.FeeCategory = "S";
                 fee.AcctID = model.GlAccount;
                 fee.SubAcctID = model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 fee.PeriodID = periodid;
                 db.Fee.Add(fee);
@@ -1324,6 +1366,8 @@ namespace ARManila.Controllers
             supplemental.FeeNameId = supplemental.Fee.FeeNameID;
             supplemental.GlAccount = supplemental.Fee.AcctID;
             supplemental.SubAccount = supplemental.Fee.SubAcctID;
+            supplemental.AmortizedGlAccount = supplemental.Fee.AmortizedAcctId;
+            supplemental.AmortizedSubAccount = supplemental.Fee.AmortizedSubAcctId;
             supplemental.QneGlAccount = supplemental.Fee.QneAccountCode;
             return View(supplemental);
         }
@@ -1342,6 +1386,8 @@ namespace ARManila.Controllers
                 fee.FeeNameID = model.FeeNameId;
                 fee.AcctID = model.GlAccount == 0 ? (int?)null : model.GlAccount;
                 fee.SubAcctID = model.SubAccount == 0 ? (int?)null : model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount == 0 ? (int?)null : model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount == 0 ? (int?)null : model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 db.SaveChanges();
 
@@ -1414,6 +1460,8 @@ namespace ARManila.Controllers
                 fee.FeeCategory = "V";
                 fee.AcctID = model.GlAccount;
                 fee.SubAcctID = model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 fee.PeriodID = periodid;
                 db.Fee.Add(fee);
@@ -1446,6 +1494,8 @@ namespace ARManila.Controllers
             various.FeeNameId = various.Fee.FeeNameID;
             various.GlAccount = various.Fee.AcctID;
             various.SubAccount = various.Fee.SubAcctID;
+            various.AmortizedGlAccount = various.Fee.AmortizedAcctId;
+            various.AmortizedSubAccount = various.Fee.AmortizedSubAcctId;
             various.QneGlAccount = various.Fee.QneAccountCode;
             return View(various);
         }
@@ -1465,6 +1515,8 @@ namespace ARManila.Controllers
                 fee.FeeNameID = model.FeeNameId;
                 fee.AcctID = model.GlAccount == 0 ? (int?)null : model.GlAccount;
                 fee.SubAcctID = model.SubAccount == 0 ? (int?)null : model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount == 0 ? (int?)null : model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount == 0 ? (int?)null : model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 db.SaveChanges();
 
@@ -1536,7 +1588,7 @@ namespace ARManila.Controllers
             ViewBag.SectionID = new SelectList(db.Section.Where(m => m.PeriodID == periodid), "SectionID", "SectionName", model.SectionID);
             if (ModelState.IsValid)
             {
-                Fee fee = new Fee { FeeNameID = model.FeeNameId, FeeCategory = "O", AcctID = model.GlAccount, SubAcctID = model.SubAccount, QneAccountCode = model.QneGlAccount, PeriodID = periodid };
+                Fee fee = new Fee { FeeNameID = model.FeeNameId, FeeCategory = "O", AcctID = model.GlAccount, SubAcctID = model.SubAccount, AmortizedAcctId = model.AmortizedGlAccount, AmortizedSubAcctId = model.AmortizedSubAccount, QneAccountCode = model.QneGlAccount, PeriodID = periodid };
                 db.Fee.Add(fee); db.SaveChanges();
                 var feename = db.FeeName.Find(model.FeeNameId);
                 Others others = new Others { Amount = model.Amount, Description = feename != null ? feename.FeeName1 : model.Description, FeeID = fee.FeeID, SubjectID = model.SubjectID, SectionID = model.SectionID };
@@ -1559,6 +1611,8 @@ namespace ARManila.Controllers
             others.FeeNameId = others.Fee.FeeNameID;
             others.GlAccount = others.Fee.AcctID;
             others.SubAccount = others.Fee.SubAcctID;
+            others.AmortizedGlAccount = others.Fee.AmortizedAcctId;
+            others.AmortizedSubAccount = others.Fee.AmortizedSubAcctId;
             others.QneGlAccount = others.Fee.QneAccountCode;
             return View(others);
         }
@@ -1579,6 +1633,8 @@ namespace ARManila.Controllers
                 fee.FeeNameID = model.FeeNameId;
                 fee.AcctID = model.GlAccount == 0 ? (int?)null : model.GlAccount;
                 fee.SubAcctID = model.SubAccount == 0 ? (int?)null : model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount == 0 ? (int?)null : model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount == 0 ? (int?)null : model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 db.SaveChanges();
                 var feename = db.FeeName.Find(model.FeeNameId);
@@ -1642,7 +1698,7 @@ namespace ARManila.Controllers
             ViewBag.SubjectID = new SelectList(db.Subject, "SubjectID", "SubjectCode", model.SubjectID);
             if (ModelState.IsValid)
             {
-                Fee fee = new Fee { FeeNameID = model.FeeNameId, FeeCategory = "L", AcctID = model.GlAccount, SubAcctID = model.SubAccount, QneAccountCode = model.QneGlAccount, PeriodID = periodid };
+                Fee fee = new Fee { FeeNameID = model.FeeNameId, FeeCategory = "L", AcctID = model.GlAccount, SubAcctID = model.SubAccount, AmortizedAcctId = model.AmortizedGlAccount, AmortizedSubAcctId = model.AmortizedSubAccount, QneAccountCode = model.QneGlAccount, PeriodID = periodid };
                 db.Fee.Add(fee); db.SaveChanges();
                 var feename = db.FeeName.Find(model.FeeNameId);
                 Lab lab = new Lab { Amount = model.Amount, Description = feename != null ? feename.FeeName1 : model.Description, FeeID = fee.FeeID, SubjectID = model.SubjectID, YearLevel = model.YearLevel };
@@ -1664,6 +1720,8 @@ namespace ARManila.Controllers
             lab.FeeNameId = lab.Fee.FeeNameID;
             lab.GlAccount = lab.Fee.AcctID;
             lab.SubAccount = lab.Fee.SubAcctID;
+            lab.AmortizedGlAccount = lab.Fee.AmortizedAcctId;
+            lab.AmortizedSubAccount = lab.Fee.AmortizedSubAcctId;
             lab.QneGlAccount = lab.Fee.QneAccountCode;
             return View(lab);
         }
@@ -1683,6 +1741,8 @@ namespace ARManila.Controllers
                 fee.FeeNameID = model.FeeNameId;
                 fee.AcctID = model.GlAccount == 0 ? (int?)null : model.GlAccount;
                 fee.SubAcctID = model.SubAccount == 0 ? (int?)null : model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount == 0 ? (int?)null : model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount == 0 ? (int?)null : model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 db.SaveChanges();
                 var feename = db.FeeName.Find(model.FeeNameId);
@@ -1738,7 +1798,7 @@ namespace ARManila.Controllers
             FeeSetupViewBags(db, period, "A");
             if (ModelState.IsValid)
             {
-                Fee fee = new Fee { FeeNameID = model.FeeNameId, FeeCategory = "A", AcctID = model.GlAccount, SubAcctID = model.SubAccount, QneAccountCode = model.QneGlAccount, PeriodID = periodid };
+                Fee fee = new Fee { FeeNameID = model.FeeNameId, FeeCategory = "A", AcctID = model.GlAccount, SubAcctID = model.SubAccount, AmortizedAcctId = model.AmortizedGlAccount, AmortizedSubAcctId = model.AmortizedSubAccount, QneAccountCode = model.QneGlAccount, PeriodID = periodid };
                 db.Fee.Add(fee); db.SaveChanges();
                 Aircon aircon = new Aircon { Amount = model.Amount, FeeID = fee.FeeID, YearLevel = model.YearLevel };
                 db.Aircon.Add(aircon); db.SaveChanges();
@@ -1758,6 +1818,8 @@ namespace ARManila.Controllers
             aircon.FeeNameId = aircon.Fee.FeeNameID;
             aircon.GlAccount = aircon.Fee.AcctID;
             aircon.SubAccount = aircon.Fee.SubAcctID;
+            aircon.AmortizedGlAccount = aircon.Fee.AmortizedAcctId;
+            aircon.AmortizedSubAccount = aircon.Fee.AmortizedSubAcctId;
             aircon.QneGlAccount = aircon.Fee.QneAccountCode;
             return View(aircon);
         }
@@ -1776,6 +1838,8 @@ namespace ARManila.Controllers
                 fee.FeeNameID = model.FeeNameId;
                 fee.AcctID = model.GlAccount == 0 ? (int?)null : model.GlAccount;
                 fee.SubAcctID = model.SubAccount == 0 ? (int?)null : model.SubAccount;
+                fee.AmortizedAcctId = model.AmortizedGlAccount == 0 ? (int?)null : model.AmortizedGlAccount;
+                fee.AmortizedSubAcctId = model.AmortizedSubAccount == 0 ? (int?)null : model.AmortizedSubAccount;
                 fee.QneAccountCode = model.QneGlAccount;
                 db.SaveChanges();
                 Aircon aircon = db.Aircon.Find(model.FeeID);
@@ -1807,6 +1871,203 @@ namespace ARManila.Controllers
             if (period == null) throw new Exception("Invalid period id.");
             var fees = db.Tuition.Where(m => m.Fee.PeriodID == periodid).Include(m => m.Paymode).Include(m => m.Progam).ToList();
             return View(fees);
+        }
+
+        #endregion
+
+        #region Copy From (bulk copy a category's fees from another period) -- port of WPF ScheduleFee
+
+        private static readonly Dictionary<string, string> CopyCategoryLabels = new Dictionary<string, string>
+        {
+            { "M", "Miscellaneous" },
+            { "S", "Supplemental" },
+            { "T", "Tuition" }
+        };
+
+        private static string CopyReturnAction(string category)
+        {
+            switch (category)
+            {
+                case "M": return "MiscFeeSetup";
+                case "S": return "SupplementalFeeSetup";
+                case "T": return "TuitionFeeSetup";
+                default: return "Index";
+            }
+        }
+
+        public ActionResult CopyFrom(string category)
+        {
+            if (string.IsNullOrEmpty(category) || !CopyCategoryLabels.ContainsKey(category))
+            {
+                return RedirectToAction("Index");
+            }
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+
+            // Source periods of the same educational level (any school year), newest first.
+            // Materialize first: Period.FullName is a computed property (uses the SchoolYear nav)
+            // and cannot be evaluated inside a LINQ-to-Entities query.
+            var sources = db.Period
+                .Where(p => p.EducLevelID == period.EducLevelID && p.PeriodID != periodid)
+                .Include(p => p.SchoolYear)
+                .OrderByDescending(p => p.SchoolYearID).ThenBy(p => p.Period1)
+                .ToList()
+                .Select(p => new SelectListItem { Value = p.PeriodID.ToString(), Text = p.FullName })
+                .ToList();
+
+            ViewBag.SourcePeriods = sources;
+            ViewBag.Category = category;
+            ViewBag.CategoryLabel = CopyCategoryLabels[category];
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CopyFrom(string category, int sourcePeriodId)
+        {
+            if (string.IsNullOrEmpty(category) || !CopyCategoryLabels.ContainsKey(category))
+            {
+                return RedirectToAction("Index");
+            }
+            var periodid = Convert.ToInt32(HttpContext.Request.Cookies["PeriodId"].Value);
+            var period = db.Period.Find(periodid);
+            if (period == null) throw new Exception("Invalid period id.");
+
+            if (sourcePeriodId == periodid)
+            {
+                TempData["Error"] = "The source period must be different from the current period.";
+                return RedirectToAction(CopyReturnAction(category));
+            }
+
+            int copied, skipped;
+            if (category == "T")
+            {
+                CopyTuition(sourcePeriodId, periodid, out copied, out skipped);
+            }
+            else
+            {
+                CopyMiscOrSupp(category, sourcePeriodId, periodid, period.EducLevelID, out copied, out skipped);
+            }
+
+            TempData["Message"] = "Copied " + copied + " fee(s); skipped " + skipped + " already-existing.";
+            return RedirectToAction(CopyReturnAction(category));
+        }
+
+        // Copies Miscellaneous (M) or Supplemental (S) fees from a source period into the current
+        // period. Skips a fee when one with the same FeeNameID already exists (matches the WPF).
+        private void CopyMiscOrSupp(string category, int srcPeriodId, int curPeriodId, int? educLevelId, out int copied, out int skipped)
+        {
+            copied = 0;
+            skipped = 0;
+            var sourceFees = db.Fee.Where(f => f.PeriodID == srcPeriodId && f.FeeCategory == category).ToList();
+            foreach (var src in sourceFees)
+            {
+                bool exists = db.Fee.Any(f => f.PeriodID == curPeriodId && f.FeeNameID == src.FeeNameID);
+                if (exists) { skipped++; continue; }
+
+                Fee newfee = new Fee
+                {
+                    AcctID = src.AcctID,
+                    SubAcctID = src.SubAcctID,
+                    AmortizedAcctId = src.AmortizedAcctId,
+                    AmortizedSubAcctId = src.AmortizedSubAcctId,
+                    FeeNameID = src.FeeNameID,
+                    QneAccountCode = src.QneAccountCode,
+                    FeeCategory = category,
+                    PeriodID = curPeriodId
+                };
+                db.Fee.Add(newfee);
+                db.SaveChanges();
+
+                if (category == "M")
+                {
+                    var d = db.Miscellaneous.FirstOrDefault(m => m.FeeID == src.FeeID);
+                    if (d != null)
+                    {
+                        db.Miscellaneous.Add(new Miscellaneous
+                        {
+                            FeeID = newfee.FeeID,
+                            Amount = d.Amount,
+                            Description = d.Description,
+                            NewStatus = d.NewStatus,
+                            DiscountCharge = d.DiscountCharge,
+                            EducationalLevel = d.EducationalLevel ?? educLevelId,
+                            YearLevel = d.YearLevel,
+                            ExceptCurrID = d.ExceptCurrID,
+                            OnlyCurrID = d.OnlyCurrID
+                        });
+                        db.SaveChanges();
+                    }
+                }
+                else // "S"
+                {
+                    var d = db.Supplemental.FirstOrDefault(m => m.FeeID == src.FeeID);
+                    if (d != null)
+                    {
+                        db.Supplemental.Add(new Supplemental
+                        {
+                            FeeID = newfee.FeeID,
+                            Amount = d.Amount,
+                            Description = d.Description,
+                            NewStatus = d.NewStatus,
+                            DiscountCharge = d.DiscountCharge,
+                            EducationalLevel = d.EducationalLevel ?? educLevelId,
+                            YearLevel = d.YearLevel,
+                            ExceptCurrID = d.ExceptCurrID,
+                            OnlyCurrID = d.OnlyCurrID
+                        });
+                        db.SaveChanges();
+                    }
+                }
+                copied++;
+            }
+        }
+
+        // Copies Tuition (T) fees from a source period. Skips when a Tuition with the same
+        // ProgramID + YearLevel + PaymodeID already exists in the current period (matches the WPF).
+        private void CopyTuition(int srcPeriodId, int curPeriodId, out int copied, out int skipped)
+        {
+            copied = 0;
+            skipped = 0;
+            var sourceFees = db.Fee.Where(f => f.PeriodID == srcPeriodId && f.FeeCategory == "T").ToList();
+            foreach (var src in sourceFees)
+            {
+                var d = db.Tuition.FirstOrDefault(t => t.FeeID == src.FeeID);
+                if (d == null) { continue; }
+
+                bool exists = db.Tuition.Any(t => t.Fee.PeriodID == curPeriodId
+                    && t.ProgramID == d.ProgramID
+                    && t.YearLevel == d.YearLevel
+                    && t.PaymodeID == d.PaymodeID);
+                if (exists) { skipped++; continue; }
+
+                Fee newfee = new Fee
+                {
+                    AcctID = src.AcctID,
+                    SubAcctID = src.SubAcctID,
+                    AmortizedAcctId = src.AmortizedAcctId,
+                    AmortizedSubAcctId = src.AmortizedSubAcctId,
+                    QneAccountCode = src.QneAccountCode,
+                    FeeCategory = "T",
+                    PeriodID = curPeriodId
+                };
+                db.Fee.Add(newfee);
+                db.SaveChanges();
+
+                db.Tuition.Add(new Tuition
+                {
+                    FeeID = newfee.FeeID,
+                    Amount = d.Amount,
+                    YearLevel = d.YearLevel,
+                    CurriculumID = d.CurriculumID,
+                    Downpayment = d.Downpayment,
+                    PaymodeID = d.PaymodeID,
+                    ProgramID = d.ProgramID
+                });
+                db.SaveChanges();
+                copied++;
+            }
         }
 
         #endregion

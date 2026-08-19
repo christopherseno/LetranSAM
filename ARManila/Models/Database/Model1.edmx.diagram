@@ -52,7 +52,6 @@
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.DiscountTypeDetail" Width="1.5" PointX="9" PointY="65.875" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.DMCM" Width="1.5" PointX="9" PointY="43.5" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Employee" Width="1.5" PointX="11" PointY="6.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="LetranIntegratedSystemModel.Fee" Width="1.5" PointX="3.75" PointY="55.625" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.FeeExemption" Width="1.5" PointX="2.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.FeeInclusion" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.IssuedSOA" Width="1.5" PointX="3" PointY="46.75" IsExpanded="true" />
@@ -93,7 +92,6 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ARSMSLog_Student" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DmcmDiscountDetail_Discount" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DmcmDiscountDetail_DMCM" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DmcmDiscountDetail_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Downpayment_Paymode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DownpaymentPercent_Paymode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_EducationalLevelDepartment_AcademicDepartment" ManuallyRouted="false" />
@@ -105,13 +103,9 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_PostedQneJournalDetail_PostedQneJournal" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AcademicDepartment_Project" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ChartOfAccounts_QNEGLAccount" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_QNEGLAccount" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_SchoolYear_QNEGLAccount" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_SubChartOfAccounts_QNEGLAccount" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Student_Section" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_SpecificFee_Fee" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_StudentFeeAttachment_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_StudentFeeAttachment_Student" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Curriculum" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Student_Section_ReAss_Paymode" ManuallyRouted="false" />
@@ -127,14 +121,11 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Adjustment_StudentSectionID_Student_Section_Student_SectionID" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AdjustmentDetails_Adjustment" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AdjustmentDetailFees_AdjustmentDetails" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_AdjustmentDetailFees_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AdjustmentDetails_Schedule" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Aircon_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ARMessage_Student" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_ARMessage_Student_Section" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Assessment_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Assessment_Student_Section" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Paycode" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_AssessmentPaymentDate_Paymode" ManuallyRouted="false" />
@@ -157,7 +148,6 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DiscountType_ChartOfAccounts" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DiscountType_ChartOfAccounts1" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DMCM_ChartOfAccounts" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_ChartOfAccounts" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Paycode_ChartOfAccounts" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_SubChartOfAccounts_ChartOfAccounts" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Section_Curriculum" ManuallyRouted="false" />
@@ -182,12 +172,6 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Payment_Employee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Payment_Employee1" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Payment_Employee2" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_SchoolYear" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Lab_Fee" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Various_Fee" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_SubChartOfAccounts" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Supplemental_Fee" ManuallyRouted="false" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Tuition_Fee" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Payment_IssuedSOA" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_SOA_Period" ManuallyRouted="false" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_SOA_Student" ManuallyRouted="false" />
@@ -251,7 +235,6 @@
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.SMSLog" Width="1.5" PointX="13.375" PointY="6.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Miscellaneous" Width="1.5" PointX="24.25" PointY="43.75" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Miscellaneous_EducationalLevel" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Miscellaneous_Fee" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Bank" Width="1.5" PointX="7.375" PointY="13.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.CancelledOR" Width="1.5" PointX="15.375" PointY="3.75" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Faculty" Width="1.5" PointX="23.25" PointY="19.625" />
@@ -260,13 +243,11 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Faculty_Employee" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Schedule_Faculty" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Others" Width="1.5" PointX="22.5" PointY="48.375" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Others_Fee" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Others_Section" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Others_Subject" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.FeeName" Width="1.5" PointX="23.25" PointY="31.125" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DiscountTypeDetail_FeeName" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_FeeName_EducationalLevel" />
-        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_FeeName" />
         <EntityTypeShape EntityType="LetranIntegratedSystemModel.Permit" Width="1.5" PointX="16.625" PointY="16" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_Period" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_Permit_PermitType" />
@@ -276,7 +257,28 @@
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncome_Employee" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncome_Period" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncomeFee_DeferredIncome" />
+        <EntityTypeShape EntityType="LetranIntegratedSystemModel.Fee" Width="1.5" PointX="25.5" PointY="36.125" />
         <AssociationConnector Association="LetranIntegratedSystemModel.FK_DeferredIncomeFee_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_DmcmDiscountDetail_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_QNEGLAccount" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_ReAssessment_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_SpecificFee_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_StudentFeeAttachment_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_AdjustmentDetailFees_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Aircon_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Assessment_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_ChartOfAccounts" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_ChartOfAccounts1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_SchoolYear" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Lab_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Others_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Various_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_FeeName" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_SubChartOfAccounts" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Fee_SubChartOfAccounts1" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Miscellaneous_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Supplemental_Fee" />
+        <AssociationConnector Association="LetranIntegratedSystemModel.FK_Tuition_Fee" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

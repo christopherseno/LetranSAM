@@ -243,6 +243,8 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
+        public int? AmortizedGlAccount { get; set; }
+        public int? AmortizedSubAccount { get; set; }
         [Required(ErrorMessage = "Description is required")]
         public int? FeeNameId { get; set; }
     }
@@ -252,6 +254,8 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
+        public int? AmortizedGlAccount { get; set; }
+        public int? AmortizedSubAccount { get; set; }
         [Required(ErrorMessage = "Description is required")]
         public int? FeeNameId { get; set; }
     }
@@ -260,6 +264,8 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
+        public int? AmortizedGlAccount { get; set; }
+        public int? AmortizedSubAccount { get; set; }
         public int? FeeNameId { get; set; }
     }
     public partial class Lab
@@ -267,6 +273,8 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
+        public int? AmortizedGlAccount { get; set; }
+        public int? AmortizedSubAccount { get; set; }
         public int? FeeNameId { get; set; }
     }
     public partial class Aircon
@@ -274,6 +282,8 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
+        public int? AmortizedGlAccount { get; set; }
+        public int? AmortizedSubAccount { get; set; }
         public int? FeeNameId { get; set; }
     }
     public partial class Others
@@ -281,6 +291,8 @@ namespace ARManila.Models
         public int? GlAccount { get; set; }
         public int? SubAccount { get; set; }
         public string QneGlAccount { get; set; }
+        public int? AmortizedGlAccount { get; set; }
+        public int? AmortizedSubAccount { get; set; }
         public int? FeeNameId { get; set; }
     }
     public partial class SubChartOfAccounts

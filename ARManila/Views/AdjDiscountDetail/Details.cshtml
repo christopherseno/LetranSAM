@@ -59,6 +59,9 @@ else
                 <a href="@Url.Action("Print", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-primary" title="Print PDF" target="_blank">
                     <i class="fa fa-file-pdf"></i>
                 </a>
+                <a href="@Url.Action("Excel", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-success" title="Export to Excel">
+                    <i class="fa fa-file-excel"></i>
+                </a>
                 @if (!Model.IsFinal)
                 {
                     using (Html.BeginForm("Finalize", "AdjDiscountDetail", FormMethod.Post, new { @class = "d-inline-block" }))

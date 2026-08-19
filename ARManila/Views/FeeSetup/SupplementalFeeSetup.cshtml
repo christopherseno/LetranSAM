@@ -5,10 +5,19 @@
 }
 
 <div class="content">
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
     <div class="block block-rounded">
         <div class="block-header block-header-default">
             <h3 class="block-title">Supplemental Fees</h3>
             <div class="block-options">
+                @Html.ActionLink("Copy From", "CopyFrom", new { category = "S" }, new { @class = "btn btn-sm btn-alt-secondary" })
                 @Html.ActionLink("Add Supplemental Fee", "CreateSupplementalFeeSetup", null, new { @class = "btn btn-sm btn-alt-primary" })
             </div>
         </div>

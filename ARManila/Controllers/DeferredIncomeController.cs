@@ -478,6 +478,33 @@ namespace ARManila.Controllers
                    " (" + nth + "/" + noof + "), " + Period.FullName + ".";
         }
 
+        // ---- Excel export (same saved data as the PDF, via EPPlus) ----
+
+        public ActionResult Excel(string date)
+        {
+            DateTime postingdate;
+            if (!DateTime.TryParse(date, out postingdate)) { return Content("Invalid date."); }
+            DeferredIncomeQueryDTO model = BuildFromSaved(postingdate);
+            if (model == null) { return Content("No deferred income records found for " + postingdate.ToShortDateString() + "."); }
+
+            byte[] bytes = ReportExcel.DeferredMatrix(model);
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DeferredIncome_" + postingdate.ToString("dd-MMMM-yyyy") + ".xlsx");
+        }
+
+        public ActionResult JournalEntryExcel(string date, string code)
+        {
+            DateTime postingdate;
+            if (!DateTime.TryParse(date, out postingdate)) { return Content("Invalid date."); }
+            bool useQne = string.Equals(code, "qne", StringComparison.OrdinalIgnoreCase);
+            JournalEntryReportDTO model = BuildJournalEntry(postingdate, useQne);
+            if (model == null) { return Content("No deferred income records found for " + postingdate.ToShortDateString() + "."); }
+
+            byte[] bytes = ReportExcel.JournalEntry(model);
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DeferredIncome_JE_" + (useQne ? "QNE_" : "") + postingdate.ToString("dd-MMMM-yyyy") + ".xlsx");
+        }
+
         // ---- PDF (rendered from the same HTML as the Details screen, via Rotativa/wkhtmltopdf) ----
 
         public ActionResult Print(string date)

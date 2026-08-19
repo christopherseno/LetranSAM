@@ -17,13 +17,13 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Fee()
         {
+            this.DeferredIncomeFee = new HashSet<DeferredIncomeFee>();
             this.DmcmDiscountDetail = new HashSet<DmcmDiscountDetail>();
             this.ReAssessment = new HashSet<ReAssessment>();
             this.SpecificFee = new HashSet<SpecificFee>();
             this.StudentFeeAttachment = new HashSet<StudentFeeAttachment>();
             this.AdjustmentDetailFees = new HashSet<AdjustmentDetailFees>();
             this.Assessment = new HashSet<Assessment>();
-            this.DeferredIncomeFee = new HashSet<DeferredIncomeFee>();
         }
     
         public int FeeID { get; set; }
@@ -33,7 +33,11 @@ namespace ARManila.Models
         public Nullable<int> SubAcctID { get; set; }
         public Nullable<int> FeeNameID { get; set; }
         public string QneAccountCode { get; set; }
+        public Nullable<int> AmortizedAcctId { get; set; }
+        public Nullable<int> AmortizedSubAcctId { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DeferredIncomeFee> DeferredIncomeFee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DmcmDiscountDetail> DmcmDiscountDetail { get; set; }
         public virtual QNEGLAccount QNEGLAccount { get; set; }
@@ -49,16 +53,16 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Assessment> Assessment { get; set; }
         public virtual ChartOfAccounts ChartOfAccounts { get; set; }
+        public virtual ChartOfAccounts ChartOfAccounts1 { get; set; }
         public virtual Period Period { get; set; }
         public virtual Lab Lab { get; set; }
+        public virtual Others Others { get; set; }
         public virtual Various Various { get; set; }
+        public virtual FeeName FeeName { get; set; }
         public virtual SubChartOfAccounts SubChartOfAccounts { get; set; }
+        public virtual SubChartOfAccounts SubChartOfAccounts1 { get; set; }
+        public virtual Miscellaneous Miscellaneous { get; set; }
         public virtual Supplemental Supplemental { get; set; }
         public virtual Tuition Tuition { get; set; }
-        public virtual Miscellaneous Miscellaneous { get; set; }
-        public virtual Others Others { get; set; }
-        public virtual FeeName FeeName { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DeferredIncomeFee> DeferredIncomeFee { get; set; }
     }
 }

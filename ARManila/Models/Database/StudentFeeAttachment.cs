@@ -18,7 +18,7 @@ namespace ARManila.Models
         public Nullable<int> FeeId { get; set; }
         public Nullable<int> StudentId { get; set; }
     
-        public virtual Fee Fee { get; set; }
         public virtual Student Student { get; set; }
+        public virtual Fee Fee { get; set; }
     }
 }

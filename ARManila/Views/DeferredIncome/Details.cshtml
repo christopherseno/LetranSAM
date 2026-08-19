@@ -62,11 +62,20 @@ else
                 <a href="@Url.Action("Print", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-primary" title="Print PDF" target="_blank">
                     <i class="fa fa-file-pdf"></i>
                 </a>
+                <a href="@Url.Action("Excel", new { date = Model.AsOfDate.ToString("yyyy-MM-dd") })" class="btn btn-sm btn-alt-success" title="Export to Excel">
+                    <i class="fa fa-file-excel"></i>
+                </a>
                 <a href="@Url.Action("JournalEntry", new { date = Model.AsOfDate.ToString("yyyy-MM-dd"), code = "local" })" class="btn btn-sm btn-alt-primary" title="Revenue Recognition JE — internal account codes (PDF)" target="_blank">
                     <i class="fa fa-file-invoice-dollar"></i>
                 </a>
                 <a href="@Url.Action("JournalEntry", new { date = Model.AsOfDate.ToString("yyyy-MM-dd"), code = "qne" })" class="btn btn-sm btn-alt-secondary" title="Revenue Recognition JE — QNE account codes (PDF)" target="_blank">
                     <i class="fa fa-file-invoice"></i>
+                </a>
+                <a href="@Url.Action("JournalEntryExcel", new { date = Model.AsOfDate.ToString("yyyy-MM-dd"), code = "local" })" class="btn btn-sm btn-alt-success" title="Journal Entry — internal codes (Excel)">
+                    <i class="fa fa-file-excel"></i>
+                </a>
+                <a href="@Url.Action("JournalEntryExcel", new { date = Model.AsOfDate.ToString("yyyy-MM-dd"), code = "qne" })" class="btn btn-sm btn-alt-success" title="Journal Entry — QNE codes (Excel)">
+                    <i class="fa fa-file-excel"></i>
                 </a>
                 @if (anyDraft)
                 {

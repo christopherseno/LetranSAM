@@ -24,7 +24,6 @@ namespace ARManila.Models
             this.BackAccount1 = new HashSet<BackAccount>();
             this.Discount = new HashSet<Discount>();
             this.DMCM = new HashSet<DMCM>();
-            this.Fee = new HashSet<Fee>();
             this.IssuedSOA = new HashSet<IssuedSOA>();
             this.Payment = new HashSet<Payment>();
             this.PaySchedule = new HashSet<PaySchedule>();
@@ -35,6 +34,7 @@ namespace ARManila.Models
             this.EducationalLevel = new HashSet<EducationalLevel>();
             this.Permit = new HashSet<Permit>();
             this.DeferredIncome = new HashSet<DeferredIncome>();
+            this.Fee = new HashSet<Fee>();
         }
     
         public int PeriodID { get; set; }
@@ -58,8 +58,6 @@ namespace ARManila.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DMCM> DMCM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Fee> Fee { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IssuedSOA> IssuedSOA { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Payment> Payment { get; set; }
@@ -81,5 +79,7 @@ namespace ARManila.Models
         public virtual ICollection<Permit> Permit { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DeferredIncome> DeferredIncome { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Fee> Fee { get; set; }
     }
 }

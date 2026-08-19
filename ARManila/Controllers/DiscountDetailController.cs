@@ -221,6 +221,18 @@ namespace ARManila.Controllers
             return View(model);
         }
 
+        public ActionResult Excel(string date)
+        {
+            DateTime postingdate;
+            if (!DateTime.TryParse(date, out postingdate)) { return Content("Invalid date."); }
+            MemoAdjustmentQueryDTO model = BuildFromSaved(postingdate);
+            if (model == null) { return Content("No saved discount posting found for " + postingdate.ToShortDateString() + "."); }
+
+            byte[] bytes = ReportExcel.MemoMatrix(model, "Student Discounts");
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Discounts_" + postingdate.ToString("dd-MMMM-yyyy") + ".xlsx");
+        }
+
         public ActionResult Print(string date)
         {
             DateTime postingdate;
