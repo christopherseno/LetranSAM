@@ -208,15 +208,9 @@
     <li class="nav-main-item">
         <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
             <i class="nav-main-link-icon fa fa-chart-bar"></i>
-            <span class="nav-main-link-name">Reports</span>
+            <span class="nav-main-link-name">Deferred Income</span>
         </a>
         <ul class="nav-main-submenu">
-            <li class="nav-main-item">
-                <a href="@Url.Action("FeesSummary", "FinanceReports")" class="nav-main-link">
-                    <i class="nav-main-link-icon fa fa-file-invoice-dollar"></i>
-                    <span class="nav-main-link-name">Summary of Fees</span>
-                </a>
-            </li>
             <li class="nav-main-item">
                 <a href="@Url.Action("Index", "DeferredIncome")" class="nav-main-link">
                     <i class="nav-main-link-icon fa fa-calendar-check"></i>
@@ -239,6 +233,21 @@
                 <a href="@Url.Action("Index", "AdjDiscountDetail")" class="nav-main-link">
                     <i class="nav-main-link-icon fa fa-scissors"></i>
                     <span class="nav-main-link-name">Adjustment Discounts</span>
+                </a>
+            </li>           
+
+        </ul>
+    </li>
+    <li class="nav-main-item">
+        <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+            <i class="nav-main-link-icon fa fa-chart-bar"></i>
+            <span class="nav-main-link-name">Reports</span>
+        </a>
+        <ul class="nav-main-submenu">
+            <li class="nav-main-item">
+                <a href="@Url.Action("FeesSummary", "FinanceReports")" class="nav-main-link">
+                    <i class="nav-main-link-icon fa fa-file-invoice-dollar"></i>
+                    <span class="nav-main-link-name">Summary of Fees</span>
                 </a>
             </li>
             <li class="nav-main-item">
