@@ -245,7 +245,7 @@ namespace ARManila.Models
         public string QneGlAccount { get; set; }
         public int? AmortizedGlAccount { get; set; }
         public int? AmortizedSubAccount { get; set; }
-        [Required(ErrorMessage = "Description is required")]
+        [Required(ErrorMessage = "Fee Name is required")]
         public int? FeeNameId { get; set; }
     }
 
@@ -256,7 +256,7 @@ namespace ARManila.Models
         public string QneGlAccount { get; set; }
         public int? AmortizedGlAccount { get; set; }
         public int? AmortizedSubAccount { get; set; }
-        [Required(ErrorMessage = "Description is required")]
+        [Required(ErrorMessage = "Fee Name is required")]
         public int? FeeNameId { get; set; }
     }
     public partial class Various
@@ -266,6 +266,7 @@ namespace ARManila.Models
         public string QneGlAccount { get; set; }
         public int? AmortizedGlAccount { get; set; }
         public int? AmortizedSubAccount { get; set; }
+        [Required(ErrorMessage = "Fee Name is required")]
         public int? FeeNameId { get; set; }
     }
     public partial class Lab
@@ -275,6 +276,7 @@ namespace ARManila.Models
         public string QneGlAccount { get; set; }
         public int? AmortizedGlAccount { get; set; }
         public int? AmortizedSubAccount { get; set; }
+        [Required(ErrorMessage = "Fee Name is required")]
         public int? FeeNameId { get; set; }
     }
     public partial class Aircon
@@ -293,6 +295,7 @@ namespace ARManila.Models
         public string QneGlAccount { get; set; }
         public int? AmortizedGlAccount { get; set; }
         public int? AmortizedSubAccount { get; set; }
+        [Required(ErrorMessage = "Fee Name is required")]
         public int? FeeNameId { get; set; }
     }
     public partial class SubChartOfAccounts
