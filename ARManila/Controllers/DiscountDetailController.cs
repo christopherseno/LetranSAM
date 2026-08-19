@@ -221,6 +221,42 @@ namespace ARManila.Controllers
             return View(model);
         }
 
+        // ---- Period-wide summary (all posted months) ----
+
+        public ActionResult Summary()
+        {
+            return View("Summary", BuildSummary());
+        }
+
+        public ActionResult SummaryPdf()
+        {
+            SummaryReportDTO model = BuildSummary();
+            ViewBag.PrintedOn = DateTime.Now;
+            ViewBag.LogoDataUri = ImageDataUri("~/Images/letranseal.jpg");
+            int numericCols = 2 * model.MonthCount + 1 + (model.ShowAdjustments ? 2 : 0);
+            int widthMm = Math.Max(330, 120 + numericCols * 20);
+            return new Rotativa.ViewAsPdf("SummaryPrint", model)
+            {
+                FileName = "Discounts_Summary_" + DateTime.Now.ToString("yyyyMMdd") + ".pdf",
+                PageMargins = new Rotativa.Options.Margins(8, 6, 10, 6),
+                CustomSwitches = "--page-width " + widthMm + "mm --page-height 216mm " +
+                    "--footer-center \"Page [page] of [topage]\" --footer-font-size 7 --footer-spacing 2"
+            };
+        }
+
+        public ActionResult SummaryExcel()
+        {
+            byte[] bytes = ReportExcel.Summary(BuildSummary());
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Discounts_Summary_" + DateTime.Now.ToString("yyyyMMdd") + ".xlsx");
+        }
+
+        private SummaryReportDTO BuildSummary()
+        {
+            var details = db.GetAllSavedDiscountDetails(Period.PeriodID);
+            return SummaryBuilder.FromDetails("Student Discounts", PeriodDisplayName(), Period.FullName, details, DiscTypeOrder);
+        }
+
         public ActionResult Excel(string date)
         {
             DateTime postingdate;

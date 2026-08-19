@@ -255,6 +255,118 @@ namespace ARManila.Models.OtherDTO
             }
         }
 
+        // ---- Period-wide Summary (deferred + recognition pivot, dynamic month columns) ----
+        public static byte[] Summary(SummaryReportDTO m)
+        {
+            using (var pkg = new ExcelPackage())
+            {
+                var ws = pkg.Workbook.Worksheets.Add("Summary");
+                int mm = m.MonthCount;
+                int cAcct = 1, cPart = 2;
+                int defStart = 3;
+                int recStart = defStart + mm;
+                int recTotal = recStart + mm;
+                int cAdj = recTotal + 1;
+                int cNet = cAdj + 1;
+                int lastCol = m.ShowAdjustments ? cNet : recTotal;
+
+                int r = 1;
+                ws.Cells[r, 1].Value = m.ReportTitle + " — Summary"; ws.Cells[r, 1].Style.Font.Bold = true; ws.Cells[r, 1].Style.Font.Size = 14; r++;
+                ws.Cells[r, 1].Value = m.PeriodName; r++;
+                if (!string.IsNullOrEmpty(m.PeriodSubtitle)) { ws.Cells[r, 1].Value = m.PeriodSubtitle; r++; }
+                r++;
+
+                int h1 = r, h2 = r + 1;
+                ws.Cells[h1, cAcct].Value = "ACCT CODE"; MergeSafe(ws, h1, cAcct, h2, cAcct);
+                ws.Cells[h1, cPart].Value = "Particular"; MergeSafe(ws, h1, cPart, h2, cPart);
+                if (mm > 0)
+                {
+                    ws.Cells[h1, defStart].Value = "Summary of Tuition and Other Fees - Deferred Accounts";
+                    MergeSafe(ws, h1, defStart, h1, recStart - 1);
+                    ws.Cells[h1, recStart].Value = "Revenue Accounts Recognition";
+                    MergeSafe(ws, h1, recStart, h1, recTotal);
+                    for (int j = 0; j < mm; j++)
+                    {
+                        ws.Cells[h2, defStart + j].Value = m.Months[j];
+                        ws.Cells[h2, recStart + j].Value = m.Months[j];
+                    }
+                    ws.Cells[h2, recTotal].Value = "TOTAL";
+                }
+                else
+                {
+                    ws.Cells[h1, recTotal].Value = "TOTAL"; MergeSafe(ws, h1, recTotal, h2, recTotal);
+                }
+                if (m.ShowAdjustments)
+                {
+                    ws.Cells[h1, cAdj].Value = "Adjustments Debit (Credit)"; MergeSafe(ws, h1, cAdj, h2, cAdj);
+                    ws.Cells[h1, cNet].Value = "Net Adjusted Fees"; MergeSafe(ws, h1, cNet, h2, cNet);
+                }
+                StyleHeader(ws.Cells[h1, 1, h2, lastCol]);
+                ws.Cells[h1, 1, h2, lastCol].Style.WrapText = true;
+
+                r = h2 + 1;
+                foreach (var sec in m.Sections)
+                {
+                    if (sec.SingleRow && sec.Rows.Count > 0)
+                    {
+                        var row = sec.Rows[0];
+                        ws.Cells[r, cAcct].Value = sec.AcctCode ?? row.AcctCode;
+                        ws.Cells[r, cPart].Value = row.Particular;
+                        SummaryVals(ws, r, row, defStart, recStart, recTotal, mm, m.ShowAdjustments, cAdj, cNet, lastCol);
+                        ws.Cells[r, 1, r, lastCol].Style.Font.Bold = true;
+                        r++;
+                        continue;
+                    }
+
+                    ws.Cells[r, cAcct].Value = sec.AcctCode;
+                    ws.Cells[r, cPart].Value = sec.Title;
+                    StyleSection(ws.Cells[r, 1, r, lastCol]);
+                    r++;
+
+                    foreach (var row in sec.Rows)
+                    {
+                        ws.Cells[r, cAcct].Value = row.AcctCode;
+                        ws.Cells[r, cPart].Value = row.Particular;
+                        SummaryVals(ws, r, row, defStart, recStart, recTotal, mm, m.ShowAdjustments, cAdj, cNet, lastCol);
+                        r++;
+                    }
+                    if (sec.Subtotal != null)
+                    {
+                        ws.Cells[r, cPart].Value = sec.Subtotal.Particular;
+                        SummaryVals(ws, r, sec.Subtotal, defStart, recStart, recTotal, mm, m.ShowAdjustments, cAdj, cNet, lastCol);
+                        ws.Cells[r, 1, r, lastCol].Style.Font.Bold = true;
+                        r++;
+                    }
+                }
+                if (m.GrandTotal != null)
+                {
+                    ws.Cells[r, cPart].Value = m.GrandTotal.Particular;
+                    SummaryVals(ws, r, m.GrandTotal, defStart, recStart, recTotal, mm, m.ShowAdjustments, cAdj, cNet, lastCol);
+                    StyleGrand(ws.Cells[r, 1, r, lastCol]);
+                    r++;
+                }
+
+                if (ws.Dimension != null) { ws.Cells[ws.Dimension.Address].AutoFitColumns(); }
+                return pkg.GetAsByteArray();
+            }
+        }
+
+        private static void SummaryVals(ExcelWorksheet ws, int r, SummaryRowDTO row, int defStart, int recStart, int recTotal, int mm, bool showAdj, int cAdj, int cNet, int lastCol)
+        {
+            for (int j = 0; j < mm; j++)
+            {
+                if (row.Deferred[j].HasValue) { ws.Cells[r, defStart + j].Value = row.Deferred[j].Value; }
+                if (row.Recognized[j].HasValue) { ws.Cells[r, recStart + j].Value = row.Recognized[j].Value; }
+            }
+            ws.Cells[r, recTotal].Value = row.RecognizedTotal;
+            if (showAdj)
+            {
+                ws.Cells[r, cAdj].Value = row.Adjustments;
+                ws.Cells[r, cNet].Value = row.NetAdjusted;
+            }
+            ws.Cells[r, defStart, r, lastCol].Style.Numberformat.Format = Money;
+        }
+
         // ---- shared styling helpers ----
         private static int WriteTitle(ExcelWorksheet ws, int r, string title, string period, DateTime asOf, int nth, int noOf, bool isFinal, int lastCol)
         {

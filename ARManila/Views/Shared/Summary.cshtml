@@ -1,0 +1,130 @@
+@model ARManila.Models.OtherDTO.SummaryReportDTO
+@using ARManila.Models.OtherDTO
+@{
+    ViewBag.Title = Model.ReportTitle + " — Summary";
+    int mm = Model.MonthCount;
+}
+@functions {
+    static string F(decimal? v) { return v.HasValue ? v.Value.ToString("#,##0.00") : ""; }
+    static string A(decimal v) { return v < 0 ? "(" + Math.Abs(v).ToString("#,##0.00") + ")" : v.ToString("#,##0.00"); }
+}
+@helper ValCells(SummaryReportDTO model, SummaryRowDTO row)
+{
+    for (int j = 0; j < model.MonthCount; j++)
+    {
+        <td class="text-end">@F(row.Deferred[j])</td>
+    }
+    for (int j = 0; j < model.MonthCount; j++)
+    {
+        <td class="text-end">@F(row.Recognized[j])</td>
+    }
+    <td class="text-end">@row.RecognizedTotal.ToString("#,##0.00")</td>
+    if (model.ShowAdjustments)
+    {
+        <td class="text-end @(row.Adjustments < 0 ? "text-danger" : "")">@A(row.Adjustments)</td>
+        <td class="text-end">@row.NetAdjusted.ToString("#,##0.00")</td>
+    }
+}
+
+<nav class="breadcrumb push bg-body-extra-light rounded-pill">
+    <span class="breadcrumb-item">@Model.ReportTitle</span>
+    <span class="breadcrumb-item active">Summary</span>
+</nav>
+
+<div class="block block-rounded">
+    <div class="block-header block-header-default">
+        <h3 class="block-title">@Model.ReportTitle &mdash; Summary</h3>
+        <div class="block-options">
+            <a href="@Url.Action("Index")" class="btn btn-sm btn-alt-secondary" title="Back"><i class="fa fa-arrow-left"></i></a>
+            <a href="@Url.Action("SummaryPdf")" class="btn btn-sm btn-alt-primary" title="Print PDF" target="_blank"><i class="fa fa-file-pdf"></i></a>
+            <a href="@Url.Action("SummaryExcel")" class="btn btn-sm btn-alt-success" title="Export to Excel"><i class="fa fa-file-excel"></i></a>
+        </div>
+    </div>
+    <div class="block-content">
+        <div class="mb-2"><strong>@Model.PeriodName</strong>@(string.IsNullOrEmpty(Model.PeriodSubtitle) ? "" : " — " + Model.PeriodSubtitle)</div>
+
+        @if (mm == 0)
+        {
+            <div class="alert alert-info">No saved postings for this period yet.</div>
+        }
+        else
+        {
+            if (mm >= 8)
+            {
+                <p class="text-muted"><small>This term has @mm month columns — the table scrolls horizontally; the Excel export is the easiest way to read a wide term.</small></p>
+            }
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm" style="font-size:.8rem; white-space:nowrap;">
+                    <thead>
+                        <tr class="bg-gray-light text-center">
+                            <th rowspan="2" style="vertical-align:middle;">ACCT CODE</th>
+                            <th rowspan="2" style="vertical-align:middle;">Particular</th>
+                            <th colspan="@mm">Summary of Tuition and Other Fees - Deferred Accounts</th>
+                            <th colspan="@(mm + 1)">Revenue Accounts Recognition</th>
+                            @if (Model.ShowAdjustments)
+                            {
+                                <th rowspan="2" style="vertical-align:middle;">Adjustments Debit (Credit)</th>
+                                <th rowspan="2" style="vertical-align:middle;">Net Adjusted Fees</th>
+                            }
+                        </tr>
+                        <tr class="bg-gray-light text-center">
+                            @foreach (var mo in Model.Months)
+                            {
+                                <th>@mo</th>
+                            }
+                            @foreach (var mo in Model.Months)
+                            {
+                                <th>@mo</th>
+                            }
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var sec in Model.Sections)
+                        {
+                            if (sec.SingleRow && sec.Rows.Count > 0)
+                            {
+                                <tr class="fw-bold">
+                                    <td>@(sec.AcctCode ?? sec.Rows[0].AcctCode)</td>
+                                    <td>@sec.Rows[0].Particular</td>
+                                    @ValCells(Model, sec.Rows[0])
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="subtotal">
+                                    <td><strong>@sec.AcctCode</strong></td>
+                                    <td colspan="@(mm * 2 + 2 + (Model.ShowAdjustments ? 2 : 0))"><strong>@sec.Title</strong></td>
+                                </tr>
+                                foreach (var row in sec.Rows)
+                                {
+                                    <tr>
+                                        <td>@row.AcctCode</td>
+                                        <td>@row.Particular</td>
+                                        @ValCells(Model, row)
+                                    </tr>
+                                }
+                                if (sec.Subtotal != null)
+                                {
+                                    <tr class="subtotal fw-bold">
+                                        <td></td>
+                                        <td><em>@sec.Subtotal.Particular</em></td>
+                                        @ValCells(Model, sec.Subtotal)
+                                    </tr>
+                                }
+                            }
+                        }
+                        @if (Model.GrandTotal != null)
+                        {
+                            <tr class="subtotal fw-bold">
+                                <td></td>
+                                <td>@Model.GrandTotal.Particular</td>
+                                @ValCells(Model, Model.GrandTotal)
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

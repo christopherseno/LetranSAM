@@ -618,5 +618,74 @@ namespace ARManila.Models
             }
         }
 
+        // ---- Period-wide readers (all posting dates) for the Summary report ----
+
+        public List<SavedMemoDetailRow> GetAllSavedMemoDetails(int periodid)
+        {
+            using (var context = new LetranIntegratedSystemEntities())
+            {
+                return context.Database.SqlQuery<SavedMemoDetailRow>(
+                    @"SELECT h.PostingDate, h.IsFinal, h.NthMonth, h.NoOfMonths, h.DateGenerated, h.GeneratedBy,
+                             d.MemoType, d.AcaDeptId, d.FeeId, d.Particular, d.ChartOfAccount, d.QNECode, d.Amount, d.PostedAmount
+                      FROM AR.MemoAdjustmentPosting h
+                      JOIN AR.MemoAdjustmentPostingDetail d ON d.PostingId = h.Id
+                      WHERE h.PeriodId = @p",
+                    new SqlParameter("@p", periodid)).ToList();
+            }
+        }
+
+        public List<SavedMemoDetailRow> GetAllSavedDiscountDetails(int periodid)
+        {
+            using (var context = new LetranIntegratedSystemEntities())
+            {
+                return context.Database.SqlQuery<SavedMemoDetailRow>(
+                    @"SELECT h.PostingDate, h.IsFinal, h.NthMonth, h.NoOfMonths, h.DateGenerated, h.GeneratedBy,
+                             d.DiscType AS MemoType, d.AcaDeptId, d.FeeId, d.Particular, d.ChartOfAccount, d.QNECode, d.Amount, d.PostedAmount
+                      FROM AR.DiscountPosting h
+                      JOIN AR.DiscountPostingDetail d ON d.PostingId = h.Id
+                      WHERE h.PeriodId = @p",
+                    new SqlParameter("@p", periodid)).ToList();
+            }
+        }
+
+        public List<SavedMemoDetailRow> GetAllSavedAdjDiscountDetails(int periodid)
+        {
+            using (var context = new LetranIntegratedSystemEntities())
+            {
+                return context.Database.SqlQuery<SavedMemoDetailRow>(
+                    @"SELECT h.PostingDate, h.IsFinal, h.NthMonth, h.NoOfMonths, h.DateGenerated, h.GeneratedBy,
+                             d.DiscType AS MemoType, d.AcaDeptId, d.FeeId, d.Particular, d.ChartOfAccount, d.QNECode, d.Amount, d.PostedAmount
+                      FROM AR.AdjDiscountPosting h
+                      JOIN AR.AdjDiscountPostingDetail d ON d.PostingId = h.Id
+                      WHERE h.PeriodId = @p",
+                    new SqlParameter("@p", periodid)).ToList();
+            }
+        }
+
+        // Net posted amount per fee across memo/adjustment + adjustment-discount postings, for the
+        // Deferred Income summary's Adjustments column (debit positive, credit negative as stored).
+        public List<FeeNetRow> GetAdjustmentNetByFee(int periodid)
+        {
+            using (var context = new LetranIntegratedSystemEntities())
+            {
+                return context.Database.SqlQuery<FeeNetRow>(
+                    @"SELECT FeeId, SUM(Net) AS Net FROM (
+                         SELECT d.FeeId, SUM(d.PostedAmount) AS Net
+                         FROM AR.MemoAdjustmentPosting h
+                         JOIN AR.MemoAdjustmentPostingDetail d ON d.PostingId = h.Id
+                         WHERE h.PeriodId = @p
+                         GROUP BY d.FeeId
+                         UNION ALL
+                         SELECT d.FeeId, SUM(d.PostedAmount) AS Net
+                         FROM AR.AdjDiscountPosting h
+                         JOIN AR.AdjDiscountPostingDetail d ON d.PostingId = h.Id
+                         WHERE h.PeriodId = @p
+                         GROUP BY d.FeeId
+                      ) x
+                      GROUP BY FeeId",
+                    new SqlParameter("@p", periodid)).ToList();
+            }
+        }
+
     }
 }

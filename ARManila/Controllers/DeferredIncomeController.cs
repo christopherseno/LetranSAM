@@ -478,6 +478,138 @@ namespace ARManila.Controllers
                    " (" + nth + "/" + noof + "), " + Period.FullName + ".";
         }
 
+        // ---- Period-wide summary (all posted months, deferred + recognition + adjustments) ----
+
+        public ActionResult Summary()
+        {
+            return View("Summary", BuildSummary());
+        }
+
+        public ActionResult SummaryPdf()
+        {
+            SummaryReportDTO model = BuildSummary();
+            ViewBag.PrintedOn = DateTime.Now;
+            ViewBag.LogoDataUri = ImageDataUri("~/Images/letranseal.jpg");
+            int numericCols = 2 * model.MonthCount + 1 + (model.ShowAdjustments ? 2 : 0);
+            int widthMm = Math.Max(330, 120 + numericCols * 20);
+            return new Rotativa.ViewAsPdf("SummaryPrint", model)
+            {
+                FileName = "DeferredIncome_Summary_" + DateTime.Now.ToString("yyyyMMdd") + ".pdf",
+                PageMargins = new Rotativa.Options.Margins(8, 6, 10, 6),
+                CustomSwitches = "--page-width " + widthMm + "mm --page-height 216mm " +
+                    "--footer-center \"Page [page] of [topage]\" --footer-font-size 7 --footer-spacing 2"
+            };
+        }
+
+        public ActionResult SummaryExcel()
+        {
+            byte[] bytes = ReportExcel.Summary(BuildSummary());
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DeferredIncome_Summary_" + DateTime.Now.ToString("yyyyMMdd") + ".xlsx");
+        }
+
+        // Pivots every saved posting date for the period: Deferred = assessed Amount, Recognition =
+        // posted amount per month + total; Adjustments = net of the memo/adjustment postings by fee.
+        private SummaryReportDTO BuildSummary()
+        {
+            int periodid = Period.PeriodID;
+            var model = new SummaryReportDTO
+            {
+                ReportTitle = "Deferred Income",
+                PeriodName = PeriodDisplayName(),
+                PeriodSubtitle = Period.FullName,
+                ShowAdjustments = true
+            };
+
+            var headers = db.DeferredIncome.Where(h => h.PeriodId == periodid).ToList();
+            var dates = headers.Select(h => h.PostingDate.Date).Distinct().OrderBy(d => d).ToList();
+            var idx = new Dictionary<DateTime, int>();
+            for (int i = 0; i < dates.Count; i++) { idx[dates[i]] = i; model.Months.Add(dates[i].ToString("dd-MMM")); }
+            int m = dates.Count;
+            model.GrandTotal = new SummaryRowDTO(m) { Particular = "GRAND TOTAL" };
+            if (headers.Count == 0) { return model; }
+
+            var headDate = headers.ToDictionary(h => h.Id, h => h.PostingDate.Date);
+            var recIds = headers.Select(h => h.Id).ToList();
+            var fees = db.DeferredIncomeFee.Where(f => recIds.Contains(f.DeferredIncomeId)).ToList();
+            var feeIds = fees.Select(f => f.FeeId).Distinct().ToList();
+
+            var acctByFee = db.Fee.Where(f => feeIds.Contains(f.FeeID))
+                .Select(f => new { f.FeeID, AcctNo = f.ChartOfAccounts.AcctNo }).ToList()
+                .ToDictionary(x => x.FeeID, x => x.AcctNo);
+            var feeMeta = db.Assessment
+                .Where(a => a.FeeID != null && feeIds.Contains(a.FeeID.Value) && a.Student_Section.Section.PeriodID == periodid)
+                .GroupBy(a => a.FeeID.Value)
+                .Select(g => new { FeeId = g.Key, Description = g.Max(x => x.Description), FeeType = g.Max(x => x.FeeType) })
+                .ToList();
+            var descByFee = feeMeta.ToDictionary(x => x.FeeId, x => x.Description);
+            var typeByFee = feeMeta.ToDictionary(x => x.FeeId, x => x.FeeType);
+            var adjByFee = db.GetAdjustmentNetByFee(periodid).Where(x => x.FeeId.HasValue)
+                .GroupBy(x => x.FeeId.Value).ToDictionary(g => g.Key, g => g.Sum(x => x.Net));
+
+            var rowByFee = new Dictionary<int, SummaryRowDTO>();
+            var typeOfFee = new Dictionary<int, string>();
+            foreach (var f in fees)
+            {
+                SummaryRowDTO row;
+                if (!rowByFee.TryGetValue(f.FeeId, out row))
+                {
+                    string ft; typeByFee.TryGetValue(f.FeeId, out ft);
+                    string desc; descByFee.TryGetValue(f.FeeId, out desc);
+                    string acct; acctByFee.TryGetValue(f.FeeId, out acct);
+                    row = new SummaryRowDTO(m)
+                    {
+                        AcctCode = acct,
+                        Particular = string.IsNullOrWhiteSpace(desc) ? ("Fee " + f.FeeId) : desc
+                    };
+                    decimal adj; adjByFee.TryGetValue(f.FeeId, out adj);
+                    row.Adjustments = adj;
+                    rowByFee[f.FeeId] = row;
+                    typeOfFee[f.FeeId] = string.IsNullOrEmpty(ft) ? "O" : ft;
+                }
+                int i;
+                if (idx.TryGetValue(headDate[f.DeferredIncomeId], out i))
+                {
+                    row.AddDeferred(i, f.Amount);
+                    row.AddRecognized(i, f.PostedAmount);
+                }
+            }
+            foreach (var kv in rowByFee) { kv.Value.Finalize(); }
+
+            string[] order = { "Tuition Fee", "Miscellaneous Fees", "Supplemental Fees", "Various/Other Fees", "Laboratory Fees" };
+            var grand = model.GrandTotal;
+            foreach (var catName in order)
+            {
+                var catFees = rowByFee.Where(kv => CategoryOf(typeOfFee[kv.Key]) == catName)
+                    .Select(kv => kv.Value).OrderBy(r => r.Particular).ToList();
+                if (catFees.Count == 0) { continue; }
+                string acctCode = catFees.Select(r => r.AcctCode).Where(a => !string.IsNullOrEmpty(a))
+                    .GroupBy(a => a).OrderByDescending(g => g.Count()).Select(g => g.Key).FirstOrDefault();
+
+                if (catName == "Tuition Fee")
+                {
+                    var single = new SummaryRowDTO(m) { AcctCode = acctCode, Particular = "Tuition Fee" };
+                    foreach (var r in catFees) { r.AccumulateInto(single); }
+                    single.Finalize();
+                    single.AccumulateInto(grand);
+                    var sec = new SummarySectionDTO { AcctCode = acctCode, Title = "Tuition Fee", SingleRow = true };
+                    sec.Rows.Add(single);
+                    model.Sections.Add(sec);
+                }
+                else
+                {
+                    var section = new SummarySectionDTO { AcctCode = acctCode, Title = catName };
+                    var sub = new SummaryRowDTO(m) { Particular = "Subtotal" };
+                    foreach (var r in catFees) { section.Rows.Add(r); r.AccumulateInto(sub); r.AccumulateInto(grand); }
+                    sub.Finalize();
+                    section.Subtotal = sub;
+                    model.Sections.Add(section);
+                }
+            }
+            grand.Finalize();
+            return model;
+        }
+
         // ---- Excel export (same saved data as the PDF, via EPPlus) ----
 
         public ActionResult Excel(string date)

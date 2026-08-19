@@ -863,6 +863,7 @@
     <Compile Include="Models\OtherDTO\DeferredIncomeDTO.cs" />
     <Compile Include="Models\OtherDTO\MemoAdjustmentDTO.cs" />
     <Compile Include="Models\OtherDTO\ReportExcel.cs" />
+    <Compile Include="Models\OtherDTO\SummaryReportDTO.cs" />
     <Compile Include="Models\OtherDTO\DeferredIncomeReportDTO.cs" />
     <Compile Include="Models\OtherDTO\FeeDTO.cs" />
     <Compile Include="Models\OtherDTO\PartialContext.cs" />
@@ -5416,6 +5417,8 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Summary.cshtml" />
+    <Content Include="Views\Shared\SummaryPrint.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />

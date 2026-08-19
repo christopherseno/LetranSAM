@@ -1,0 +1,148 @@
+@model ARManila.Models.OtherDTO.SummaryReportDTO
+@using ARManila.Models.OtherDTO
+@{
+    Layout = null;
+    int mm = Model.MonthCount;
+    string logo = ViewBag.LogoDataUri as string;
+    DateTime printedOn = ViewBag.PrintedOn == null ? DateTime.Now : (DateTime)ViewBag.PrintedOn;
+}
+@functions {
+    static string F(decimal? v) { return v.HasValue ? v.Value.ToString("#,##0.00") : ""; }
+    static string A(decimal v) { return v < 0 ? "(" + Math.Abs(v).ToString("#,##0.00") + ")" : v.ToString("#,##0.00"); }
+}
+@helper ValCells(SummaryReportDTO model, SummaryRowDTO row)
+{
+    for (int j = 0; j < model.MonthCount; j++)
+    {
+        <td class="num">@F(row.Deferred[j])</td>
+    }
+    for (int j = 0; j < model.MonthCount; j++)
+    {
+        <td class="num">@F(row.Recognized[j])</td>
+    }
+    <td class="num tot">@row.RecognizedTotal.ToString("#,##0.00")</td>
+    if (model.ShowAdjustments)
+    {
+        <td class="num@(row.Adjustments < 0 ? " neg" : "")">@A(row.Adjustments)</td>
+        <td class="num tot">@row.NetAdjusted.ToString("#,##0.00")</td>
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.ReportTitle Summary</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: "Segoe UI", Arial, sans-serif; color: #1f2733; font-size: 7.5px; -webkit-print-color-adjust: exact; }
+
+        .lh-inst { font-family: "Old English Text MT", "Times New Roman", serif; font-size: 16px; font-weight: 700; color: #1d4ed8; }
+        .lh-sub { font-size: 8px; color: #6c757d; }
+        .lh-rep { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 2px; }
+        .meta { font-size: 8px; margin: 3px 0 6px; }
+        .meta b { font-weight: 700; }
+
+        table.sm { width: 100%; border-collapse: collapse; }
+        table.sm th, table.sm td { border: 1px solid #cfd6dd; padding: 1px 3px; }
+        table.sm thead th { background: #1d4ed8; color: #fff; text-align: center; font-weight: 700; }
+        table.sm td.num { text-align: right; white-space: nowrap; }
+        table.sm td.tot { font-weight: 700; }
+        table.sm td.neg { color: #c1121f; }
+        table.sm tr.section td { background: #eef1f4 !important; font-weight: 700; }
+        table.sm tr.subtotal td { background: #e9edf1 !important; font-weight: 700; }
+        table.sm tr.single td { font-weight: 700; }
+        table.sm tr.grand td { background: #1d4ed8 !important; color: #fff; font-weight: 700; }
+
+        tr { page-break-inside: avoid; }
+        thead { display: table-header-group; }
+    </style>
+</head>
+<body>
+    <div class="lh-inst">Colegio de San Juan de Letran</div>
+    <div class="lh-sub">Intramuros, Manila &bull; Accounting / Finance Office</div>
+    <div class="lh-rep">@Model.ReportTitle &mdash; Summary</div>
+    <div class="meta">
+        <b>Period:</b> @Model.PeriodName@(string.IsNullOrEmpty(Model.PeriodSubtitle) ? "" : " &bull; " + Model.PeriodSubtitle)
+        &nbsp;&bull;&nbsp; Printed @printedOn.ToString("MMM dd, yyyy h:mm tt")
+    </div>
+
+    @if (mm == 0)
+    {
+        <p>No saved postings for this period yet.</p>
+    }
+    else
+    {
+        <table class="sm">
+            <thead>
+                <tr>
+                    <th rowspan="2">ACCT CODE</th>
+                    <th rowspan="2">Particular</th>
+                    <th colspan="@mm">Summary of Tuition and Other Fees - Deferred Accounts</th>
+                    <th colspan="@(mm + 1)">Revenue Accounts Recognition</th>
+                    @if (Model.ShowAdjustments)
+                    {
+                        <th rowspan="2">Adjustments Debit (Credit)</th>
+                        <th rowspan="2">Net Adjusted Fees</th>
+                    }
+                </tr>
+                <tr>
+                    @foreach (var mo in Model.Months)
+                    {
+                        <th>@mo</th>
+                    }
+                    @foreach (var mo in Model.Months)
+                    {
+                        <th>@mo</th>
+                    }
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sec in Model.Sections)
+                {
+                    if (sec.SingleRow && sec.Rows.Count > 0)
+                    {
+                        <tr class="single">
+                            <td>@(sec.AcctCode ?? sec.Rows[0].AcctCode)</td>
+                            <td>@sec.Rows[0].Particular</td>
+                            @ValCells(Model, sec.Rows[0])
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class="section">
+                            <td>@sec.AcctCode</td>
+                            <td colspan="@(mm * 2 + 2 + (Model.ShowAdjustments ? 2 : 0))">@sec.Title</td>
+                        </tr>
+                        foreach (var row in sec.Rows)
+                        {
+                            <tr>
+                                <td>@row.AcctCode</td>
+                                <td>@row.Particular</td>
+                                @ValCells(Model, row)
+                            </tr>
+                        }
+                        if (sec.Subtotal != null)
+                        {
+                            <tr class="subtotal">
+                                <td></td>
+                                <td>@sec.Subtotal.Particular</td>
+                                @ValCells(Model, sec.Subtotal)
+                            </tr>
+                        }
+                    }
+                }
+                @if (Model.GrandTotal != null)
+                {
+                    <tr class="grand">
+                        <td></td>
+                        <td>@Model.GrandTotal.Particular</td>
+                        @ValCells(Model, Model.GrandTotal)
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</body>
+</html>

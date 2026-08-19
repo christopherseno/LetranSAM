@@ -38,6 +38,7 @@ namespace ARManila.Models.OtherDTO
     // Saved detail rows joined to their header, for rebuilding a saved batch.
     public class SavedMemoDetailRow
     {
+        public DateTime PostingDate { get; set; }   // populated by the period-wide reader only
         public bool IsFinal { get; set; }
         public int NthMonth { get; set; }
         public int NoOfMonths { get; set; }
@@ -51,6 +52,13 @@ namespace ARManila.Models.OtherDTO
         public string QNECode { get; set; }
         public decimal Amount { get; set; }
         public decimal PostedAmount { get; set; }
+    }
+
+    // Net posted amount per fee, for the Deferred Income summary's Adjustments column.
+    public class FeeNetRow
+    {
+        public int? FeeId { get; set; }
+        public decimal Net { get; set; }
     }
 
     // Prior finalized posted totals, keyed by MemoType + Dept + Fee.
