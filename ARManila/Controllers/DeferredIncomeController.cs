@@ -508,6 +508,11 @@ namespace ARManila.Controllers
                 "DeferredIncome_Summary_" + DateTime.Now.ToString("yyyyMMdd") + ".xlsx");
         }
 
+        private string PeriodDisplayName()
+        {
+            return Period.EducationalLevel1.EducLevelName + " - " + Period.FullName;
+        }
+
         // Pivots every saved posting date for the period: Deferred = assessed Amount, Recognition =
         // posted amount per month + total; Adjustments = net of the memo/adjustment postings by fee.
         private SummaryReportDTO BuildSummary()
